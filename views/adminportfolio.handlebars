@@ -1,0 +1,166 @@
+<section class="main">
+  
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.js"></script>
+  
+  <div class='row'>
+    <div class="col-sm-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3>Portfolio Object Administration</h3>
+        </div>
+        <div class="panel-body">
+          <h2>Add New Portfolio Object
+            <i class="fa fa-plus-square" id="addnewproject"></i>
+          </h2>
+          <hr>
+
+            {{#each dynamicData}}
+              <form enctype="multipart/form-data" action="updateportfolio/{{this.id}}" onsubmit="return validateUpdatePortfolioForm({{this.id}})" method="POST">
+
+                <div class="row">
+                  <div class="col-sm-12">
+                    <input type="text" id="ProjectName" name="ProjectName" value="{{this.ProjectName}}"/>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-2">
+                    <p>Project URL:</p>
+                  </div>
+                  <div class="col-sm-10">
+                    <input type="text" id="ProjectURL" name="ProjectURL" value="{{this.ProjectURL}}"/> 
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-2">
+                    <p>Github URL:</p>
+                  </div>
+                  <div class="col-sm-10">
+                    <input type="text" id="GithubURL" name="GithubURL" value="{{this.GithubURL}}"/>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="row">
+                      <div class="col-sm-2">
+                        <p>Image:</p>
+                      </div>
+                      <div class="col-sm-10 projectImage">
+                        <a target="new" href="{{this.ProjectURL}}">
+                          <img src="{{this.ProjectIMG}}" alt="{{this.ProjectName}}" class="adminimage">
+                        </a>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <input type="file" name="portfoliopicture" id="portfoliopicture{{this.id}}" class="hideElement">
+                        <input type="hidden" id="ProjectIMG{{this.id}}" name="ProjectIMG{{this.id}}" value="{{this.ProjectIMG}}"/> 
+                        <label for="portfoliopicture{{this.id}}" class="labelButton image-selection">Select Image</label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-2"></div>
+                      <div class="col-sm-10 projectImage">
+                        
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-sm-7 projectdisplay">
+                    <div class="row">
+                      <div id="summernoteBlurb{{this.id}}" data-id="{{this.id}}">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hideElement adminTextArea col-md-12">      
+                  <input type="text" id="ProjectBlurb{{this.id}}" name="ProjectBlurb{{this.id}}" value="{{this.ProjectBlurb}}"/>
+                </div>
+
+                <div class="row buttonRow">
+                  <div class="col-sm-12">
+                    <button type="submit" id="update" class="btn btn-primary">Update This Project</button>
+                    <a href="deleteportfolioproject/{{this.id}}">
+                      <button type="button" id="delete" class="btn btn-danger">Delete This Project</button>
+                    </a>
+                  </div>
+                </div>
+              </form>
+            {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4>Add New Project</h4>
+        </div>
+        
+        <div class="modal-body">
+          <form action="newportfolio" method="POST">
+            <p>ProjectName:</p><input type="text" id="NewProjectName" name="NewProjectName"/>
+            <p>ProjectBlurb:</p><input type="text" id="NewProjectBlurb" name="NewProjectBlurb"/> 
+            <p>ProjectURL:</p><input type="text" id="NewProjectURL" name="NewProjectURL"/> 
+            <p>GithubURL:</p><input type="text" id="NewGithubURL" name="NewGithubURL"/> 
+            <p>ProjectIMG:</p><input type="text" id="NewProjectIMG" name="NewProjectIMG"/> 
+            <p><button type="submit" id="update">Submit</button></p>
+            <p><button type="cancel" id="cancel" data-dismiss="modal">Cancel</button></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+<script>
+    $(document).ready(function() {
+
+      //loop through the DOM and create a summernote element for each object    
+      $('div[id^=summernote]').each(function() {
+        var summerNoteID = $(this).data("id");
+
+        //Initialize Summernote for the BODY
+        $('#summernoteBlurb'  + summerNoteID).summernote({
+          fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                      "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+          fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                      "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+          toolbar: [
+              ['style', ['bold', 'italic', 'underline', 'clear']],
+              ['font', ['strikethrough', 'superscript', 'subscript']],
+              ['fontsize', ['fontsize']],
+              ["fontname", ["fontname"]],
+              ['para', ['ul', 'ol', 'paragraph']],
+              ['height', ['height']],
+              ['insert', ['link']]
+            ]
+        });
+
+        //Read coded contents from the database & decode them
+        var decodedBodyContent = decodeURI( $("#ProjectBlurb"  + summerNoteID).val() );
+
+        //Insert decoded text into the proper field  
+        $('#summernoteBlurb'  + summerNoteID).summernote('code', decodedBodyContent);
+      })
+    })
+
+    //Listen for updates
+    function validateUpdatePortfolioForm(event) {
+
+      var blurbFormattedData = $('#summernoteBlurb' + event).summernote('code');
+      var blurbEncodedData = encodeURI(blurbFormattedData);
+      $("#ProjectBlurb" + event).val(blurbEncodedData);
+
+      return true;
+    }
+  </script>
+
+</section>

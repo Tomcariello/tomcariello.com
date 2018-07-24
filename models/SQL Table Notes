@@ -1,0 +1,9 @@
+CREATE TABLE messages (
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(45) NOT NULL,
+  email VARCHAR(45) NOT NULL,
+  message VARCHAR(255) NOT NULL,
+  createdAt DATE NOT NULL,
+  updatedAt DATE NOT NULL,
+  PRIMARY KEY (id)
+)

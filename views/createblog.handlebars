@@ -1,0 +1,130 @@
+<section class="main">
+  
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.js"></script>
+  
+  <div class='row linktoportal'>
+    <div class="col-sm-12">
+      <a href="adminportal">Return to Admin Portal</a>
+    </div>
+  </div>
+  <div class='row'>
+    <div class="col-sm-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3>Create New Blog</h3>
+        </div>
+        <div class="panel-body">
+
+          {{!-- <form action="newblog" method="POST"> --}}
+          <form enctype="multipart/form-data" action="newblog" onsubmit="return validateNewBlogForm()" method="POST">
+            <p>Author:</p><input type="text" id="NewBlogAuthor" name="NewBlogAuthor"/> 
+
+            {{!-- Hidden element to contain encoded text for headline --}}
+            <div class="hideElement adminTextArea col-md-12">      
+              <textarea rows="4" cols="50" id="NewBlogHeadline" name="NewBlogHeadline" maxlength="250">{{dynamicData.headline}}</textarea> 
+            </div>
+            {{!-- Summernote Headline --}}
+            <div class="row">
+              <div class="col-md-8">
+                <div class="row">
+                  <p>Headline:</p>
+                  <div id="summernoteheadline" data-id="{{dynamicData.id}}">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {{!-- Hidden element to contain encoded text for body --}}
+            <div class="hideElement adminTextArea col-md-12">      
+              <textarea rows="4" cols="50" id="NewBlogtext" name="NewBlogtext" maxlength="100000">{{dynamicData.blogtext}}</textarea> 
+            </div>
+            <div class="row">
+              <div class="col-md-8">
+                <div class="row">
+                  <p>Body:</p>
+                  <div id="summernotebody" data-id="{{dynamicData.id}}">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
+
+            <div class="col-sm-12">
+              <input type="file" name="blogpicture" id="blogpicture{{this.id}}" class="hideElement">
+              <input type="hidden" id="ProjectIMG{{this.id}}" name="ProjectIMG{{this.id}}" value="{{this.ProjectIMG}}"/> 
+              <label for="blogpicture{{this.id}}" class="labelButton image-selection">Select Image</label>
+            </div>
+            <input class="hideElement" type="text" id="NewBlogImage" name="NewBlogImage"/> 
+            <p>Image Caption:</p><input type="text" id="NewImageCaption" name="NewImageCaption"/> 
+
+            <p><button type="submit" id="update">Submit</button></p>
+            <p><button type="cancel" id="cancel">Cancel</button></p>
+          </form>
+           
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<script>
+  $(document).ready(function() {
+    //Initialize Summernote for the BODY
+    $('div[id^=summernote]').each(function() {
+      var summerNoteID = $(this).data("id");
+
+      //Initialize Summernote for the Headline
+      $('#summernoteheadline' + summerNoteID).summernote({
+        fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ["fontname", ["fontname"]],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['insert', ['link']]
+          ]
+      });
+
+      //Initialize Summernote for the Body
+      $('#summernotebody' + summerNoteID).summernote({
+        fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ["fontname", ["fontname"]],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['insert', ['link']]
+          ]
+      });
+    })
+  })
+
+    //Listen for updates
+    function validateNewBlogForm(event) {
+      //Update Headline Data
+      var headlineFormattedData = $('#summernoteheadline').summernote('code');
+      var headlineEncodedData = encodeURI(headlineFormattedData);
+      $("#NewBlogHeadline").val(headlineEncodedData);
+
+      //Update Body Data
+      var bodyFormattedData = $('#summernotebody').summernote('code');
+      var bodyEncodedData = encodeURI(bodyFormattedData);
+      $("#NewBlogtext").val(bodyEncodedData);
+
+      return true;
+    }
+  </script>
+
+</section>

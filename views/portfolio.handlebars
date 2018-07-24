@@ -1,0 +1,43 @@
+<section class="mainportfolio">
+  {{#each dynamicData}}
+    <div class='row portfolio-section'>
+      <div class="col-xs-12">
+        <div class="row">
+          <div class="col-md-5 col-sm-12 projectImage">
+            <a target="new" href="{{this.ProjectURL}}">
+              <img class="portfolio-image" src="{{this.ProjectIMG}}" alt="{{this.ProjectName}}">
+            </a>
+          </div>
+          <div class="col-md-7 col-sm-12">
+            <p class='projecttitle'>
+              <a target="new" href="{{this.ProjectURL}}">{{this.ProjectName}}</a>
+            </p>
+            <p class="projectinfo">{{{decodeSummernote this.ProjectBlurb}}}</p>
+            <p class="githubLink"><a href="{{this.GithubURL}}" target="new">View on Github</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+  <div id="socialMediaContainer">
+    <div id="socialMediaParent" class="fas fa-user-circle btn-lg"></div>
+    <div id="socialMediaLinks">
+      <div class="socialMediaChild">
+        <a href="https://github.com/Tomcariello" target="_blank">
+          <img class="socialButtons socialCollapse" src="public\images\github.png" alt="github">
+        </a>
+      </div>
+      <div class="socialMediaChild">
+        <a href="http://www.linkedin.com/in/tom-cariello" target="_blank">
+          <img class="socialButtons socialCollapse" src="public\images\linkedin.png" alt="Linkedin">
+        </a>
+      </div>
+      <div class="socialMediaChild">
+        <a href="https://drive.google.com/open?id=1ndua-vF5tXVHote5v0WAwMv2IiARfDJo" target="_blank">
+          <img class="socialButtons socialCollapse" src="public\images\resume.jpg" alt="Resume">
+        </a>
+      </div>
+    </div>
+  </div>
+
+</section>

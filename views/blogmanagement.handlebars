@@ -1,0 +1,70 @@
+<section class="main">
+  <div class='row'>
+    <div class="col-sm-12 col-md-8">
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h3> Manage Blog Entries</h3>
+                        </div>
+                        <div class="col-sm-6 newblogcontainer">
+                            <h3>Create Blog
+                                <a href="createblog">
+                                    <i class="fa fa-plus-square" id="addblog"></i>
+                                </a>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    
+    
+                    <div class='row'>
+                        <div class="col-sm-1 deleteblog"></div>
+                        <div class="col-sm-1 editblog"></div>
+                        <div class="col-sm-1 blogcomments"></div>
+                        <div class="blogmessagetitle col-sm-4">
+                            Blog Title
+                        </div>
+                        <div class="blogmessagetitle col-sm-4">
+                            Date Created
+                        </div>
+                    </div>
+
+                    {{#each dynamicData}}
+
+                    <div class="row blogmessagerow">
+                        <div class="col-sm-1 deleteblog">
+                            <a href="deleteblog/{{this.id}}">
+                                <i class="fa fa-times-circle" aria-hidden="true" title="Delete Blog"></i>
+                            </a>
+                        </div>
+                        <div class="col-sm-1 editblog">
+                            <a href="editblog?id={{this.id}}">
+                                <i class="fa fa-edit" aria-hidden="true" title="Edit Blog"></i>
+                            </a>
+                        </div>
+                        <div class="col-sm-1 commentblog">
+                            <a href="blogcomments?id={{this.id}}">
+                                <i class="fa fa-comment" aria-hidden="true" title="Edit Comments"></i>
+                            </a>
+                        </div>
+
+                        <div class="col-sm-4">
+                            {{{decodeSummernote this.headline}}}
+                        </div>
+                        <div class="col-sm-4 blogdate">
+                            {{formatdate this.createdAt}}<br/>
+                        </div>
+                    </div>
+
+                    {{/each}}
+
+                </div>    
+            </div>
+        </div>
+    </div>
+  </div>
+</section>

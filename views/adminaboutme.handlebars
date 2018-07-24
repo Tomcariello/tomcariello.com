@@ -1,0 +1,129 @@
+<section class="main">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.js"></script>
+  
+  <div class='row'>
+    <div class="col-sm-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3>Update About Me Information</h3>
+        </div>
+        <div class="panel-body">
+        
+          <form enctype="multipart/form-data" action="updateAboutMe" onsubmit="return validateAboutMeForm()" method="POST">
+            <div class="row">
+              <div class="col-sm-12">
+                <p>About Me (limit 1,000 characters):</p>
+              </div>
+            </div>
+        
+            {{!-- Hidden element to contain encoded text for form submission --}}
+            <div class="hideElement adminTextArea col-md-12">      
+              <textarea rows="4" cols="50" id="AboutMe" name="AboutMe" maxlength="1000">{{dynamicData.bio}}</textarea> 
+            </div>
+            <div class="row">
+              <div class="col-md-8">
+                <div class="row">
+                  <div id="summernoteAboutMe" data-id="1">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class='col-sm-2'>
+                <p>Image:</p>
+                <input type="file" name="profilepicture" id="profilepicture">
+                <input type="text" id="AboutMeImage" name="AboutMeImage" value="{{dynamicData.image}}"/>
+                <label for="profilepicture" class="labelButton">Select file</label>
+              </div>
+              <div class='col-sm-10'>
+                <img class="aboutAdminImage" src="{{dynamicData.image}}">
+              </div>
+            </div>
+            
+            {{!-- Hidden element to contain encoded text for form submission --}}
+            <div class="hideElement adminTextArea col-md-12">      
+              <textarea rows="4" cols="50" id="AboutMeCaption" name="AboutMeCaption" maxlength="1000">{{dynamicData.caption}}</textarea> 
+            </div>
+            <div class="row">
+              <div class="col-md-8">
+                <div class="row">
+                  <div id="summernoteAboutMeCaption" data-id="2">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class='col-sm-12'>
+                <p><button type="submit" id="update" class="btn btn-primary">Update About Me</button></p>
+              </div>
+            </div>
+         </form>
+        </div>  
+      </div>
+    </div>
+  </div>
+
+   <script>
+    $(document).ready(function() {
+      //Initialize Summernote for the BODY
+      $('#summernoteAboutMe').summernote({
+        fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ["fontname", ["fontname"]],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['insert', ['link']]
+          ]
+      });
+      $('#summernoteAboutMeCaption').summernote({
+        fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ["fontname", ["fontname"]],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['insert', ['link']]
+          ]
+      });
+
+      //Encoded data is entered into hidden forms
+      //Read coded contents from the database & decode them
+      var decodedBodyContent = decodeURI( $("#AboutMe").val() );
+      var decodedCaptionContent = decodeURI( $("#AboutMeCaption").val() );
+
+      //Insert decoded text into the proper field for rendering
+      $('#summernoteAboutMe').summernote('code', decodedBodyContent);
+      $('#summernoteAboutMeCaption').summernote('code', decodedCaptionContent);
+    })
+
+    //Listen for form submission
+    function validateAboutMeForm() {
+
+      //Encode the Summernote contents and store them in the form for submission
+      var aboutMeFormattedData = $('#summernoteAboutMe').summernote('code');
+      var aboutMeEncodedData = encodeURI(aboutMeFormattedData);
+      $("#AboutMe").val(aboutMeEncodedData);
+
+      var captionFormattedData = $('#summernoteAboutMeCaption').summernote('code');
+      var captionEncodedData = encodeURI(captionFormattedData);
+      $("#AboutMeCaption").val(captionFormattedData);
+
+      return true;
+    }
+  </script>
+</section>

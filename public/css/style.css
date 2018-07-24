@@ -1,0 +1,455 @@
+/* Animate contact icons Left/Right Split */
+@keyframes animMoveGithubStandard {
+	0%   {right: -90px;}
+	100% {right: 0px;}
+}
+@keyframes animMoveResumeStandard {
+	0%   {right: 90px;}
+	100% {right: 0px;}
+}
+#github {
+	animation-name: animMoveGithubStandard;
+	animation-duration: 1.5s;
+}
+#resume {
+	animation-name: animMoveResumeStandard;
+	animation-duration: 1.5s;
+}
+
+/* Animate contact icons into nav bar */
+@keyframes animMovetoNav {
+	0%   {top: 0px;}
+	100% {top: -76px;}
+}
+#movetonav {
+	animation-name: animMovetoNav;
+	animation-duration: 1.5s;
+	position: relative;
+    bottom: 76px;
+}
+
+body {
+    width:100%;
+    height: 100vh;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+	font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+	color: #777;
+}
+h3 {
+	font-size: 30px;
+    color: #777;
+}
+.container {
+	width: 100%;
+	height: 900px;
+	background-repeat: repeat;
+	background-size: 100%;
+	padding: 0px;
+}
+a {
+	color: #777777;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.navbar-default {
+	background-color: #68b4ff;
+}
+
+.navbar-default .navbar-brand {
+	color: #ffffff;
+    font-size: 30px;
+}
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #fff;
+}
+.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {
+    background-color: #68b5ff;
+}
+
+/*Profile Image properties*/
+.profile {
+	width: 400px;
+	display: block;
+	float: left;
+	padding: 5px 15px 15px 0;
+}
+
+.seperator {
+	border-left: 1px solid #cccccc;
+	border-right: 1px solid #cccccc;
+}
+.main {
+	width: 90%;
+	padding-bottom: 100px;
+}
+section {
+	clear: both;
+	margin: auto;
+}
+
+p {
+	color: #777777;
+	font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+	line-height: 170%;
+	font-size: 18px;
+	margin-bottom: 10px;
+}
+
+.about {
+	max-width: 618px;
+	height: 10%0;
+	padding: 15px 15px 50px 15px;
+	margin:20px 14px;
+}
+
+.aboutme {
+	/* color: #4aaaa5; */
+	padding: 0 0 20px 0;
+	width: 100%;
+}
+.connect {
+	width: 100%;
+	float: right;
+	padding: 0 15px 15px 15px;
+	margin: 0 8px 40px 0px;
+}
+.icons {
+	border-top: 1px solid #dddddd;
+	margin-top: 20px auto 0 auto;
+	margin-top: 10px;
+	padding: 7px 9px 0;
+}
+.socialButtons {
+	width: 50px;
+	margin: 0px;
+}
+.socialMenu {
+	text-align: center;
+}
+.socialCollapse {
+	margin: 10px 0;
+}
+
+li {
+	padding: 5px;
+	display: inline-block;	
+}
+
+footer {
+	background-color: #666666;
+	height: 60px;
+	position: fixed;
+	bottom: 0px;
+	width: 100%;
+}
+
+.foot {
+	margin-top: 20px;
+	font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+	font-size: 12px;
+	color: #ffffff;
+	text-align: center;
+}
+
+.pf1, .pf2, .pf3, .pf4, .pf5 {
+	float: left;
+	width: 260px;
+	color: #ffffff;
+	margin-left: 20px;
+}
+
+.text1 {
+	position: relative;
+	bottom: 50px;
+	background-color: #4aaaa5;
+	text-align: center;
+	height: 35px;
+	width: 250px;
+    padding: 4px 0;
+    text-decoration: bold;
+    font-size: 20px;
+}
+
+.pf_container {
+	margin-top: 20px;
+}
+
+input {
+	margin-bottom: 20px;
+}
+
+form > p {
+	margin: 0;
+}
+
+input[type=text] {
+	width: 100%;
+	color: #aaaaaa;
+}
+
+input[type=password] {
+	width: 100%;
+	color: #aaaaaa;
+}
+#message {
+	width: 80%;
+}
+textarea {
+	width: 100%;
+	height: 200px;
+	color: #505050
+}
+
+button {
+    color: #ffffff;
+    background-color: #005cb5;
+    border: none;
+    padding: 8px 16px;
+    margin: 10px 5px;
+    /* width: 100px; */
+    height: 50px;
+    font-size: 20px;
+}
+
+button:hover {
+	opacity: .8;
+}
+.profileImageCaption {
+    text-align: center;
+    font-style: italic;
+}
+.profilePictureContainer {
+	float: left;
+}
+.navbar-settings {
+    position: fixed;
+    margin: 0;
+}
+.navbar .nav>li>a {
+  font-size: 16px;
+ }
+ .navbar-default .navbar-nav>li>a {
+    color: #ffffff;
+}
+ .navbar {
+    border-radius: 0px;
+  }
+
+.panel-heading {
+	padding: 1px 15px;
+}
+.footer-content {
+	color: #ffffff;
+	text-align: center;
+	padding-top: 15px;
+}
+
+.projecttitle {
+	font-size: 42px;
+	text-align: center;
+	padding-top: 25vh;
+}
+.projectinfo {
+	font-size: 26px;
+}
+.thumbnails {
+	padding: 4%;
+}
+
+input[type=text] {
+	color: #505050;
+}
+
+#submitButton {
+	display: none;
+}
+.adminimage {
+	width: 40%;
+}
+.aboutAdminImage {
+    width: 50%;
+}
+#profilepicture {
+    display: none;
+}
+.selectFileButton {
+	
+}
+#addnewproject {
+	font-size: 26px;
+	cursor: pointer;
+}
+.portfoliotitle, .projectImage {
+	text-align: center;
+}
+.portfoliotitletext {
+	font-size: 26px;
+}
+#AboutMeBio {
+    width: 500px;
+    height: 300px;
+}
+#AboutMeImage {
+	/* width: 500px; */
+	display: none;
+}
+.linktoportal {
+	padding: 10px 0;
+}
+
+#ProjectName {
+	text-align: center;
+	font-size: 26px;
+	border: 3px solid black;
+}
+.buttonRow {
+    margin-bottom: 40px;
+}
+#socialMediaParent {
+    font-size: 40px;
+}
+.socialMediaChild {
+	text-align: center;
+}
+#socialMediaContainer {
+    position: fixed;
+    right: 20px;
+    top: 80PX;
+}
+#socialMediaLinks {
+    display: none;
+}
+.portfolio-section {
+	height: 90vh;
+}
+.portfolio-section:nth-child(even) {
+	background-color: rgb(224, 222, 222);
+	background-size: 50px 50px;
+}
+.portfolio-image {
+	padding-top: 25vh;
+    max-width: 85%;
+    max-height: 85vh;
+}
+.hideElement {
+	display: none !important;
+}
+.image-selection {
+	display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid #000000;
+    border-radius: 4px;
+}
+/* Contact Page Settings */
+.messageIntro {
+    margin-bottom: 50px;
+}
+#fname, #email, #BlogCommentHeadline, #BlogCommentName {
+    border-right: none;
+    border-left: none;
+    border-top: none;
+    height: 30px;
+    border-bottom: 1px solid #6b6b6b;
+    width: 50%;
+}
+#fname:focus, #email:focus, #message:focus, #BlogCommentHeadline:focus, #BlogCommentName:focus {
+    outline: none;
+}
+.messageSent {
+    font-size: 30px;
+    margin-bottom: 45px;
+}
+
+/* Blog Specific Settings */
+.blogimage {
+    width: 50%;
+}
+.blogHeadline {
+    font-weight: bold;
+	font-size: 26px;
+	margin-bottom: 12px;
+}
+.blogcaption {
+	font-style: italic;
+	margin-bottom: 10px;
+}
+.blogimagecontainer { 
+	text-align: center;
+}
+.blogcontainer {
+    border: 1px solid #b5b4b4;
+	border-top: none;
+	margin-top: 20px;
+}
+.blogauthor, .blogdate {
+color: #8e8d8d;
+}
+.blogdate {
+	margin-bottom: 20px;
+}
+.blogmessagetitle {
+	font-weight: bold;
+	padding-bottom: 10px;
+}
+.blogmessagerow {
+	border-top: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+.blogmessagerow:nth-child(odd) {
+	background-color: #ddd;
+}
+.newblogcontainer {
+	text-align: right;
+}
+.blogimagemaincontainer {
+	margin-bottom: 15px;
+}
+.commentheadline {
+    font-size: 24px;
+}
+.commentrow {
+	padding-bottom: 10px;
+}
+.commentrow:nth-child(odd) {
+	background-color: #f5f5f5;
+}
+.commenttext {
+    font-size: 16px;
+    padding: 10px 20px;
+}
+.newCommentTitle {
+    color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+.keep_reading {
+    text-decoration: underline;
+    font-style: italic;
+}
+.error {
+	background-color: #fb3c47;
+	color: #ffffff;
+}
