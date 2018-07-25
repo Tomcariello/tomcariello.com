@@ -1,9 +1,7 @@
-var socialMediaExpanded = false;
-
 $( document ).ready(function() {
 
 	//Check registration form for validity as fields are populated
-	//NET THESE WITH A CLASS
+	//NET THESE WITH A CLASS?
 	$("#fname" ).change(function() {
 	  validateRegistration();
 	});
@@ -71,10 +69,6 @@ function clearFields() {
   document.getElementById("fname").value = "";
   document.getElementById("email").value = "";
   document.getElementById("message").value = "";
-
-  //Thank user for the message
-  // alert("Thank you for your message.")
-
 }
 
 function validateRegistration() {
@@ -112,8 +106,4 @@ function validateRegistration() {
 		$("#fname").css({"border-bottom":"1px solid red"});
 		hideSubmitButton();
 	}
-}
-
-function hideSubmitButton() {
-	$("#submitButton").css({"display":"none"});	
 }

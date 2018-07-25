@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "author": "Tom Cariello",
   "license": "ISC",
@@ -27,7 +27,8 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "sequelize": "^3.27.0",
-    "sequelize-cli": "^2.4.0"
+    "sequelize-cli": "^2.4.0",
+    "twitter": "^1.7.1"
   },
   "devDependencies": {
     "express": "^4.14.0"
