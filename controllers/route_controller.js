@@ -19,15 +19,6 @@ var S3_BUCKET = process.env.S3_BUCKET;
 var S3_accessKeyId = process.env.AWS_ACCESS_KEY_ID
 var S3_secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
 
-//Twitter configuration
-var twitterClient = new Twitter({
-  consumer_key: process.env.TWITTER_CONSUMER_KEY,
-  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
-});
-
-
 //==================================
 //=====GET routes to load pages=====
 //==================================
@@ -36,19 +27,6 @@ router.get('/', function(req, res) {
 });
 
 router.get('/index', function(req, res) {
-  var tweetResponse;
-
-  //Get my tweets
-  twitterClient.get('statuses/user_timeline', function(error, tweets, response) {
-    if(error) throw error;
-
-    tweetResponse = tweets;
-
-    for (var i=0; i < tweets.length; i++) {
-      var tweetArray = tweets[i].created_at.split(" ");
-      // console.log(tweetArray[1] + " " + tweetArray[2] + " " + tweetArray[5] + ": " + tweets[i].text);
-    }
-  });
 
   //Query database for page information
   models.AboutMe.findOne({
@@ -60,7 +38,7 @@ router.get('/index', function(req, res) {
     //Check if user is logged in
     checkAdminStatus(req, payload);
 
-    res.render('index', {dynamicData: payload.dynamicData});
+    res.render('index', {dynamicData: payload.dynamicData, layout: 'main-social'});
   })
 });
 
@@ -91,7 +69,7 @@ router.get('/contact', function(req, res) {
     req.session.messageSent = false;
   }
   
-  res.render('contact', {dynamicData: payload.dynamicData});
+  res.render('contact', {dynamicData: payload.dynamicData, layout: "main-social"});
 });
 
 //Load the frontend main blog page
@@ -102,7 +80,7 @@ router.get('/blog', function(req, res) {
 
     checkAdminStatus(req, payload);
 
-    res.render('blog', {dynamicData: payload.dynamicData});
+    res.render('blog', {dynamicData: payload.dynamicData, layout: "main-social"});
   })
 });
 
@@ -134,10 +112,10 @@ router.get('/blogpost', function(req, res) {
           .then(function(data) {
             payload.dynamicData["Comments"] = data;
 
-            res.render('blogpost', {dynamicData: payload.dynamicData});
+            res.render('blogpost', {dynamicData: payload.dynamicData, layout: "main-social"});
         }).catch(function(err) {
           // If there are no comments
-          res.render('blogpost', {dynamicData: payload.dynamicData});
+          res.render('blogpost', {dynamicData: payload.dynamicData, layout: "main-social"});
         });
       }
     })

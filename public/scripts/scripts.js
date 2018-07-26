@@ -1,3 +1,5 @@
+var socialMediaExpanded = false;
+
 $( document ).ready(function() {
 
 	//Check registration form for validity as fields are populated
