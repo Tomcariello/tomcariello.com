@@ -73,8 +73,11 @@ a:hover {
 }
 
 /*Profile Image properties*/
+.profilePictureContainer {
+	float: left;
+}
 .profile {
-	width: 400px;
+	width: 100%;
 	display: block;
 	float: left;
 	padding: 5px 15px 15px 0;
@@ -212,7 +215,6 @@ button {
     border: none;
     padding: 8px 16px;
     margin: 10px 5px;
-    /* width: 100px; */
     height: 50px;
     font-size: 20px;
 }
@@ -223,9 +225,6 @@ button:hover {
 .profileImageCaption {
     text-align: center;
     font-style: italic;
-}
-.profilePictureContainer {
-	float: left;
 }
 .navbar-settings {
     position: fixed;
