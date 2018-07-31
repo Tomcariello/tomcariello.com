@@ -43,18 +43,32 @@
                 </div>
               </div>
             </div>
-
-            <div class="col-sm-12">
-              <input type="file" name="blogpicture" id="blogpicture{{this.id}}" class="hideElement">
-              <input type="hidden" id="ProjectIMG{{this.id}}" name="ProjectIMG{{this.id}}" value="{{this.ProjectIMG}}"/> 
-              <label for="blogpicture{{this.id}}" class="labelButton image-selection">Select Image</label>
+            <div class="row">
+              <div class="col-sm-2">
+                <p>Image:</p>
+                <input type="file" name="blogpicture" id="blogpicture{{this.id}}" class="hideElement">
+                <input type="hidden" id="ProjectIMG{{this.id}}" name="ProjectIMG{{this.id}}" value="{{this.ProjectIMG}}"/> 
+                <label for="blogpicture{{this.id}}" class="labelButton image-selection">Select Image</label>
+              </div>
+              <div class='col-sm-10'>
+                <img class="blogAdminImage" src="{{dynamicData.blogimage}}">
+              </div>
             </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <input class="hideElement" type="text" id="BlogImage" name="BlogImage" value="{{dynamicData.blogimage}}"/> 
+                <p>Image Caption:</p><input type="text" id="ImageCaption" name="ImageCaption" value="{{dynamicData.imagecaption}}"/> 
+              </div>
+            </div>  
 
-            <input class="hideElement" type="text" id="BlogImage" name="BlogImage" value="{{dynamicData.blogimage}}"/> 
-            <p>Image Caption:</p><input type="text" id="ImageCaption" name="ImageCaption" value="{{dynamicData.imagecaption}}"/> 
-
-            <p><button type="submit" id="update">Submit</button></p>
-            <p><button type="cancel" id="cancel" onclick="window.location='blogmanagement';return false;">Cancel</button></p>
+            <div class="row">
+              <div class="col-sm-2">
+                <p><button type="submit" id="update">Submit</button></p>
+              </div>
+              <div class="col-sm-2">
+                <p><button type="cancel" id="cancel" onclick="window.location='blogmanagement';return false;">Cancel</button></p>
+              </div>
+            </div>  
          </form>
         </div>  
       </div>
