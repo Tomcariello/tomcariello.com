@@ -1,13 +1,13 @@
 <section class="main">
   <div class='row'>
-    <div class="col-sm-12 col-md-8">
+    <div class="col-sm-12">
         <div class="row">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3> Manage Blog Entries</h3>
+                            <h3>Manage Blog Entries</h3>
                         </div>
                         <div class="col-sm-6 newblogcontainer">
                             <h3>Create Blog
@@ -36,19 +36,19 @@
                     {{#each dynamicData}}
 
                     <div class="row blogmessagerow">
-                        <div class="col-sm-1 deleteblog">
+                        <div class="col-sm-1 center deleteblog">
                             <a href="deleteblog/{{this.id}}">
-                                <i class="fa fa-times-circle" aria-hidden="true" title="Delete Blog"></i>
+                                <i class="fa fa-2x fa-times-circle" aria-hidden="true" title="Delete Blog"></i>
                             </a>
                         </div>
-                        <div class="col-sm-1 editblog">
+                        <div class="col-sm-1 center editblog">
                             <a href="editblog?id={{this.id}}">
-                                <i class="fa fa-edit" aria-hidden="true" title="Edit Blog"></i>
+                                <i class="fa fa-2x fa-edit" aria-hidden="true" title="Edit Blog"></i>
                             </a>
                         </div>
-                        <div class="col-sm-1 commentblog">
+                        <div class="col-sm-1 center commentblog">
                             <a href="blogcomments?id={{this.id}}">
-                                <i class="fa fa-comment" aria-hidden="true" title="Edit Comments"></i>
+                                <i class="fa fa-2x fa-comment" aria-hidden="true" title="Edit Comments"></i>
                             </a>
                         </div>
 

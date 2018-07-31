@@ -7,13 +7,19 @@
     <div class="col-sm-12">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3>Portfolio Object Administration</h3>
+          <div class="row">
+            <div class="col-sm-6">
+              <h3>Portfolio Administration</h3>
+            </div>
+            <div class="col-sm-6">
+              <h3>Add New Project
+                <i class="fa fa-plus-square" id="addnewproject"></i>
+              </h3>
+            </div>
+          </div>
+          
         </div>
         <div class="panel-body">
-          <h2>Add New Portfolio Object
-            <i class="fa fa-plus-square" id="addnewproject"></i>
-          </h2>
-          <hr>
 
             {{#each dynamicData}}
               <form enctype="multipart/form-data" action="updateportfolio/{{this.id}}" onsubmit="return validateUpdatePortfolioForm({{this.id}})" method="POST">
@@ -24,45 +30,37 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-2">
+                  <div class="col-sm-4 right">
                     <p>Project URL:</p>
                   </div>
-                  <div class="col-sm-10">
-                    <input type="text" id="ProjectURL" name="ProjectURL" value="{{this.ProjectURL}}"/> 
+                  <div class="col-sm-7">
+                    <input class="portfolioInput" type="text" id="ProjectURL" name="ProjectURL" value="{{this.ProjectURL}}"/> 
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-2">
+                  <div class="col-sm-4 right">
                     <p>Github URL:</p>
                   </div>
-                  <div class="col-sm-10">
-                    <input type="text" id="GithubURL" name="GithubURL" value="{{this.GithubURL}}"/>
+                  <div class="col-sm-7">
+                    <input class="portfolioInput" type="text" id="GithubURL" name="GithubURL" value="{{this.GithubURL}}"/>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="col-sm-4">
                     <div class="row">
-                      <div class="col-sm-2">
-                        <p>Image:</p>
-                      </div>
-                      <div class="col-sm-10 projectImage">
-                        <a target="new" href="{{this.ProjectURL}}">
-                          <img src="{{this.ProjectIMG}}" alt="{{this.ProjectName}}" class="adminimage">
-                        </a>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-sm-12">
+
+                      <div class="col-sm-6">
                         <input type="file" name="portfoliopicture" id="portfoliopicture{{this.id}}" class="hideElement">
                         <input type="hidden" id="ProjectIMG{{this.id}}" name="ProjectIMG{{this.id}}" value="{{this.ProjectIMG}}"/> 
                         <label for="portfoliopicture{{this.id}}" class="labelButton image-selection">Select Image</label>
                       </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-sm-2"></div>
-                      <div class="col-sm-10 projectImage">
-                        
+
+
+                      <div class="col-sm-6 projectImage">
+                        <a target="new" href="{{this.ProjectURL}}">
+                          <img src="{{this.ProjectIMG}}" alt="{{this.ProjectName}}" class="adminimage">
+                        </a>
                       </div>
                     </div>
                   </div>

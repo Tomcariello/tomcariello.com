@@ -269,10 +269,29 @@ input[type=text] {
 	display: none;
 }
 .adminimage {
-	width: 40%;
+	width: 100%;
 }
 .aboutAdminImage {
     width: 50%;
+}
+.adminPortalIcons {
+	text-align: center;
+}
+.adminPortalRow {
+    margin: 20px 0;
+}
+.right {
+    text-align: right;
+}
+.center {
+	text-align: center;
+}
+.portfolioInput {
+	position: relative;
+	right: 15px;
+}
+.imageCaptionRow {
+    margin-top: 20px;
 }
 #profilepicture {
     display: none;
@@ -364,7 +383,7 @@ input[type=text] {
 .messageIntro {
     margin-bottom: 50px;
 }
-#fname, #email, #BlogCommentHeadline, #BlogCommentName {
+#fname, #email, #password, #BlogCommentHeadline, #BlogCommentName {
     border-right: none;
     border-left: none;
     border-top: none;
@@ -413,7 +432,7 @@ color: #8e8d8d;
 }
 .blogmessagerow {
 	border-top: 1px solid #ddd;
-    padding-bottom: 10px;
+    padding: 10px 0;
 }
 .blogmessagerow:nth-child(odd) {
 	background-color: #ddd;

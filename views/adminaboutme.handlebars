@@ -42,10 +42,18 @@
               </div>
             </div>
             
-            {{!-- Hidden element to contain encoded text for form submission --}}
+            <div class="row imageCaptionRow">
+              <div class="col-sm-12">
+                <p>Image Caption:</p>
+              </div>
+            </div>
+
+
+            {{!-- Hidden element to contain encoded text for form submission of AboutMeCaption --}}
             <div class="hideElement adminTextArea col-md-12">      
               <textarea rows="4" cols="50" id="AboutMeCaption" name="AboutMeCaption" maxlength="1000">{{dynamicData.caption}}</textarea> 
             </div>
+            {{!-- Visible WYSYWIG Editor for AboutMeCaption --}}
             <div class="row">
               <div class="col-md-8">
                 <div class="row">
