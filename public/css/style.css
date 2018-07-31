@@ -443,6 +443,9 @@ color: #8e8d8d;
 .blogimagemaincontainer {
 	margin-bottom: 15px;
 }
+.blogimagemain {
+    width: 100%;
+}
 .commentheadline {
     font-size: 24px;
 }
