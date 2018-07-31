@@ -92,7 +92,7 @@
                       <p>Name:</p>
                     </div> --}}
                     <div class="col-sm-8">
-                      <input type="text" id="BlogCommentName" name="BlogCommentName" placeholder="John Smith"/> 
+                      <input type="text" id="BlogCommentName" name="BlogCommentName" placeholder="John Smith" required/> 
                     </div>
                   </div>
 
@@ -101,17 +101,18 @@
                       <p>Headline:</p>
                     </div> --}}
                     <div class="col-sm-8">
-                      <input type="text" id="BlogCommentHeadline" name="BlogCommentHeadline" placeholder="Comment Headline"/> 
+                      <input type="text" id="BlogCommentHeadline" name="BlogCommentHeadline" placeholder="Comment Headline" required/> 
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-sm-10">
-                      <textarea rows="4" cols="50" id="BlogCommentText" name="BlogCommentText" maxlength="250"></textarea> 
+                      <textarea rows="4" cols="50" id="BlogCommentText" name="BlogCommentText" maxlength="500" required></textarea>
+                      <div id="charCount"></div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-sm-10">
-                      <button type="submit" id="update" onsubmit="return validateCommentForm()">Submit</button>
+                      <button type="submit" id="update">Submit</button>
                     </div>
                   </div>
                 </form>
@@ -120,60 +121,15 @@
           </div>
       </div>
     </div>
-    {{!-- <div class="col-sm-12 col-md-4">
-      <div class="connect">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h5>Connect with Me</h5>
-          </div>
-          <div class="panel-body">
-            <div class="row">
-
-              <div id="github" class="col-xs-4 socialMenu">
-                <a href="https://github.com/Tomcariello" target="_blank"><img class="socialButtons" src="public\images\github.png" alt="github"></a>
-              </div>
-              <div id="linkedin" class="col-xs-4 socialMenu">
-                <a href="http://www.linkedin.com/in/tom-cariello" target="_blank"><img class="socialButtons" src="public\images\linkedin.png" alt="Linkedin"></a>
-              </div>
-              <div id="resume" class="col-xs-4 socialMenu">
-                <a href="https://drive.google.com/open?id=1ndua-vF5tXVHote5v0WAwMv2IiARfDJo" target="_blank"><img class="socialButtons" src="public\images\resume.jpg" alt="Resume"></a>
-              </div>
-            </div>
-          </div>
-        </div>    
-      </div>
-    </div> --}}
-  {{!-- </div> --}}
 
   <script>
-    //Process on comment form submission
-    function validateCommentForm() {
-      
-      //Check that there is a name
-      if ( $('#BlogCommentName').val() == "" ) {
-        $('#BlogCommentName').addClass('error');
-        return false;
-      } else {
-        $('#BlogCommentName').removeClass('error');
-      }
+    //Track the comment being typed and inform the user how many characters remain.
+    $( document ).ready(function() {
+      $("#BlogCommentText").keyup(function() {
+        var max = 500;
+        var currentCharCount = $("#BlogCommentText").val().length;
 
-      //Check that there is a headline
-      if ( $('#BlogCommentHeadline').val() == "" ) {
-        $('#BlogCommentHeadline').addClass('error');
-        return false;
-      } else {
-        $('#BlogCommentHeadline').removeClass('error');
-      }
-
-      //Check that there is a message
-      if ( $('#BlogCommentText').val() == "" ) {
-        $('#BlogCommentText').addClass('error');
-        return false;
-      } else {
-        $('#BlogCommentText').removeClass('error');
-      }
-      
-      return true;
-    }
+        $("#charCount").html( max - currentCharCount + " Characters remaining.");
+      })
+    })
   </script>
-{{!-- </section> --}}
