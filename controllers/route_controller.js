@@ -191,11 +191,12 @@ router.get('/editblog', isLoggedIn, function(req, res) {
   }
 });
 
+//Route to access the comments page per blog
 router.get('/blogcomments', isLoggedIn, function(req, res) {
   if (req.query.id == null) {
     res.redirect('blogmanagement');
   } else { 
-    //Pull Blog data from database
+    //Pull Blog Comment data from database
     models.Blogcomments.findAll({
       where: {blogid: req.query.id}
     })
@@ -203,7 +204,17 @@ router.get('/blogcomments', isLoggedIn, function(req, res) {
       var payload = {dynamicData: data}
       checkAdminStatus(req, payload);
 
-      res.render('blogcomments', {dynamicData: payload.dynamicData});
+      //Look up the main blog associated with these comments
+      models.Blogs.findOne({
+        where: {id: req.query.id}
+      })
+      .then(function(blogdata) {
+        //Add the title of the blog to the object
+        payload.dynamicData["blogTitle"] =  decodeURIComponent(blogdata.headline);
+
+        //Render the page
+        res.render('blogcomments', {dynamicData: payload.dynamicData});
+      })
     })
   }
 });
