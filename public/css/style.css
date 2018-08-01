@@ -209,9 +209,18 @@ textarea {
 	color: #505050
 }
 
-button {
+.blueButton {
     color: #ffffff;
     background-color: #005cb5;
+    border: none;
+    padding: 8px 16px;
+    margin: 10px 5px;
+    height: 50px;
+    font-size: 20px;
+}
+.redButton {
+    color: #ffffff;
+    background-color: red;
     border: none;
     padding: 8px 16px;
     margin: 10px 5px;
