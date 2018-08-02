@@ -302,7 +302,7 @@ input[type=text] {
 .imageCaptionRow {
     margin-top: 20px;
 }
-#profilepicture {
+#profilepicture, #AboutMeImage, #aboutpagepicture, #AboutPageImage {
     display: none;
 }
 .selectFileButton {
@@ -321,10 +321,6 @@ input[type=text] {
 #AboutMeBio {
     width: 500px;
     height: 300px;
-}
-#AboutMeImage {
-	/* width: 500px; */
-	display: none;
 }
 .linktoportal {
 	padding: 10px 0;

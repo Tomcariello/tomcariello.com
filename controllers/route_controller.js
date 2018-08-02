@@ -470,18 +470,23 @@ router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoli
 });
 
 //Process portfolio update requests
-router.post('/updateAboutMe', isLoggedIn, upload.single('profilepicture'), function(req, res) {
+// router.post('/updateAboutMe', isLoggedIn, upload.single('profilepicture'), function(req, res) {
+var fileUpload = upload.fields([{ name: 'profilepicture', maxCount: 1 }, { name: 'aboutpagepicture', maxCount: 8 }])
+router.post('/updateAboutMe', isLoggedIn, fileUpload, function(req, res) {
   var profileImageToUpload;
+  var aboutPageImageToUpload;
   var currentDate = new Date();
 
-  //Process image on submit; temporary
-  if (typeof req.file !== "undefined") {
-    //Process file being uploaded
-    var fileName = req.file.originalname;
-    var fileType = req.file.mimetype;
-    var stream = fs.createReadStream(req.file.path) //Create "stream" of the file
+  //If both images have been uploaded, process them both
+  if (req.files['profilepicture'] && req.files['aboutpagepicture']) {
+    //Process profilepicture being uploaded
+    var fileName = req.files['profilepicture'][0].originalname;
+    var stream = fs.createReadStream(req.files['profilepicture'][0].path) //Create "stream" of the file
+    var fileType = req.files['profilepicture'][0].mimetype;
 
-    //Create Amazon S3 specific object
+    // profileImageToUpload = uploadToS3(fileName, stream, fileType);
+
+    // Create Amazon S3 specific object
     var s3 = new aws.S3();
 
     var params = {
@@ -495,6 +500,7 @@ router.post('/updateAboutMe', isLoggedIn, upload.single('profilepicture'), funct
       secretAccessKey: S3_secretAccessKey
       }
 
+    //Upload this image
     s3.upload( params, function(err, data) {
       if (err) {
         console.log("err is " + err);
@@ -503,21 +509,54 @@ router.post('/updateAboutMe', isLoggedIn, upload.single('profilepicture'), funct
       //Get S3 filepath & set it to publicationImageToUpload
       profileImageToUpload = data.Location
 
-      //Use Sequelize to push to DB
-      models.AboutMe.findOne({ where: {id: 1} })
 
-      .then(function(id) {
-        //Update the data
-        id.updateAttributes({
-          bio: req.body.AboutMe,
-          caption: req.body.AboutMeCaption,
-          image: profileImageToUpload,
-          updatedAt: currentDate
-        }).then(function(){
-          res.redirect('../adminaboutme');
-        })
-      })            
-    });
+      //Process aboutpagepicture being uploaded
+      var aboutfileName = req.files['aboutpagepicture'][0].originalname;
+      var aboutfileType = req.files['aboutpagepicture'][0].mimetype;
+      var aboutstream = fs.createReadStream(req.files['aboutpagepicture'][0].path) //Create "stream" of the file
+
+      //Create Amazon S3 specific object
+      var pages3 = new aws.S3();
+
+      var secondparams = {
+        Bucket: S3_BUCKET,
+        Key: aboutfileName, //This is what S3 will use to store the data uploaded.
+        Body: aboutstream, //the actual *file* being uploaded
+        ContentType: aboutfileType, //type of file being uploaded
+        ACL: 'public-read', //Set permissions so everyone can see the image
+        processData: false,
+        accessKeyId: S3_accessKeyId,
+        secretAccessKey: S3_secretAccessKey
+        }
+
+      //Upload this image
+      pages3.upload( secondparams, function(err, aboutPageData) {
+        if (err) {
+          console.log("err is " + err);
+        }
+
+        //Get S3 filepath & set it to publicationImageToUpload
+        aboutPageImageToUpload = aboutPageData.Location
+
+        //Use Sequelize to push to DB
+        models.AboutMe.findOne({ where: {id: 1} })
+
+        .then(function(id) {
+          //Update the data
+          id.updateAttributes({
+            bio: req.body.AboutMe,
+            caption: req.body.AboutMeCaption,
+            image: profileImageToUpload,
+            aboutpagetext: req.body.AboutPage,
+            aboutpagecaption: req.body.AboutPageCaption,
+            aboutpageimage: aboutPageImageToUpload,
+            updatedAt: currentDate
+          }).then(function(){
+            res.redirect('../adminaboutme');
+          })
+        })            
+      })
+    })
   } else {
     //Use Sequelize to push to DB
     models.AboutMe.findOne({ where: {id: 1} })
@@ -528,6 +567,8 @@ router.post('/updateAboutMe', isLoggedIn, upload.single('profilepicture'), funct
         bio: req.body.AboutMe,
         caption: req.body.AboutMeCaption,
         image: profileImageToUpload,
+        aboutpagetext: req.body.AboutPage,
+        aboutpagecaption: req.body.AboutPageCaption,
         updatedAt: currentDate
       }).then(function(){
         res.redirect('../adminaboutme');
@@ -736,6 +777,32 @@ function checkAdminStatus(req, payload) {
   }
 
   return payload;
+}
+
+function uploadToS3(fileName, stream, fileType) {
+  //Create Amazon S3 specific object
+  var s3 = new aws.S3();
+
+  var params = {
+    Bucket: S3_BUCKET,
+    Key: fileName, //This is what S3 will use to store the data uploaded.
+    Body: stream, //the actual *file* being uploaded
+    ContentType: fileType, //type of file being uploaded
+    ACL: 'public-read', //Set permissions so everyone can see the image
+    processData: false,
+    accessKeyId: S3_accessKeyId,
+    secretAccessKey: S3_secretAccessKey
+    }
+
+  //Upload this image
+  // s3.upload( params, function(err, data) {
+  //   if (err) {
+  //     console.log("err is " + err);
+  //   }
+
+  //   //Get S3 filepath & set it to publicationImageToUpload
+  //   return data.Location
+  // })
 }
 
 module.exports = router;

@@ -2,18 +2,17 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.js"></script>
   
-  <div class='row'>
-    <div class="col-sm-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3>Update About Me Information</h3>
-        </div>
-        <div class="panel-body">
-        
-          <form enctype="multipart/form-data" action="updateAboutMe" onsubmit="return validateAboutMeForm()" method="POST">
+  <form enctype="multipart/form-data" action="updateAboutMe" onsubmit="return validateAboutMeForm()" method="POST">
+    <div class='row'>
+      <div class="col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3>Update About Me Information</h3>
+          </div>
+          <div class="panel-body">
             <div class="row">
               <div class="col-sm-12">
-                <p>About Me (limit 1,000 characters):</p>
+                <p>About Me (limit 10,000 characters):</p>
               </div>
             </div>
         
@@ -62,22 +61,86 @@
                 </div>
               </div>
             </div>
-
-
-            <div class="row">
-              <div class='col-sm-12'>
-                <p><button type="submit" id="update" class="blueButton">Update About Me</button></p>
-              </div>
-            </div>
-         </form>
-        </div>  
+          </div>  
+        </div>
       </div>
     </div>
-  </div>
 
-   <script>
+    <div class='row'>
+      <div class="col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3>Update About This Page Information</h3>
+          </div>
+          <div class="panel-body">
+              <div class="row">
+                <div class="col-sm-12">
+                  <p>About Me (limit 10,000 characters):</p>
+                </div>
+              </div>
+          
+              {{!-- Hidden element to contain encoded text for form submission --}}
+              <div class="hideElement adminTextArea col-md-12">      
+                <textarea rows="4" cols="50" id="AboutPage" name="AboutPage" maxlength="1000">{{dynamicData.aboutpagetext}}</textarea> 
+              </div>
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="row">
+                    <div id="summernoteAboutPage" data-id="3">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class='col-sm-2'>
+                  <p>Image:</p>
+                  <input type="file" name="aboutpagepicture" id="aboutpagepicture">
+                  <input type="text" id="AboutPageImage" name="AboutPageImage" value="{{dynamicData.aboutpageimage}}"/>
+                  <label for="aboutpagepicture" class="labelButton">Select file</label>
+                </div>
+                <div class='col-sm-10'>
+                  <img class="aboutAdminImage" src="{{dynamicData.aboutpageimage}}">
+                </div>
+              </div>
+              
+              <div class="row imageCaptionRow">
+                <div class="col-sm-12">
+                  <p>Image Caption:</p>
+                </div>
+              </div>
+
+
+              {{!-- Hidden element to contain encoded text for form submission of AboutPageCaption --}}
+              <div class="hideElement adminTextArea col-md-12">      
+                <textarea rows="4" cols="50" id="AboutPageCaption" name="AboutPageCaption" maxlength="1000">{{dynamicData.aboutpagecaption}}</textarea> 
+              </div>
+              {{!-- Visible WYSYWIG Editor for AboutPageCaption --}}
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="row">
+                    <div id="summernoteAboutPageCaption" data-id="4">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="row">
+                <div class='col-sm-12'>
+                  <p><button type="submit" id="update" class="blueButton">Update About Me</button></p>
+                </div>
+              </div>
+          </div>  
+        </div>
+      </div>
+    </div>
+  </form>
+
+
+  <script>
     $(document).ready(function() {
-      //Initialize Summernote for the BODY
+      //Initialize Summernote for the About Me (BIO) section
       $('#summernoteAboutMe').summernote({
         fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
                     "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
@@ -93,6 +156,7 @@
             ['insert', ['link']]
           ]
       });
+      //Initialize Summernote for the About Me Caption section
       $('#summernoteAboutMeCaption').summernote({
         fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
                     "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
@@ -109,14 +173,52 @@
           ]
       });
 
-      //Encoded data is entered into hidden forms
-      //Read coded contents from the database & decode them
+      //Initialize Summernote for the About The Page section
+      $('#summernoteAboutPage').summernote({
+        fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ["fontname", ["fontname"]],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['insert', ['link']]
+          ]
+      });
+      //Initialize Summernote for the About Me Caption section
+      $('#summernoteAboutPageCaption').summernote({
+        fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+                    "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['font', ['strikethrough', 'superscript', 'subscript']],
+            ['fontsize', ['fontsize']],
+            ["fontname", ["fontname"]],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['height', ['height']],
+            ['insert', ['link']]
+          ]
+      });
+
+      //Encoded data is loaded into hidden forms from the database
+      //Decode contents And display them within the WSYWIG
       var decodedBodyContent = decodeURI( $("#AboutMe").val() );
       var decodedCaptionContent = decodeURI( $("#AboutMeCaption").val() );
+      var decodedAboutPageContent = decodeURI( $("#AboutPage").val() );
+      var decodedPageCaptionContent = decodeURI( $("#AboutPageCaption").val() );
 
       //Insert decoded text into the proper field for rendering
       $('#summernoteAboutMe').summernote('code', decodedBodyContent);
       $('#summernoteAboutMeCaption').summernote('code', decodedCaptionContent);
+      $('#summernoteAboutPage').summernote('code', decodedAboutPageContent);
+      $('#summernoteAboutPageCaption').summernote('code', decodedPageCaptionContent);
+
     })
 
     //Listen for form submission
@@ -129,7 +231,15 @@
 
       var captionFormattedData = $('#summernoteAboutMeCaption').summernote('code');
       var captionEncodedData = encodeURI(captionFormattedData);
-      $("#AboutMeCaption").val(captionFormattedData);
+      $("#AboutMeCaption").val(captionEncodedData);
+
+      var aboutPageFormattedData = $('#summernoteAboutPage').summernote('code');
+      var aboutPageEncodedData = encodeURI(aboutPageFormattedData);
+      $("#AboutPage").val(aboutPageEncodedData);
+
+      var pageCaptionFormattedData = $('#summernoteAboutPageCaption').summernote('code');
+      var pageCaptionEncodedData = encodeURI(pageCaptionFormattedData);
+      $("#AboutPageCaption").val(pageCaptionEncodedData);
 
       return true;
     }
