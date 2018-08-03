@@ -395,39 +395,14 @@ router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoli
 
   //Check if any image(s) were uploaded
   if (typeof req.file !== "undefined") {
-    console.log("****************");
-    console.log(S3_BUCKET);
-    console.log("****************");
-
-
-
 
     //Process file being uploaded
     var fileName = req.file.originalname;
     var fileType = req.file.mimetype;
     var stream = fs.createReadStream(req.file.path) //Create "stream" of the file
 
-    //Create Amazon S3 specific object
-    var s3 = new aws.S3();
-
-    var params = {
-      Bucket: S3_BUCKET,
-      Key: fileName, //This is what S3 will use to store the data uploaded.
-      Body: stream, //the actual *file* being uploaded
-      ContentType: fileType, //type of file being uploaded
-      ACL: 'public-read', //Set permissions so everyone can see the image
-      processData: false,
-      accessKeyId: S3_accessKeyId,
-      secretAccessKey: S3_secretAccessKey
-    }
-
-    s3.upload( params, function(err, data) {
-      if (err) {
-        console.log("err is " + err);
-      }
-
-      //Get S3 filepath & set it to portfolioImageToUpload
-      portfolioImageToUpload = data.Location
+    var imageToUpload = uploadToS3(fileName, stream, fileType)
+    .then(function(portfolioImagePath) {
 
       var currentDate = new Date();
 
@@ -438,10 +413,10 @@ router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoli
         //Update the data
         id.updateAttributes({
           ProjectName: req.body.ProjectName,
-          ProjectBlurb: req.body['ProjectBlurb' +req.params.portfolioId],
+          ProjectBlurb: req.body['ProjectBlurb' + req.params.portfolioId],
           ProjectURL: req.body.ProjectURL,
           GithubURL: req.body.GithubURL,
-          ProjectIMG: portfolioImageToUpload,
+          ProjectIMG: portfolioImagePath,
           updatedAt: currentDate
         }).then(function(){
           res.redirect('../adminportfolio');
@@ -469,94 +444,108 @@ router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoli
   }
 });
 
-//Process portfolio update requests
-// router.post('/updateAboutMe', isLoggedIn, upload.single('profilepicture'), function(req, res) {
+
+//Create variable to simplify the updateAboutMe post route
 var fileUpload = upload.fields([{ name: 'profilepicture', maxCount: 1 }, { name: 'aboutpagepicture', maxCount: 8 }])
+
+//Process portfolio update requests
 router.post('/updateAboutMe', isLoggedIn, fileUpload, function(req, res) {
   var profileImageToUpload;
   var aboutPageImageToUpload;
   var currentDate = new Date();
 
-  //If both images have been uploaded, process them both
+  //If both images have been uploaded, procede
   if (req.files['profilepicture'] && req.files['aboutpagepicture']) {
-    //Process profilepicture being uploaded
+    
+    //Isolate profilepicture elements
     var fileName = req.files['profilepicture'][0].originalname;
-    var stream = fs.createReadStream(req.files['profilepicture'][0].path) //Create "stream" of the file
+    var stream = fs.createReadStream(req.files['profilepicture'][0].path); //Create "stream" of the file
     var fileType = req.files['profilepicture'][0].mimetype;
 
-    // profileImageToUpload = uploadToS3(fileName, stream, fileType);
+    //Uploads the profilepicture to S3
+    profileImageToUpload = uploadToS3(fileName, stream, fileType)
+    .then(function(profileImagePath) {
 
-    // Create Amazon S3 specific object
-    var s3 = new aws.S3();
-
-    var params = {
-      Bucket: S3_BUCKET,
-      Key: fileName, //This is what S3 will use to store the data uploaded.
-      Body: stream, //the actual *file* being uploaded
-      ContentType: fileType, //type of file being uploaded
-      ACL: 'public-read', //Set permissions so everyone can see the image
-      processData: false,
-      accessKeyId: S3_accessKeyId,
-      secretAccessKey: S3_secretAccessKey
-      }
-
-    //Upload this image
-    s3.upload( params, function(err, data) {
-      if (err) {
-        console.log("err is " + err);
-      }
-
-      //Get S3 filepath & set it to publicationImageToUpload
-      profileImageToUpload = data.Location
-
-
-      //Process aboutpagepicture being uploaded
+      //Isolate aboutpagepicture elements
       var aboutfileName = req.files['aboutpagepicture'][0].originalname;
       var aboutfileType = req.files['aboutpagepicture'][0].mimetype;
       var aboutstream = fs.createReadStream(req.files['aboutpagepicture'][0].path) //Create "stream" of the file
 
-      //Create Amazon S3 specific object
-      var pages3 = new aws.S3();
-
-      var secondparams = {
-        Bucket: S3_BUCKET,
-        Key: aboutfileName, //This is what S3 will use to store the data uploaded.
-        Body: aboutstream, //the actual *file* being uploaded
-        ContentType: aboutfileType, //type of file being uploaded
-        ACL: 'public-read', //Set permissions so everyone can see the image
-        processData: false,
-        accessKeyId: S3_accessKeyId,
-        secretAccessKey: S3_secretAccessKey
-        }
-
-      //Upload this image
-      pages3.upload( secondparams, function(err, aboutPageData) {
-        if (err) {
-          console.log("err is " + err);
-        }
-
-        //Get S3 filepath & set it to publicationImageToUpload
-        aboutPageImageToUpload = aboutPageData.Location
+      //Uploads the aboutpagepicture to S3
+      aboutPageImageToUpload = uploadToS3(aboutfileName, aboutstream, aboutfileType)
+      .then(function(pageImagePath) {
 
         //Use Sequelize to push to DB
         models.AboutMe.findOne({ where: {id: 1} })
-
         .then(function(id) {
-          //Update the data
+
           id.updateAttributes({
             bio: req.body.AboutMe,
             caption: req.body.AboutMeCaption,
-            image: profileImageToUpload,
+            image: profileImagePath,
             aboutpagetext: req.body.AboutPage,
             aboutpagecaption: req.body.AboutPageCaption,
-            aboutpageimage: aboutPageImageToUpload,
+            aboutpageimage: pageImagePath,
             updatedAt: currentDate
           }).then(function(){
             res.redirect('../adminaboutme');
           })
-        })            
+        })
       })
     })
+  //If only profilepicture has been updated
+  } else if (req.files['profilepicture']) {
+    //Isolate profilepicture elements
+    var fileName = req.files['profilepicture'][0].originalname;
+    var stream = fs.createReadStream(req.files['profilepicture'][0].path); //Create "stream" of the file
+    var fileType = req.files['profilepicture'][0].mimetype;
+
+    //Uploads the profilepicture to S3
+    profileImageToUpload = uploadToS3(fileName, stream, fileType)
+    .then(function(profileImagePath) {
+      //Use Sequelize to push to DB
+      models.AboutMe.findOne({ where: {id: 1} })
+      .then(function(id) {
+
+        id.updateAttributes({
+          bio: req.body.AboutMe,
+          caption: req.body.AboutMeCaption,
+          image: profileImagePath,
+          aboutpagetext: req.body.AboutPage,
+          aboutpagecaption: req.body.AboutPageCaption,
+          updatedAt: currentDate
+        }).then(function(){
+          res.redirect('../adminaboutme');
+        })
+      })
+    })
+  } else if (req.files['aboutpagepicture']) {
+    //Isolate aboutpagepicture elements
+    var aboutfileName = req.files['aboutpagepicture'][0].originalname;
+    var aboutfileType = req.files['aboutpagepicture'][0].mimetype;
+    var aboutstream = fs.createReadStream(req.files['aboutpagepicture'][0].path) //Create "stream" of the file
+
+    //Uploads the aboutpagepicture to S3
+    aboutPageImageToUpload = uploadToS3(aboutfileName, aboutstream, aboutfileType)
+    .then(function(pageImagePath) {
+
+      //Use Sequelize to push to DB
+      models.AboutMe.findOne({ where: {id: 1} })
+      .then(function(id) {
+
+        id.updateAttributes({
+          bio: req.body.AboutMe,
+          caption: req.body.AboutMeCaption,
+          aboutpagetext: req.body.AboutPage,
+          aboutpagecaption: req.body.AboutPageCaption,
+          aboutpageimage: pageImagePath,
+          updatedAt: currentDate
+        }).then(function(){
+          res.redirect('../adminaboutme');
+        })
+      })
+    })
+  //If no images uploaded simply update the text
   } else {
     //Use Sequelize to push to DB
     models.AboutMe.findOne({ where: {id: 1} })
@@ -594,32 +583,14 @@ router.post('/newblog', upload.single('blogpicture'), isLoggedIn, function(req, 
     var fileType = req.file.mimetype;
     var stream = fs.createReadStream(req.file.path) //Create "stream" of the file
 
-    //Create Amazon S3 specific object
-    var s3 = new aws.S3();
-
-    var params = {
-      Bucket: S3_BUCKET,
-      Key: fileName, //This is what S3 will use to store the data uploaded.
-      Body: stream, //the actual *file* being uploaded
-      ContentType: fileType, //type of file being uploaded
-      ACL: 'public-read', //Set permissions so everyone can see the image
-      processData: false,
-      accessKeyId: S3_accessKeyId,
-      secretAccessKey: S3_secretAccessKey
-    }
-    s3.upload( params, function(err, data) {
-      if (err) {
-        console.log("err is " + err);
-      }
-      
-      //Get S3 filepath & set it to blogImageToUpload
-      blogImageToUpload = data.Location
-
+    var imageToUpload = uploadToS3(fileName, stream, fileType)
+    .then(function(blogImagePath) {
+  
       //Use Sequelize to push to DB
       models.Blogs.create({
         headline: req.body.NewBlogHeadline,
         blogtext: req.body.NewBlogtext,
-        blogimage: blogImageToUpload,
+        blogimage: blogImagePath,
         imagecaption: req.body.NewImageCaption,
         author: req.body.NewBlogAuthor,
         createdAt: currentDate,
@@ -662,33 +633,15 @@ router.post('/updateblog/:blogId', upload.single('blogpicture'), isLoggedIn, fun
     var fileType = req.file.mimetype;
     var stream = fs.createReadStream(req.file.path) //Create "stream" of the file
 
-    //Create Amazon S3 specific object
-    var s3 = new aws.S3();
-
-    var params = {
-      Bucket: S3_BUCKET,
-      Key: fileName, //This is what S3 will use to store the data uploaded.
-      Body: stream, //the actual *file* being uploaded
-      ContentType: fileType, //type of file being uploaded
-      ACL: 'public-read', //Set permissions so everyone can see the image
-      processData: false,
-      accessKeyId: S3_accessKeyId,
-      secretAccessKey: S3_secretAccessKey
-    }
-    s3.upload( params, function(err, data) {
-      if (err) {
-        console.log("err is " + err);
-      }
-
-      //Get S3 filepath & set it to blogImageToUpload
-      blogImageToUpload = data.Location
+    imageToUpload = uploadToS3(fileName, stream, fileType)
+    .then(function(blogImagePath) {
 
       models.Blogs.findOne({ where: {id: req.params.blogId} })
       .then(function(id) {
         id.updateAttributes({
           headline: req.body.BlogHeadline,
           blogtext: req.body.Blogtext,
-          blogimage: blogImageToUpload,
+          blogimage: blogImagePath,
           imagecaption: req.body.ImageCaption,
           author: req.body.BlogAuthor,
           updatedAt: currentDate
@@ -775,34 +728,38 @@ function checkAdminStatus(req, payload) {
   if (req.user) {
     payload.dynamicData["administrator"] = true;
   }
-
   return payload;
 }
 
-function uploadToS3(fileName, stream, fileType) {
-  //Create Amazon S3 specific object
-  var s3 = new aws.S3();
+//Function to upload an image to Amazon S3
+var uploadToS3 = function(fileName, stream, fileType) {
+  //Create a Promise to control the Async of the file upload
+  return new Promise(function(resolve, reject) {
+    //Instantiate Amazon S3 module
+    var s3 = new aws.S3();
 
-  var params = {
-    Bucket: S3_BUCKET,
-    Key: fileName, //This is what S3 will use to store the data uploaded.
-    Body: stream, //the actual *file* being uploaded
-    ContentType: fileType, //type of file being uploaded
-    ACL: 'public-read', //Set permissions so everyone can see the image
-    processData: false,
-    accessKeyId: S3_accessKeyId,
-    secretAccessKey: S3_secretAccessKey
-    }
+    //Create object to upload to S3
+    var params = {
+      Bucket: S3_BUCKET, //My S3 Bucket
+      Key: fileName, //This is what S3 will use to store the data uploaded.
+      Body: stream, //the actual *file* being uploaded
+      ContentType: fileType, //type of file being uploaded
+      ACL: 'public-read', //Set permissions so everyone can see the image
+      processData: false,
+      accessKeyId: S3_accessKeyId, //My Key
+      secretAccessKey: S3_secretAccessKey //My Secret Key
+      }
 
-  //Upload this image
-  // s3.upload( params, function(err, data) {
-  //   if (err) {
-  //     console.log("err is " + err);
-  //   }
-
-  //   //Get S3 filepath & set it to publicationImageToUpload
-  //   return data.Location
-  // })
+    //Upload the object
+    s3.upload( params, function(err, data) {
+      if (err) {
+        reject(Error("It broke"));
+      } else {
+        //Return the filepath to the uploaded image
+        resolve(data.Location)
+      }
+    })
+  })
 }
 
 module.exports = router;
