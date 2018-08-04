@@ -77,16 +77,21 @@
 
    <script>
     $(document).ready(function() {
-      //Initialize Summernote for the BODY
+      //For each summernote div in the DOM
       $('div[id^=summernote]').each(function() {
+        //Get the ID for the current summernote DIV
         var summerNoteID = $(this).data("id");
 
-        //Initialize Summernote for the Headline
+        //Initialize Summernote for this Headline
         $('#summernoteheadline' + summerNoteID).summernote({
-          fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-                      "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
-          fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-                      "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
+          fontNames: [
+            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
+          ],
+          fontNamesIgnoreCheck: [
+            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
+            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
+          ],
           toolbar: [
               ['style', ['bold', 'italic', 'underline', 'clear']],
               ['font', ['strikethrough', 'superscript', 'subscript']],
@@ -94,11 +99,12 @@
               ["fontname", ["fontname"]],
               ['para', ['ul', 'ol', 'paragraph']],
               ['height', ['height']],
-              ['insert', ['link']]
+              ['insert', ['link']],
+              ['view', ['codeview']]
             ]
         });
 
-        //Initialize Summernote for the Body
+        //Initialize Summernote for this Body
         $('#summernotebody' + summerNoteID).summernote({
           fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
                       "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
@@ -111,7 +117,8 @@
               ["fontname", ["fontname"]],
               ['para', ['ul', 'ol', 'paragraph']],
               ['height', ['height']],
-              ['insert', ['link']]
+              ['insert', ['link']],
+              ['view', ['codeview']]
             ]
         });
 
