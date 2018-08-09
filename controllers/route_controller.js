@@ -124,8 +124,8 @@ router.get('/blogpost', function(req, res) {
 
 //Registration page. Disabled since no more registrations are required
 router.get('/register', function(req, res) {
-  res.render('register');
-  // res.redirect('/index');
+  // res.render('register');
+  res.redirect('/index');
 });
 
 router.get('/login', function(req, res) {
