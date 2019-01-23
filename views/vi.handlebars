@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Virtual Incentives Test</title>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    </head>
+
+    <body>
+        Testing the Virtual Incentives API.<Br><Br>
+        <button id="apiTestButton">Test API</button>
+        <div id="APIResult"></div>
+    </body>
+
+    <script type = "text/javascript">       
+        $("#apiTestButton").on("click", function(event) {
+            event.preventDefault();
+            callAPI();
+        })
+
+        function authenticateUser(user, password) {
+            var token = user + ":" + password;
+
+            // Base64 Encoding -> btoa
+            var hash = btoa(token); 
+
+            return "Basic " + hash;
+        }
+
+        function callAPI(data) {
+
+            var order = {
+                "programid":"26490",
+                "clientid":"1234567890",
+                "accounts": [{
+                    "firstname":"Tom",
+                    "lastname":"Cariello",
+                    "email":"tom.cariello@mvrg.com",
+                    "sku":"UVC-V-A06",
+                    "amount":"10.00"}]
+            };
+            $.ajax({
+                type: "POST",
+                beforeSend: function(request) {
+                    request.setRequestHeader("Authorization", "Basic " + authenticateUser("mvrg", "2hfBr4btYZR3P5C9rGtAbwCt0jW14JbWAzTfGXPfNEQ8IKswgfo44Yy5UlB7XapE"));
+                },
+                url: "https://rest.virtualincentives.com/v4/JSON/orders",
+                data: order,
+                contentType: "application/json",
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+
+
+
+        }
+    
+    </script>
+
+</html>
+

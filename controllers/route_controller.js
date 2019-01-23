@@ -26,6 +26,11 @@ router.get('/', function(req, res) {
   res.redirect('/index');
 });
 
+router.get('/vi', function(req, res) {
+  res.render('vi');
+});
+
+
 router.get('/index', function(req, res) {
 
   //Query database for page information
