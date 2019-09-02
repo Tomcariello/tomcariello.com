@@ -39,6 +39,11 @@ $( document ).ready(function() {
 		}
 	})
 
+	// Populate Footer
+	var today = new Date();
+	var thisYear = today.getFullYear();
+	$("#footer-div").html("&copy;" + thisYear );
+
 });
 
 function validateContact() {
