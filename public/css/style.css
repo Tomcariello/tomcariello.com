@@ -526,3 +526,30 @@ img.port-nav-image {
     text-align: center;
     margin-top: 25%;
 }
+
+
+/* Media queries */
+/* Iphone X portrait */
+@media only screen 
+	and (min-device-width : 375px) 
+	and (max-device-width : 812px) { 
+		img.port-nav-image {
+			max-height: 35px;
+		}	
+		#socialMediaContainer {
+			display: none;
+		}
+		.projecttitle {
+			padding-top: 10px;
+		}
+		.portfolio-image {
+			padding-top: 10px;
+			max-width: 45%;
+		}
+		.projecttitle {
+			font-size: 26px;
+		}
+		p {
+			line-height: inherit;
+		}
+}
