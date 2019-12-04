@@ -74,7 +74,7 @@ router.get('/contact', function(req, res) {
     req.session.messageSent = false;
   }
   
-  res.render('contact', {dynamicData: payload.dynamicData, layout: "main-social"});
+  res.render('contact', {dynamicData: payload.dynamicData, layout: "main"});
 });
 
 //Load the frontend main blog page
