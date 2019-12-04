@@ -552,4 +552,7 @@ img.port-nav-image {
 		p {
 			line-height: inherit;
 		}
+		.portfolio-section {
+			min-height: 900px;
+		}
 }
