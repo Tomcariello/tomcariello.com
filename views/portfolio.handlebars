@@ -4,7 +4,9 @@
     {{#each dynamicData}}
     <div class="col-sm-2 col-xs-3 qap-nav" id="{{this.id}}">
       <div class="row project-img">
-        <img class="port-nav-image" src="{{this.ProjectIMG}}" alt="{{this.ProjectName}}">
+        <div class="col-xs-12 project-img">
+          <img class="port-nav-image" src="{{this.ProjectIMG}}" alt="{{this.ProjectName}}">
+          </div>
       </div>
       <div class="row project-name">
         {{this.ProjectName}}
