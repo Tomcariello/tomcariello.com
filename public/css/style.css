@@ -12,6 +12,37 @@
 	0%   {top: 0px;}
 	100% {top: -76px;}
 }
+
+/* Fade In */
+.fade-in {
+	-webkit-animation: fade 2.5s;
+	animation: fade 2.5s;
+	-moz-animation: fade 2.5s;
+	-o-animation: fade 2.5s;
+  }
+@-webkit-keyframes fade {
+	0% {opacity: 0.2} 
+	100% {opacity: 1}
+	/* 100% {opacity:0.2} */
+}
+
+@-moz-keyframes fade{
+	0% {opacity: 0.2} 
+	100% {opacity: 1}
+	/* 100% {opacity:0}   */
+}
+
+@keyframes fade {
+	0% {opacity: 0.2} 
+	100% {opacity: 1}
+	/* 100%{opacity: 0.2} */
+	}
+@-o-keyframes fade {
+	0% {opacity: 0.2} 
+	100% {opacity: 1}
+	/* 100%{opacity: 0.2} */
+}
+
 #github {
 	animation-name: animMoveGithubStandard;
 	animation-duration: 1.5s;
@@ -294,6 +325,7 @@ input[type=text] {
 }
 /* Prevent horizontal scrolling */
 .row.portfolio-section {
+	display: none;
     margin-right: 0px;
 }
 .imageCaptionRow {
@@ -343,7 +375,7 @@ input[type=text] {
     display: none;
 }
 .portfolio-section {
-	height: 90vh;
+	height: 80vh;
 }
 .portfolio-section:nth-child(even) {
 	background-color: rgb(224, 222, 222);
@@ -475,4 +507,22 @@ color: #8e8d8d;
 }
 .twitter-timeline {
     width: 100vw !important;
+}
+
+/* Portfolio page */
+img.port-nav-image {
+	max-height: 150px;
+	max-width: 85%;
+}
+.project-name, .project-img {
+    text-align: center;
+}
+/* Show the placeholder DIV on the portfolio page on initial load */
+#main-999 {
+	display: inherit;
+}
+#placeholder-div {
+    font-size: 3em;
+    text-align: center;
+    margin-top: 25%;
 }

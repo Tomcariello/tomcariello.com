@@ -39,6 +39,27 @@ $( document ).ready(function() {
 		}
 	})
 
+	// Listen for clicks on the portfolio nav
+	$('.qap-nav').on('click', function() {
+		var clickedPort = this.id;
+		
+		// Iterate through the item(s) and display the selected project. Hide all others
+		$(".portfolio-section").each(function(index) {
+			console.log(this.id);
+			var thisPortSection = this.id;
+			// Bring up large display for the selected project
+			if (thisPortSection == "main-" + clickedPort) {
+				$("#" + thisPortSection).addClass("fade-in");
+				$("#" + thisPortSection).css("display", "inherit");
+			// Hide all other projects
+			} else {
+				$("#" +thisPortSection).removeClass("fade-in");
+				$("#" + thisPortSection).css("display", "none");
+			}
+		})
+
+	})
+
 	// Populate Footer
 	var today = new Date();
 	var thisYear = today.getFullYear();
