@@ -31,7 +31,7 @@
     "nodemailer": "^4.0.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
-    "sequelize": "^3.27.0",
+    "sequelize": "^5.15.1",
     "sequelize-cli": "^5.5.1",
     "twitter": "^1.7.1"
   },
