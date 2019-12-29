@@ -1,27 +1,29 @@
-{{!-- <section class="main">
-  <div class='row'> --}}
+<section class="main">
+  <div class='row'>
     <div class="col-sm-12 col-md-8">
-          <div class='row'>
-            <div class="aboutme">
-              <h3 class='messageIntro'>Send me a message!</h3>
-              <form action="contact/message" onsubmit="return validateContact()" method="POST">
-  
-                  {{#if dynamicData.messageSent}}
-                    <div class='row'>
-                      <div class="col-xs-12 messageSent">
-                        Thank you for your message!
-                      </div>
-                    </div>
-                  {{/if}}
-  
-                {{!-- <p>Name:</p> --}}
-                <input type="text" id ="fname" name="fname"  placeholder="John Smith">
-                {{!-- <p>E-mail:</p> --}}
-                <input type="text" id="email" name="email"  placeholder="example@gmail.com">
-                {{!-- <p>Message:</p> --}}
-                <textarea id="message" name="message" placeholder="Your message..."></textarea>
-                <p><button class="blueButton" id="submitContact" type="submit">Submit</button></p>
-              </form>
+      <div class='row'>
+        <div class="aboutme">
+          <h3 class='messageIntro'>Send me a message!</h3>
+          <form action="contact/message" onsubmit="return validateContact()" method="POST">
+
+            {{#if dynamicData.messageSent}}
+            <div class='row'>
+              <div class="col-xs-12 messageSent">
+                Thank you for your message!
+              </div>
             </div>
-          </div>
+            {{/if}}
+
+            {{!-- <p>Name:</p> --}}
+            <input type="text" id="fname" name="fname" placeholder="John Smith">
+            {{!-- <p>E-mail:</p> --}}
+            <input type="text" id="email" name="email" placeholder="example@gmail.com">
+            {{!-- <p>Message:</p> --}}
+            <textarea id="message" name="message" placeholder="Your message..."></textarea>
+            <p><button class="blueButton" id="submitContact" type="submit">Submit</button></p>
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
+</section>
