@@ -448,7 +448,7 @@ router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoli
 
           .then((id) => {
             // Update the data
-            id.updateAttributes({
+            id.update({
               ProjectName: req.body.ProjectName,
               ProjectBlurb: req.body[`ProjectBlurb ${req.params.portfolioId}`],
               ProjectURL: req.body.ProjectURL,
@@ -465,7 +465,7 @@ router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoli
     models.Project.findOne({ where: { id: req.params.portfolioId } })
       .then((project) => {
         // Update the data
-        project.updateAttributes({
+        project.update({
           ProjectName: req.body.ProjectName,
           ProjectBlurb: req.body[`ProjectBlurb ${req.params.portfolioId}`],
           ProjectURL: req.body.ProjectURL,
@@ -508,7 +508,7 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, (req, res) => {
             // Use Sequelize to push to DB
             models.AboutMe.findOne({ where: { id: 1 } })
               .then((id) => {
-                id.updateAttributes({
+                id.update({
                   bio: req.body.AboutMe,
                   caption: req.body.AboutMeCaption,
                   image: profileImagePath,
@@ -535,7 +535,7 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, (req, res) => {
         // Use Sequelize to push to DB
         models.AboutMe.findOne({ where: { id: 1 } })
           .then((id) => {
-            id.updateAttributes({
+            id.update({
               bio: req.body.AboutMe,
               caption: req.body.AboutMeCaption,
               image: profileImagePath,
@@ -559,7 +559,7 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, (req, res) => {
         // Use Sequelize to push to DB
         models.AboutMe.findOne({ where: { id: 1 } })
           .then((id) => {
-            id.updateAttributes({
+            id.update({
               bio: req.body.AboutMe,
               caption: req.body.AboutMeCaption,
               aboutpagetext: req.body.AboutPage,
@@ -577,7 +577,7 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, (req, res) => {
     models.AboutMe.findOne({ where: { id: 1 } })
       .then((id) => {
         // Update the data
-        id.updateAttributes({
+        id.update({
           bio: req.body.AboutMe,
           caption: req.body.AboutMeCaption,
           image: profileImageToUpload,
@@ -661,7 +661,7 @@ router.post('/updateblog/:blogId', upload.single('blogpicture'), isLoggedIn, (re
       .then((blogImagePath) => {
         models.Blogs.findOne({ where: { id: req.params.blogId } })
           .then((id) => {
-            id.updateAttributes({
+            id.update({
               headline: req.body.BlogHeadline,
               blogtext: req.body.Blogtext,
               blogimage: blogImagePath,
@@ -681,7 +681,7 @@ router.post('/updateblog/:blogId', upload.single('blogpicture'), isLoggedIn, (re
     models.Blogs.findOne({ where: { id: req.params.blogId } })
       .then((blog) => {
         // Update the data
-        blog.updateAttributes({
+        blog.update({
           headline: req.body.BlogHeadline,
           blogtext: req.body.Blogtext,
           imagecaption: req.body.ImageCaption,
