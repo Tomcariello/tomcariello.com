@@ -1,55 +1,57 @@
-var express = require('express');
-var bcrypt = require('bcrypt');
-var router = express.Router();
-var models = require('../models');
-var bodyParser = require('body-parser');
-var connection = require('../config/connection.js');
-var passport = require('passport');
-var nodemailer = require('nodemailer');
-var transporter = require('../config/transporter.js');
-var sequelizeConnection = models.sequelize;
-var multer = require('multer');
-var upload = multer({ dest: __dirname + '/public/images/' });
-var fs = require('fs');
-var aws = require('aws-sdk');
-var Twitter = require('twitter');
+// const bcrypt = require('bcrypt');
+// const bodyParser = require('body-parser');
+// const connection = require('../config/connection.js');
+// const nodemailer = require('nodemailer');
+// const Twitter = require('twitter');
 
-//amazon S3 configuration
-var S3_BUCKET = process.env.S3_BUCKET;
-var S3_accessKeyId = process.env.AWS_ACCESS_KEY_ID
-var S3_secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
+const express = require('express');
+const passport = require('passport');
+const multer = require('multer');
+const fs = require('fs');
+const aws = require('aws-sdk');
+const path = require('path');
+const models = require('../models');
+const transporter = require('../config/transporter.js');
 
-//==================================
-//=====GET routes to load pages=====
-//==================================
-router.get('/', function (req, res) {
+const router = express.Router();
+// const sequelizeConnection = models.sequelize;
+const upload = multer({ dest: path.join(__dirname, '/public/images/') });
+
+// amazon S3 configuration
+const S3_BUCKET = process.env.S3_BUCKET;
+const S3AccessKeyId = process.env.AWS_ACCESS_KEY_ID;
+const S3SecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+
+// ==================================
+// =====GET routes to load pages=====
+// ==================================
+router.get('/', (req, res) => {
   res.redirect('/index');
 });
 
-router.get('/vi', function (req, res) {
+router.get('/vi', (req, res) => {
   res.render('vi');
 });
 
 
-router.get('/index', function (req, res) {
-
-  //Query database for page information
+router.get('/index', (req, res) => {
+  // Query database for page information
   models.AboutMe.findOne({
-    where: { id: 1 }
+    where: { id: 1 },
   })
     .then(function (data) {
       var payload = { dynamicData: data };
 
-      //Check if user is logged in
+      // Check if user is logged in
       checkAdminStatus(req, payload);
 
       res.render('index', { dynamicData: payload.dynamicData, layout: 'main-social' });
     })
 });
 
-router.get('/portfolio', function (req, res) {
-  //get data from projects table & sort it newest first
-  models.Project.findAll({ order: 'id  DESC' })
+router.get('/portfolio', (req, res) => {
+  // get data from projects table & sort it newest first
+  models.Project.findAll({ order: [[ 'id', 'DESC']] })
     .then(function (data) {
       var payload = { dynamicData: data }
 
@@ -59,7 +61,7 @@ router.get('/portfolio', function (req, res) {
     })
 });
 
-router.get('/contact', function (req, res) {
+router.get('/contact', (req, res) => {
   var payload = {
     dynamicData: {
       messageSent: false
@@ -68,7 +70,7 @@ router.get('/contact', function (req, res) {
 
   checkAdminStatus(req, payload);
 
-  //Add messageSent credential to the created object
+  // Add messageSent credential to the created object
   if (req.session.messageSent) {
     payload.dynamicData.messageSent = true;
     req.session.messageSent = false;
@@ -77,9 +79,9 @@ router.get('/contact', function (req, res) {
   res.render('contact', { dynamicData: payload.dynamicData, layout: "main" });
 });
 
-//Load the frontend main blog page
-router.get('/blog', function (req, res) {
-  models.Blogs.findAll({ order: 'createdAt DESC' })
+// Load the frontend main blog page
+router.get('/blog', (req, res) => {
+  models.Blogs.findAll({ order: [['createdAt', 'DESC']] })
     .then(function (data) {
       var payload = { dynamicData: data }
 
@@ -89,28 +91,27 @@ router.get('/blog', function (req, res) {
     })
 });
 
-//Load Specific Blog Pages
-router.get('/blogpost', function (req, res) {
-
-  //If no ID provided, redirect back to main blog page
+// Load Specific Blog Pages
+router.get('/blogpost', (req, res) => {
+  // If no ID provided, redirect back to main blog page
   if (req.query.id == null) {
     res.redirect('blog');
   } else {
-    //Query database for specific blog
+    // Query database for specific blog
     models.Blogs.findOne({
       where: { id: req.query.id }
     })
       .then(function (data) {
-        //If no matching entry, redirect back to the main blog page
+        // If no matching entry, redirect back to the main blog page
         if (data == null) {
           res.redirect('blog');
-        } else { //blog found
+        } else { // blog found
 
           var payload = { dynamicData: data }
 
           checkAdminStatus(req, payload);
 
-          //Check for comments for this blog
+          // Check for comments for this blog
           models.Blogcomments.findAll({
             where: { blogid: req.query.id }
           })
@@ -127,26 +128,26 @@ router.get('/blogpost', function (req, res) {
   }
 });
 
-//Registration page. Disabled since no more registrations are required
-router.get('/register', function (req, res) {
+// Registration page. Disabled since no more registrations are required
+router.get('/register', (req, res) => {
   // res.render('register');
   res.redirect('/index');
 });
 
-router.get('/login', function (req, res) {
+router.get('/login', (req, res) => {
   res.render('login');
 });
 
-//============================================
-//=====GET PROTECTED routes to load pages=====
-//============================================
-router.get('/adminportal', isLoggedIn, function (req, res) {
+// ============================================
+// =====GET PROTECTED routes to load pages=====
+// ============================================
+router.get('/adminportal', isLoggedIn, (req, res) => {
   res.render('adminportal');
 });
 
-router.get('/viewmessages', isLoggedIn, function (req, res) {
+router.get('/viewmessages', isLoggedIn, (req, res) => {
 
-  //Pull message data from database
+  // Pull message data from database
   models.Messages.findAll({})
     .then(function (data) {
       var payload = { dynamicData: data }
@@ -157,10 +158,10 @@ router.get('/viewmessages', isLoggedIn, function (req, res) {
     })
 });
 
-//List all blog entries for management
-router.get('/blogmanagement', isLoggedIn, function (req, res) {
-  //Pull blog data from database
-  models.Blogs.findAll({ order: 'createdAt DESC' })
+// List all blog entries for management
+router.get('/blogmanagement', isLoggedIn, (req, res) => {
+  // Pull blog data from database
+  models.Blogs.findAll({ order: [['createdAt', 'DESC']] })
     .then(function (data) {
       var payload = { dynamicData: data }
 
@@ -170,8 +171,8 @@ router.get('/blogmanagement', isLoggedIn, function (req, res) {
     })
 });
 
-router.get('/createblog', isLoggedIn, function (req, res) {
-  //Add administrator credential to the created object
+router.get('/createblog', isLoggedIn, (req, res) => {
+  // Add administrator credential to the created object
   var payload = { dynamicData: "administrator" }
 
   checkAdminStatus(req, payload);
@@ -179,11 +180,11 @@ router.get('/createblog', isLoggedIn, function (req, res) {
   res.render('createblog', { dynamicData: payload.dynamicData });
 });
 
-router.get('/editblog', isLoggedIn, function (req, res) {
+router.get('/editblog', isLoggedIn, (req, res) => {
   if (req.query.id == null) {
     res.redirect('blogmanagement');
   } else {
-    //Pull Blog data from database
+    // Pull Blog data from database
     models.Blogs.findOne({
       where: { id: req.query.id }
     })
@@ -196,12 +197,12 @@ router.get('/editblog', isLoggedIn, function (req, res) {
   }
 });
 
-//Route to access the comments page per blog
-router.get('/blogcomments', isLoggedIn, function (req, res) {
+// Route to access the comments page per blog
+router.get('/blogcomments', isLoggedIn, (req, res) => {
   if (req.query.id == null) {
     res.redirect('blogmanagement');
   } else {
-    //Pull Blog Comment data from database
+    // Pull Blog Comment data from database
     models.Blogcomments.findAll({
       where: { blogid: req.query.id }
     })
@@ -209,23 +210,23 @@ router.get('/blogcomments', isLoggedIn, function (req, res) {
         var payload = { dynamicData: data }
         checkAdminStatus(req, payload);
 
-        //Look up the main blog associated with these comments
+        // Look up the main blog associated with these comments
         models.Blogs.findOne({
           where: { id: req.query.id }
         })
           .then(function (blogdata) {
-            //Add the title of the blog to the object
+            // Add the title of the blog to the object
             payload.dynamicData["blogTitle"] = decodeURIComponent(blogdata.headline);
 
-            //Render the page
+            // Render the page
             res.render('blogcomments', { dynamicData: payload.dynamicData });
           })
       })
   }
 });
 
-router.get('/adminaboutme', isLoggedIn, function (req, res) {
-  //Pull about me data from database
+router.get('/adminaboutme', isLoggedIn, (req, res) => {
+  // Pull about me data from database
   models.AboutMe.findOne({
     where: { id: 1 }
   })
@@ -238,8 +239,8 @@ router.get('/adminaboutme', isLoggedIn, function (req, res) {
     })
 });
 
-router.get('/adminportfolio', isLoggedIn, function (req, res) {
-  //pull portfolio/project data from database
+router.get('/adminportfolio', isLoggedIn, (req, res) => {
+  // pull portfolio/project data from database
   models.Project.findAll({})
     .then(function (data) {
       var payload = { dynamicData: data }
@@ -250,34 +251,34 @@ router.get('/adminportfolio', isLoggedIn, function (req, res) {
     })
 });
 
-//Delete Portfolio Project
+// Delete Portfolio Project
 router.get('/deleteportfolioproject/:projectid', isLoggedIn, function (req, res) {
 
-  //Use Sequelize to find the relevant DB object
+  // Use Sequelize to find the relevant DB object
   models.Project.findOne({ where: { id: req.params.projectid } })
     .then(function (id) {
-      //Delete the object
+      // Delete the object
       id.destroy();
     }).then(function () {
       res.redirect('../adminportfolio');
     })
 })
 
-//Delete Message
-router.get('/deletemessage/:messageId', isLoggedIn, function (req, res) {
+// Delete Message
+router.get('/deletemessage/:messageId', isLoggedIn, (req, res) => {
 
-  //Use Sequelize to find the relevant DB object
+  // Use Sequelize to find the relevant DB object
   models.Messages.findOne({ where: { id: req.params.messageId } })
     .then(function (id) {
-      //Delete the object
+      // Delete the object
       id.destroy();
     }).then(function () {
       res.redirect('../viewmessages');
     })
 })
 
-//Delete Message
-router.get('/deletecomment/:commentId', isLoggedIn, function (req, res) {
+// Delete Message
+router.get('/deletecomment/:commentId', isLoggedIn, (req, res) => {
 
   console.log(req.params.commentId);
 
@@ -285,10 +286,10 @@ router.get('/deletecomment/:commentId', isLoggedIn, function (req, res) {
     res.redirect('../blogmanagement');
   } else {
 
-    //Use Sequelize to find the relevant DB object
+    // Use Sequelize to find the relevant DB object
     models.Blogcomments.findOne({ where: { id: req.params.commentId } })
       .then(function (id) {
-        //Delete the object
+        // Delete the object
         id.destroy();
       }).then(function () {
         res.redirect('../blogcomments?id=' + req.query.blogid);
@@ -296,39 +297,39 @@ router.get('/deletecomment/:commentId', isLoggedIn, function (req, res) {
   }
 })
 
-//Delete Blog
-router.get('/deleteblog/:blogId', isLoggedIn, function (req, res) {
+// Delete Blog
+router.get('/deleteblog/:blogId', isLoggedIn, (req, res) => {
 
-  //Use Sequelize to find the relevant DB object
+  // Use Sequelize to find the relevant DB object
   models.Blogs.findOne({ where: { id: req.params.blogId } })
     .then(function (id) {
-      //Delete the object
+      // Delete the object
       id.destroy();
     }).then(function () {
       res.redirect('../blogmanagement');
     })
 })
-//===============================================
-//=====POST routes to record to the database=====
-//===============================================
+// ===============================================
+// =====POST routes to record to the database=====
+// ===============================================
 
-//Process registration requests using Passport
+// Process registration requests using Passport
 router.post('/register', passport.authenticate('local-signup', {
-  successRedirect: ('../adminportal'), //if authenticated, proceed to adminportal page
-  failureRedirect: ('login') //if failed, redirect to login page (consider options here!!)
+  successRedirect: ('../adminportal'), // if authenticated, proceed to adminportal page
+  failureRedirect: ('login') // if failed, redirect to login page (consider options here!!)
 }));
 
-//Process login requests with Passport
+// Process login requests with Passport
 router.post('/login', passport.authenticate('local-login', {
-  successRedirect: ('../adminportal'), //if login successful, proceed to adminportal page
-  failureRedirect: ('login') //if failed, redirect to login page (consider options here!!)
+  successRedirect: ('../adminportal'), // if login successful, proceed to adminportal page
+  failureRedirect: ('login') // if failed, redirect to login page (consider options here!!)
 }));
 
-//Process new portfolio object requests
-router.post('/newportfolio', isLoggedIn, function (req, res) {
+// Process new portfolio object requests
+router.post('/newportfolio', isLoggedIn, (req, res) => {
   var currentDate = new Date();
 
-  //Use Sequelize to push to DB
+  // Use Sequelize to push to DB
   models.Project.create({
     ProjectName: req.body.NewProjectName,
     ProjectBlurb: req.body.NewProjectBlurb,
@@ -346,10 +347,10 @@ router.post('/newportfolio', isLoggedIn, function (req, res) {
     });
 });
 
-router.post('/contact/message', function (req, res) {
+router.post('/contact/message', (req, res) => {
   var currentDate = new Date();
 
-  //Use Sequelize to push to DB
+  // Use Sequelize to push to DB
   models.Messages.create({
     name: req.body.fname,
     email: req.body.email,
@@ -358,7 +359,7 @@ router.post('/contact/message', function (req, res) {
     updatedAt: currentDate
   }).then(function () {
 
-    //Send email to alert the admin that a message was recieved
+    // Send email to alert the admin that a message was recieved
     var mailOptions = {
       from: 'contact@tomcariello.com', // sender address
       to: 'tomcariello@gmail.com', // list of receivers
@@ -373,11 +374,11 @@ router.post('/contact/message', function (req, res) {
   });
 });
 
-//Process New Blog Comments
-router.post('/postblogcomment/:blogid', function (req, res) {
+// Process New Blog Comments
+router.post('/postblogcomment/:blogid', (req, res) => {
   var currentDate = new Date();
 
-  //Use Sequelize to push to DB
+  // Use Sequelize to push to DB
   models.Blogcomments.create({
     blogid: req.params.blogid,
     commentheadline: req.body.BlogCommentHeadline,
@@ -391,31 +392,31 @@ router.post('/postblogcomment/:blogid', function (req, res) {
   });
 });
 
-//Process portfolio update requests
+// Process portfolio update requests
 router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoliopicture'), function (req, res) {
   var currentDate = new Date();
 
-  //Retain previous image location
+  // Retain previous image location
   var portfolioImageToUpload = req.body['ProjectIMG' + req.params.portfolioId];
 
-  //Check if any image(s) were uploaded
+  // Check if any image(s) were uploaded
   if (typeof req.file !== "undefined") {
 
-    //Process file being uploaded
+    // Process file being uploaded
     var fileName = req.file.originalname;
     var fileType = req.file.mimetype;
-    var stream = fs.createReadStream(req.file.path) //Create "stream" of the file
+    var stream = fs.createReadStream(req.file.path) // Create "stream" of the file
 
     var imageToUpload = uploadToS3(fileName, stream, fileType)
       .then(function (portfolioImagePath) {
 
         var currentDate = new Date();
 
-        //Use Sequelize to find the relevant DB object
+        // Use Sequelize to find the relevant DB object
         models.Project.findOne({ where: { id: req.params.portfolioId } })
 
           .then(function (id) {
-            //Update the data
+            // Update the data
             id.updateAttributes({
               ProjectName: req.body.ProjectName,
               ProjectBlurb: req.body['ProjectBlurb' + req.params.portfolioId],
@@ -428,13 +429,13 @@ router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoli
             })
           })
       });
-  } else { //No image to upload, just update the text
+  } else { // No image to upload, just update the text
 
-    //Use Sequelize to find the relevant DB object
+    // Use Sequelize to find the relevant DB object
     models.Project.findOne({ where: { id: req.params.portfolioId } })
 
       .then(function (id) {
-        //Update the data
+        // Update the data
         id.updateAttributes({
           ProjectName: req.body.ProjectName,
           ProjectBlurb: req.body['ProjectBlurb' + req.params.portfolioId],
@@ -450,37 +451,37 @@ router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoli
 });
 
 
-//Create variable to simplify the updateAboutMe post route
+// Create variable to simplify the updateAboutMe post route
 var fileUpload = upload.fields([{ name: 'profilepicture', maxCount: 1 }, { name: 'aboutpagepicture', maxCount: 8 }])
 
-//Process portfolio update requests
-router.post('/updateAboutMe', isLoggedIn, fileUpload, function (req, res) {
+// Process portfolio update requests
+router.post('/updateAboutMe', isLoggedIn, fileUpload, (req, res) => {
   var profileImageToUpload;
   var aboutPageImageToUpload;
   var currentDate = new Date();
 
-  //If both images have been uploaded, procede
+  // If both images have been uploaded, procede
   if (req.files['profilepicture'] && req.files['aboutpagepicture']) {
 
-    //Isolate profilepicture elements
+    // Isolate profilepicture elements
     var fileName = req.files['profilepicture'][0].originalname;
-    var stream = fs.createReadStream(req.files['profilepicture'][0].path); //Create "stream" of the file
+    var stream = fs.createReadStream(req.files['profilepicture'][0].path); // Create "stream" of the file
     var fileType = req.files['profilepicture'][0].mimetype;
 
-    //Uploads the profilepicture to S3
+    // Uploads the profilepicture to S3
     profileImageToUpload = uploadToS3(fileName, stream, fileType)
       .then(function (profileImagePath) {
 
-        //Isolate aboutpagepicture elements
+        // Isolate aboutpagepicture elements
         var aboutfileName = req.files['aboutpagepicture'][0].originalname;
         var aboutfileType = req.files['aboutpagepicture'][0].mimetype;
-        var aboutstream = fs.createReadStream(req.files['aboutpagepicture'][0].path) //Create "stream" of the file
+        var aboutstream = fs.createReadStream(req.files['aboutpagepicture'][0].path) // Create "stream" of the file
 
-        //Uploads the aboutpagepicture to S3
+        // Uploads the aboutpagepicture to S3
         aboutPageImageToUpload = uploadToS3(aboutfileName, aboutstream, aboutfileType)
           .then(function (pageImagePath) {
 
-            //Use Sequelize to push to DB
+            // Use Sequelize to push to DB
             models.AboutMe.findOne({ where: { id: 1 } })
               .then(function (id) {
 
@@ -498,17 +499,17 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, function (req, res) {
               })
           })
       })
-    //If only profilepicture has been updated
+    // If only profilepicture has been updated
   } else if (req.files['profilepicture']) {
-    //Isolate profilepicture elements
+    // Isolate profilepicture elements
     var fileName = req.files['profilepicture'][0].originalname;
-    var stream = fs.createReadStream(req.files['profilepicture'][0].path); //Create "stream" of the file
+    var stream = fs.createReadStream(req.files['profilepicture'][0].path); // Create "stream" of the file
     var fileType = req.files['profilepicture'][0].mimetype;
 
-    //Uploads the profilepicture to S3
+    // Uploads the profilepicture to S3
     profileImageToUpload = uploadToS3(fileName, stream, fileType)
       .then(function (profileImagePath) {
-        //Use Sequelize to push to DB
+        // Use Sequelize to push to DB
         models.AboutMe.findOne({ where: { id: 1 } })
           .then(function (id) {
 
@@ -525,16 +526,16 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, function (req, res) {
           })
       })
   } else if (req.files['aboutpagepicture']) {
-    //Isolate aboutpagepicture elements
+    // Isolate aboutpagepicture elements
     var aboutfileName = req.files['aboutpagepicture'][0].originalname;
     var aboutfileType = req.files['aboutpagepicture'][0].mimetype;
-    var aboutstream = fs.createReadStream(req.files['aboutpagepicture'][0].path) //Create "stream" of the file
+    var aboutstream = fs.createReadStream(req.files['aboutpagepicture'][0].path) // Create "stream" of the file
 
-    //Uploads the aboutpagepicture to S3
+    // Uploads the aboutpagepicture to S3
     aboutPageImageToUpload = uploadToS3(aboutfileName, aboutstream, aboutfileType)
       .then(function (pageImagePath) {
 
-        //Use Sequelize to push to DB
+        // Use Sequelize to push to DB
         models.AboutMe.findOne({ where: { id: 1 } })
           .then(function (id) {
 
@@ -550,13 +551,13 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, function (req, res) {
             });
           });
       });
-    //If no images uploaded simply update the text
+    // If no images uploaded simply update the text
   } else {
-    //Use Sequelize to push to DB
-    models.AboutMe.findOne({ where: { id: 1 } })
-
+    // Use Sequelize to push to DB
+    models.AboutMe.findOne({ 
+      where: { id: 1 } })
       .then(function (id) {
-        //Update the data
+        // Update the data
         id.updateAttributes({
           bio: req.body.AboutMe,
           caption: req.body.AboutMeCaption,
@@ -575,23 +576,23 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, function (req, res) {
 // *************Blog Routes*************
 // *************************************
 
-//Process new Blog requests
+// Process new Blog requests
 // Note: Image upload is not in place yet. These are just placeholders
-router.post('/newblog', upload.single('blogpicture'), isLoggedIn, function (req, res) {
+router.post('/newblog', upload.single('blogpicture'), isLoggedIn, (req, res) => {
   var blogImageToUpload;
   var currentDate = new Date();
 
-  //Check if any image(s) were uploaded
+  // Check if any image(s) were uploaded
   if (typeof req.file !== "undefined") {
-    //Process file being uploaded
+    // Process file being uploaded
     var fileName = req.file.originalname;
     var fileType = req.file.mimetype;
-    var stream = fs.createReadStream(req.file.path) //Create "stream" of the file
+    var stream = fs.createReadStream(req.file.path) // Create "stream" of the file
 
     var imageToUpload = uploadToS3(fileName, stream, fileType)
       .then(function (blogImagePath) {
 
-        //Use Sequelize to push to DB
+        // Use Sequelize to push to DB
         models.Blogs.create({
           headline: req.body.NewBlogHeadline,
           blogtext: req.body.NewBlogtext,
@@ -608,7 +609,7 @@ router.post('/newblog', upload.single('blogpicture'), isLoggedIn, function (req,
             console.log(err);
           });
       });
-  } else { //no image to upload
+  } else { // no image to upload
     models.Blogs.create({
       headline: req.body.NewBlogHeadline,
       blogtext: req.body.NewBlogtext,
@@ -626,17 +627,17 @@ router.post('/newblog', upload.single('blogpicture'), isLoggedIn, function (req,
   }
 });
 
-//Process Blog update requests
-router.post('/updateblog/:blogId', upload.single('blogpicture'), isLoggedIn, function (req, res) {
+// Process Blog update requests
+router.post('/updateblog/:blogId', upload.single('blogpicture'), isLoggedIn, (req, res) => {
   var blogImageToUpload;
   var currentDate = new Date();
 
-  //Check if any image(s) were uploaded
+  // Check if any image(s) were uploaded
   if (typeof req.file !== "undefined") {
-    //Process file being uploaded
+    // Process file being uploaded
     var fileName = req.file.originalname;
     var fileType = req.file.mimetype;
-    var stream = fs.createReadStream(req.file.path) //Create "stream" of the file
+    var stream = fs.createReadStream(req.file.path) // Create "stream" of the file
 
     imageToUpload = uploadToS3(fileName, stream, fileType)
       .then(function (blogImagePath) {
@@ -659,11 +660,11 @@ router.post('/updateblog/:blogId', upload.single('blogpicture'), isLoggedIn, fun
               });
           });
       });
-  } else { //no image to upload
+  } else { // no image to upload
     models.Blogs.findOne({ where: { id: req.params.blogId } })
       .then(function (id) {
 
-        //Update the data
+        // Update the data
         id.updateAttributes({
           headline: req.body.BlogHeadline,
           blogtext: req.body.Blogtext,
@@ -681,10 +682,10 @@ router.post('/updateblog/:blogId', upload.single('blogpicture'), isLoggedIn, fun
   }
 });
 
-router.post('/contact/message', function (req, res) {
-  var currentDate = new Date();
+router.post('/contact/message', (req, res) => {
+  const currentDate = new Date();
 
-  //Use Sequelize to push to DB
+  // Use Sequelize to push to DB
   models.Messages.create({
     name: req.body.fname,
     email: req.body.email,
@@ -693,7 +694,7 @@ router.post('/contact/message', function (req, res) {
     updatedAt: currentDate
   }).then(function () {
 
-    //Send email to alert the admin that a message was recieved
+    // Send email to alert the admin that a message was recieved
     var mailOptions = {
       from: 'contact@tomcariello.com', // sender address
       to: 'tomcariello@gmail.com', // list of receivers
@@ -728,7 +729,7 @@ function sendAutomaticEmail(mailOptions, req, res) {
   });
 }
 
-//Check Administrator status and add to object
+// Check Administrator status and add to object
 function checkAdminStatus(req, payload) {
   if (req.user) {
     payload.dynamicData["administrator"] = true;
@@ -736,31 +737,31 @@ function checkAdminStatus(req, payload) {
   return payload;
 }
 
-//Function to upload an image to Amazon S3
-var uploadToS3 = function (fileName, stream, fileType) {
-  //Create a Promise to control the Async of the file upload
+// Function to upload an image to Amazon S3
+let uploadToS3 = function (fileName, stream, fileType) {
+  // Create a Promise to control the Async of the file upload
   return new Promise(function (resolve, reject) {
-    //Instantiate Amazon S3 module
+    // Instantiate Amazon S3 module
     var s3 = new aws.S3();
 
-    //Create object to upload to S3
+    // Create object to upload to S3
     var params = {
-      Bucket: S3_BUCKET, //My S3 Bucket
-      Key: fileName, //This is what S3 will use to store the data uploaded.
-      Body: stream, //the actual *file* being uploaded
-      ContentType: fileType, //type of file being uploaded
-      ACL: 'public-read', //Set permissions so everyone can see the image
+      Bucket: S3_BUCKET, // My S3 Bucket
+      Key: fileName, // This is what S3 will use to store the data uploaded.
+      Body: stream, // the actual *file* being uploaded
+      ContentType: fileType, // type of file being uploaded
+      ACL: 'public-read', // Set permissions so everyone can see the image
       processData: false,
-      accessKeyId: S3_accessKeyId, //My Key
-      secretAccessKey: S3_secretAccessKey //My Secret Key
+      accessKeyId: S3AccessKeyId, // My Key
+      secretAccessKey: S3SecretAccessKey // My Secret Key
     }
 
-    //Upload the object
+    // Upload the object
     s3.upload(params, function (err, data) {
       if (err) {
         reject(Error("It broke"));
       } else {
-        //Return the filepath to the uploaded image
+        // Return the filepath to the uploaded image
         resolve(data.Location)
       }
     });
