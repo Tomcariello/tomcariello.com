@@ -2,7 +2,7 @@
 
 The profile page for Tom Cariello's development career.
 
-A simple 3 page website with a fully functional custom written CMS. This site is powered by Node.js/Express with a MySQL backend.
+A simple website with a fully functional custom written CMS. This site is powered by Node.js/Express with a MySQL backend.
 
 	About: A profile image/caption & bio, all three elements are editable via the CMS.
 

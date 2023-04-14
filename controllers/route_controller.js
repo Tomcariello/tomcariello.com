@@ -3,7 +3,6 @@
 // const connection = require('../config/connection.js');
 // const nodemailer = require('nodemailer');
 // const Twitter = require('twitter');
-
 const express = require('express');
 const passport = require('passport');
 const multer = require('multer');
@@ -18,7 +17,7 @@ const router = express.Router();
 const upload = multer({ dest: path.join(__dirname, '/public/images/') });
 
 // amazon S3 configuration
-const S3_BUCKET = process.env.S3_BUCKET;
+const { S3_BUCKET } = process.env;
 const S3AccessKeyId = process.env.AWS_ACCESS_KEY_ID;
 const S3SecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
@@ -52,9 +51,9 @@ function checkAdminStatus(req, payload) {
 }
 
 // Function to upload an image to Amazon S3
-const uploadToS3 = (fileName, stream, fileType) => {
+const uploadToS3 = (fileName, stream, fileType) =>
   // Create a Promise to control the Async of the file upload
-  return new Promise((resolve, reject) => {
+  new Promise((resolve, reject) => {
     // Instantiate Amazon S3 module
     const s3 = new aws.S3();
 
@@ -79,8 +78,8 @@ const uploadToS3 = (fileName, stream, fileType) => {
         resolve(data.Location);
       }
     });
-  });
-};
+  })
+;
 
 
 // ==================================
@@ -170,7 +169,7 @@ router.get('/blogpost', (req, res) => {
             where: { blogid: req.query.id },
           })
             .then((blogComments) => {
-              payload.dynamicData["Comments"] = blogComments;
+              payload.dynamicData.Comments = blogComments;
 
               res.render('blogpost', { dynamicData: payload.dynamicData, layout: 'main-social' });
             }).catch(() => {
@@ -222,7 +221,7 @@ router.get('/blogmanagement', isLoggedIn, (req, res) => {
 
 router.get('/createblog', isLoggedIn, (req, res) => {
   // Add administrator credential to the created object
-  const payload = { dynamicData: "administrator" };
+  const payload = { dynamicData: 'administrator' };
   checkAdminStatus(req, payload);
   res.render('createblog', { dynamicData: payload.dynamicData });
 });
@@ -306,7 +305,6 @@ router.get('/deleteportfolioproject/:projectid', isLoggedIn, (req, res) => {
 
 // Delete Message
 router.get('/deletemessage/:messageId', isLoggedIn, (req, res) => {
-
   // Use Sequelize to find the relevant DB object
   models.Messages.findOne({ where: { id: req.params.messageId } })
     .then((message) => {
