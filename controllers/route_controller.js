@@ -1,8 +1,3 @@
-// const bcrypt = require('bcrypt');
-// const bodyParser = require('body-parser');
-// const connection = require('../config/connection.js');
-// const nodemailer = require('nodemailer');
-// const Twitter = require('twitter');
 const express = require('express');
 const passport = require('passport');
 const multer = require('multer');

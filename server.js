@@ -1,78 +1,80 @@
-var dotenv = require('dotenv').config();
+const dotenv = require('dotenv').config();
 
-//Set up the server to use mySQL locally & Jaws once deployed
-var Sequelize = require('sequelize'),
-  connection;
-if (process.env.JAWSDB_URL){
+// Set up the server to use mySQL locally & Jaws once deployed
+const Sequelize = require('sequelize');
+
+let connection;
+
+if (process.env.JAWSDB_URL) {
   connection = new Sequelize(process.env.JAWSDB_URL);
-} else{
-  connection = new Sequelize('tomcariello', 'root', 'password', {
+} else {
+  connection = new Sequelize('tomcariello', 'root', 'su7tnven', {
     host: 'localhost',
     dialect: 'mysql',
-    port:'3306'
-  })
+    port: '3306',
+  });
 }
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var session = require('express-session');
-var moment = require('moment');
+const express = require('express');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');
+const moment = require('moment');
 
-var app = express();
+const app = express();
 require('./config/passportConfig.js')(passport);
 
 // Serve static content for the app from the "public" directory in the application directory.
-app.use("/public", express.static(__dirname + '/public'));
+app.use('/public', express.static(`${__dirname}/public`));
 
-app.use(cookieParser()); //read cookies
+app.use(cookieParser()); // read cookies
 
-app.use(bodyParser.urlencoded({ //read data from forms
-	extended: false
+app.use(bodyParser.urlencoded({ // read data from forms
+  extended: false,
 }));
 
-var exphbs = require('express-handlebars'); //for templating
+const exphbs = require('express-handlebars'); // for templating
 
 app.set('view engine', 'handlebars');
 
 app.engine('handlebars', exphbs({
   defaultLayout: 'main',
   helpers: {
-    'formatdate': function(datetime,format) {
+    formatdate(datetime, format) {
       if (moment) {
-        return moment(datetime).format("DD MMMM - YYYY");
-      } else {
-        return datetime;
+        return moment(datetime).format('DD MMMM - YYYY');
       }
+      return datetime;
     },
-    'limittext': function(data) {
+    limittext(data) {
       data = decodeURIComponent(data);
-      return data.substring(0,400) + "...";
+      return `${data.substring(0, 400)}...`;
     },
-    'decodeSummernote': function(data) {
+    decodeSummernote(data) {
       return data = decodeURIComponent(data);
-    }
-  }
+    },
+  },
 }));
 
 require('./config/passportConfig.js');
 
-//Passport configuration
-app.use(session({ 
+// Passport configuration
+app.use(session({
   secret: 'tomtest', // session secret
   resave: true,
-  saveUninitialized: true
- })); 
+  saveUninitialized: true,
+}));
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
 
-//Routes
-var routes = require('./controllers/route_controller.js');
+// Routes
+const routes = require('./controllers/route_controller.js');
+
 app.use('/', routes);
 
-//Launch
-var PORT = 3000;
+// Launch
+const PORT = 3000;
 app.listen(process.env.PORT || PORT);
