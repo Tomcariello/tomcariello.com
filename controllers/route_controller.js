@@ -94,12 +94,16 @@ router.get('/index', (req, res) => {
     where: { id: 1 },
   })
     .then((data) => {
+      data = data.toJSON();
       const payload = { dynamicData: data };
 
       // Check if user is logged in
       checkAdminStatus(req, payload);
 
-      res.render('index', { dynamicData: payload.dynamicData, layout: 'main-social' });
+      res.render('index', { 
+        dynamicData: payload.dynamicData, 
+        layout: 'main-social' 
+      });
     });
 });
 
@@ -107,6 +111,9 @@ router.get('/portfolio', (req, res) => {
   // get data from projects table & sort it newest first
   models.Project.findAll({ order: [['id', 'DESC']] })
     .then((data) => {
+      data = JSON.stringify(data);
+      data = JSON.parse(data);
+
       const payload = { dynamicData: data };
       checkAdminStatus(req, payload);
       res.render('portfolio', { dynamicData: payload.dynamicData });
@@ -135,8 +142,14 @@ router.get('/contact', (req, res) => {
 router.get('/blog', (req, res) => {
   models.Blogs.findAll({ order: [['createdAt', 'DESC']] })
     .then((data) => {
+      // Must convert from sequelize object to normal JSON
+      // Must be a better way...?
+      data = JSON.stringify(data);
+      data = JSON.parse(data);
+
       const payload = { dynamicData: data };
       checkAdminStatus(req, payload);
+      console.log(payload.dynamicData);
       res.render('blog', { dynamicData: payload.dynamicData, layout: 'main-social' });
     });
 });
@@ -152,6 +165,9 @@ router.get('/blogpost', (req, res) => {
       where: { id: req.query.id },
     })
       .then((blogData) => {
+        blogData = JSON.stringify(blogData);
+        blogData = JSON.parse(blogData);
+  
         // If no matching entry, redirect back to the main blog page
         if (blogData == null) {
           res.redirect('blog');
@@ -164,6 +180,8 @@ router.get('/blogpost', (req, res) => {
             where: { blogid: req.query.id },
           })
             .then((blogComments) => {
+              blogComments = JSON.stringify(blogComments);
+              blogComments = JSON.parse(blogComments);
               payload.dynamicData.Comments = blogComments;
 
               res.render('blogpost', { dynamicData: payload.dynamicData, layout: 'main-social' });

@@ -39,7 +39,7 @@ const exphbs = require('express-handlebars'); // for templating
 
 app.set('view engine', 'handlebars');
 
-app.engine('handlebars', exphbs({
+app.engine('handlebars', exphbs.engine({
   defaultLayout: 'main',
   helpers: {
     formatdate(datetime, format) {

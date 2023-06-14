@@ -1,14 +1,14 @@
 {
   "development": {
     "username": "root",
-    "password": "su7tnven",
+    "password": "change_me",
     "database": "tomcariello",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
-    "password": "su7tnven",
+    "password": "change_me",
     "database": "tomcariello",
     "host": "127.0.0.1",
     "dialect": "mysql"
