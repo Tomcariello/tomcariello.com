@@ -43,7 +43,6 @@ module.exports = function(passport) {
             if (err)
                 return done(err);
             if (rows.length) {
-                console.log('User with this email found. Redirecting to "Login" page');
                 return done(null, false);
             } else { // if there is no user with that username create the user
 
@@ -87,7 +86,7 @@ module.exports = function(passport) {
 
             connection.query(emailQuery, function(err, rows){
                 if (err) {
-                    console.log('Error recieved');
+                    console.log('Error recieved', err);
                     return done(err);
                 }
                 if (!rows.length) {

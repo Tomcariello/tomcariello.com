@@ -149,7 +149,6 @@ router.get('/blog', (req, res) => {
 
       const payload = { dynamicData: data };
       checkAdminStatus(req, payload);
-      console.log(payload.dynamicData);
       res.render('blog', { dynamicData: payload.dynamicData, layout: 'main-social' });
     });
 });
