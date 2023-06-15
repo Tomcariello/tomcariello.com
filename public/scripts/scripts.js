@@ -1,31 +1,5 @@
 let socialMediaExpanded = false;
 
-// function validateContact() {
-//   // check name
-//   if ($('#fname').val() == '') {
-//     $('#fname').css('border-bottom', '2px solid red');
-//     return false;
-//   }
-//   $('#fname').css('border-bottom', '1px solid #6b6b6b');
-//   if ($('#email').val() == '') {
-//     $('#email').css('border-bottom', '2px solid red');
-//     return false;
-//   }
-//   $('#email').css('border-bottom', '1px solid #6b6b6b');
-//   if ($('#message').val() == '') {
-//     $('#message').css('border', '2px solid red');
-//     return false;
-//   }
-//   $('#message').css('border', '1px solid #6b6b6b');
-// }
-
-// function clearFields() {
-//   // Clear fields on contact form
-//   document.getElementById('fname').value = '';
-//   document.getElementById('email').value = '';
-//   document.getElementById('message').value = '';
-// }
-
 function validateRegistration() {
   // if all fields not null and passwords match...
   // Write this code better
@@ -123,4 +97,14 @@ $(document).ready(() => {
   const today = new Date();
   const thisYear = today.getFullYear();
   $('#footer-div').html(`&copy;${thisYear}`);
+
+  // update open graph image url
+  // Get the existing og:image meta tag
+  const ogImageTag = document.querySelector('meta[property="og:image"]');
+
+  // Set the URL of the dynamically generated image
+  const dynamicImageURL = 'http://tomcariello.herokuapp.com/public/images/profile.jpg';
+
+  // Update the content attribute of the og:image meta tag
+  ogImageTag.setAttribute('content', dynamicImageURL);
 });
