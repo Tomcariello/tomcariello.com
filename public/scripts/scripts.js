@@ -97,19 +97,4 @@ $(document).ready(() => {
   const today = new Date();
   const thisYear = today.getFullYear();
   $('#footer-div').html(`&copy;${thisYear}`);
-
-  // Get the existing og:image meta tag
-  const ogImageTag = document.querySelector('meta[property="og:image"]');
-
-  // Set the base URL of the dynamically generated image
-  let dynamicImageURL = 'http://tomcariello.herokuapp.com/public/images/profile.jpg';
-
-  // Generate a cache-busting parameter (e.g., timestamp)
-  const timestamp = Date.now();
-
-  // Append the cache-busting parameter to the URL
-  dynamicImageURL += `?cache=${timestamp}`;
-
-  // Update the content attribute of the og:image meta tag
-  ogImageTag.setAttribute('content', dynamicImageURL);
 });
