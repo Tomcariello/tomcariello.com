@@ -22,7 +22,7 @@ Technologies Used:
     - **Sequelize**: To simplify database reads/writes  
     - **Summernote**: WYSYWIG used on the backend for styling  
 
-To-Do:
+To-Do:  
 	- Polish the Administration area visually  
 	- Add warning messages on misformed requests on login  
     - Re-activate contact form with a different email provider  
