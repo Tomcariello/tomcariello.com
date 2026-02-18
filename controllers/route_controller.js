@@ -6,6 +6,7 @@ const aws = require('aws-sdk');
 const path = require('path');
 const models = require('../models');
 const transporter = require('../config/transporter.js');
+const { Op } = require("sequelize");
 
 const router = express.Router();
 // const sequelizeConnection = models.sequelize;
@@ -40,7 +41,14 @@ function sendAutomaticEmail(mailOptions) {
 // Check Administrator status and add to object
 function checkAdminStatus(req, payload) {
   if (req.user) {
-    payload.dynamicData.administrator = true;
+    // attach it to the payload object
+    payload.administrator = true; 
+    
+    // Some older workflows might look for it inside the data array too
+    // Deprecate this approach until all routes are modernized
+    if (Array.isArray(payload.dynamicData)) {
+       payload.dynamicData.administrator = true;
+    }
   }
   return payload;
 }
@@ -122,17 +130,21 @@ router.get('/portfolio', (req, res) => {
 
 router.get("/puzzles", (req, res) => {
   models.Puzzles.findAll({
-    limit: 50,
-    order: [['id', 'ASC']]
-  })
-  .then((dbPuzzles) => {
+   where: {
+      piece_count: 500,
+      year: {
+        [Op.between]: [1985, 1986]
+      }
+    },
+    // limit: 50, // Keeping your limit for performance
+    order: [['year', 'ASC'], ['id', 'ASC']]
+  }).then((dbPuzzles) => {
     // Map the Sequelize objects to plain JSON for Handlebars
     const puzzles = dbPuzzles.map(puzzle => puzzle.get({ plain: true }));
 
     res.render("puzzles", {
       puzzles: puzzles,
-      // filterDecade: "1980-1990",
-      // filterPieces: "500"
+      s3Base: "https://tomcarielloimages.s3.amazonaws.com/puzzle_images/"
     });
   })
   .catch(err => {
@@ -314,14 +326,21 @@ router.get('/adminaboutme', isLoggedIn, (req, res) => {
     });
 });
 
-router.get('/adminportfolio', isLoggedIn, (req, res) => {
-  // pull portfolio/project data from database
-  models.Project.findAll({})
-    .then((projects) => {
-      const payload = { dynamicData: projects };
-      checkAdminStatus(req, payload);
-      res.render('adminportfolio', { dynamicData: payload.dynamicData });
+router.get('/adminportfolio', isLoggedIn, async (req, res) => {
+  try {
+    // pull portfolio/project data from database
+    const projects = await models.Project.findAll();
+    const plainProjects = projects.map(project => project.get({ plain: true }));
+    const payload = { dynamicData: plainProjects };
+    payload = checkAdminStatus(req, payload);
+    res.render('adminportfolio', { 
+      dynamicData: payload.dynamicData,
+      isAdmin: payload.isAdmin // Pass this explicitly if your helper sets it
     });
+  } catch (err) {
+    console.error("Error loading admin portfolio:", err);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 // Delete Portfolio Project

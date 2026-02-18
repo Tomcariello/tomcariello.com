@@ -524,6 +524,106 @@ img.port-nav-image {
     margin-top: 25%;
 }
 
+/* Container to hold the image and keep the grid rows aligned */
+.puzzle-img {
+    width: 100%;
+    height: 200px;         /* Adjust this height based on your preference */
+    display: flex;
+    align-items: center;   /* Vertical center */
+    justify-content: center; /* Horizontal center */
+    overflow: hidden;
+    padding: 5px;
+}
+
+/* The actual image preserving its original perspective */
+.puzzle-img img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;           /* Prevents stretching */
+    height: auto;          /* Prevents stretching */
+    object-fit: contain;   /* Ensures no cropping occurs */
+}
+
+/* Ensure the thumbnail has a consistent footprint */
+.puzzle-thumbnail {
+    height: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Force captions to the bottom if names are short */
+.caption {
+    flex-grow: 1;
+}
+
+/* Simple styling for the text to prevent long names from breaking the grid */
+.puzzle-name-text {
+    height: 2.4em;
+    overflow: hidden;
+    line-height: 1.2em;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* Highlight the card if owned */
+.owned-card {
+    border: 2px solid #5cb85c !important; /* Bootstrap Success Green */
+    background-color: #f0fff0 !important; /* Very faint green tint */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-divider {
+    margin: 10px 0;
+    border-top: 1px solid #eee;
+}
+
+.status-area {
+    min-height: 50px; /* Keeps card heights consistent */
+}
+
+.status-row {
+    margin-bottom: 5px;
+}
+
+.status-row .label {
+    display: inline-block;
+    margin-right: 4px;
+    padding: 5px 8px;
+}
+
+.acquisition-text {
+    margin-top: 8px;
+    color: #666;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Keeps long source names from breaking the box */
+}
+
+.missing {
+    opacity: 0.6;
+    text-align: center;
+    padding-top: 10px;
+}
+
+/* Ensure the empty state matches the image container size */
+.no-image-placeholder {
+    width: 100%;
+    height: 200px; /* Must match .puzzle-img height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #ededed;
+    color: #999;
+    border-bottom: 1px solid #ddd;
+}
+
+.no-image-placeholder i {
+    font-size: 2em;
+    margin-bottom: 8px;
+}
 
 /* Media queries */
 /* Iphone X portrait */

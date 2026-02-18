@@ -23,10 +23,11 @@ Technologies Used:
     - **Summernote**: WYSYWIG used on the backend for styling  
 
 To-Do:  
+    - Check adminportfolio to test recent fixes  
+    - Clean Messages Spam from database (carefully! Don't violate Heroku's limits!)  
 	- Polish the Administration area visually  
 	- Add warning messages on misformed requests on login  
     - Re-activate contact form with a different email provider  
     - Make puzzle filters functional  
     - Create Admin puzzle page(s) to allow editing & image upload of each puzzle  
-    - Add pictures for target puzzles  
     - Activate puzzle-detail page  
