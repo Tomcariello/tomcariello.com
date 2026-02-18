@@ -120,6 +120,27 @@ router.get('/portfolio', (req, res) => {
     });
 });
 
+router.get("/puzzles", (req, res) => {
+  models.Puzzles.findAll({
+    limit: 50,
+    order: [['id', 'ASC']]
+  })
+  .then((dbPuzzles) => {
+    // Map the Sequelize objects to plain JSON for Handlebars
+    const puzzles = dbPuzzles.map(puzzle => puzzle.get({ plain: true }));
+
+    res.render("puzzles", {
+      puzzles: puzzles,
+      // filterDecade: "1980-1990",
+      // filterPieces: "500"
+    });
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).send("Error retrieving puzzles");
+  });
+});
+
 router.get('/contact', (req, res) => {
   const payload = {
     dynamicData: {
@@ -421,21 +442,22 @@ router.post('/contact/message', (req, res) => {
 });
 
 // Process New Blog Comments
-router.post('/postblogcomment/:blogid', (req, res) => {
-  const currentDate = new Date();
+// Disabled since bots found the link & I don't want to setup actual 'Users'
+// router.post('/postblogcomment/:blogid', (req, res) => {
+//   const currentDate = new Date();
 
-  // Use Sequelize to push to DB
-  models.Blogcomments.create({
-    blogid: req.params.blogid,
-    commentheadline: req.body.BlogCommentHeadline,
-    commenttext: req.body.BlogCommentText,
-    commentauthor: req.body.BlogCommentName,
-    createdAt: currentDate,
-    updatedAt: currentDate,
-  }).then(() => {
-    res.redirect(`../blogpost?id= ${req.params.blogid}`);
-  });
-});
+//   // Use Sequelize to push to DB
+//   models.Blogcomments.create({
+//     blogid: req.params.blogid,
+//     commentheadline: req.body.BlogCommentHeadline,
+//     commenttext: req.body.BlogCommentText,
+//     commentauthor: req.body.BlogCommentName,
+//     createdAt: currentDate,
+//     updatedAt: currentDate,
+//   }).then(() => {
+//     res.redirect(`../blogpost?id= ${req.params.blogid}`);
+//   });
+// });
 
 // Process portfolio update requests
 router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoliopicture'), (req, res) => {

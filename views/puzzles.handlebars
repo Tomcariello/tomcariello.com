@@ -1,0 +1,98 @@
+<div class="row">
+    <div class="col-xs-12">
+        <h2 class="page-header">Springbok Collection <small>In progress</small></h2>
+        <h3 class="error">Just printing 50 puzzles for now. Filters are non-functional.</h3>
+        
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form class="form-inline" id="puzzleFilterForm">
+                    
+                    <div class="form-group">
+                        <label for="startYear">From:</label>
+                        <input type="number" id="startYear" class="form-control" value="1980" style="width: 80px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="endYear">To:</label>
+                        <input type="number" id="endYear" class="form-control" value="1990" style="width: 80px;">
+                    </div>
+
+                    <div class="form-group" style="margin-left: 15px;">
+                        <label for="pieceFilter">Pieces:</label>
+                        <select id="pieceFilter" class="form-control">
+                            <option value="all">All</option>
+                            <option value="500" selected>500</option>
+                            <option value="1000">1000</option>
+                            <option value="1500">1500+</option>
+                        </select>
+                    </div>
+
+                    <div class="checkbox" style="margin-left: 15px;">
+                        <label title="Only show puzzles currently in your physical collection">
+                            <input type="checkbox" id="collectionOnly"> My Collection
+                        </label>
+                    </div>
+
+                    <div class="form-group pull-right">
+                        <input type="text" id="puzzleSearch" class="form-control" placeholder="Search by name...">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="puzzleGrid">
+    {{#each puzzles}}
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 puzzle-card" 
+         data-year="{{this.year}}" 
+         data-pieces="{{this.piece_count}}" 
+         data-owned="{{this.in_collection}}">
+        
+        <div class="thumbnail puzzle-thumbnail {{#if this.in_collection}}owned-border{{/if}}">
+            
+            {{#if this.image_box_front}}
+                <div class="img-container">
+                    <img src="{{this.image_box_front}}" alt="{{this.puzzle_name}}" loading="lazy">
+                </div>
+            {{else}}
+                <div class="no-image-placeholder">
+                    <small>No Image Available</small>
+                </div>
+            {{/if}}
+
+            <div class="caption">
+                <h4 class="text-primary"><i class="fas fa-puzzle-piece"></i>{{this.puzzle_id}}</h4>
+                <p class="puzzle-name-text" title="{{this.puzzle_name}}">{{this.puzzle_name}}</p>
+                <p>
+                    <span class="badge">{{this.year}}</span>
+                    <span class="badge">{{this.piece_count}} pcs</span>
+                </p>
+                
+                {{#if this.in_collection}}
+                    <div class="status-indicator">
+                        <span class="label label-success">
+                            <i class="fas fa-check"></i> In Collection
+                        </span>
+                        {{#if this.is_complete}}
+                            <span class="label label-info">Complete</span>
+                        {{/if}}
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>
+
+<style>
+    .puzzle-thumbnail {
+        height: 400px;
+        overflow: hidden;
+        transition: transform 0.2s;
+        border: 1px solid #ddd;
+    }
+    .puzzle-thumbnail:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .owned-border {

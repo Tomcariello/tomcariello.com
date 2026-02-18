@@ -35,15 +35,15 @@
           </div>    
       </div>
   </div>
-  {{!-- Comment Section --}}
+  {{!-- Comment Section removed due to bots
   <div class="row">
     <div class="panel panel-default">
       <div class="panel-heading">
           <h3>Comments</h3>
       </div>
       <div class="panel-body">
-        {{!-- Display previous comments --}}
-        {{#if dynamicData.Comments}}
+        Display previous comments}}
+        dynamicData.Comme
           {{#each dynamicData.Comments}}
             <div class='row commentrow'>
               <div class="col-sm-3 commentUser">
@@ -74,11 +74,9 @@
           </div> 
         {{/if}}
       </div>
-    </div>
-
-
-      {{!-- Post New Comments --}}
-      <div class="row">
+    </div>ments
+  Post New Comrow">
+      <div class="
         <div class="panel-body">
           <div class="panel-heading">
             <h3>Add A New Comment</h3>
@@ -86,19 +84,19 @@
           <div class="panel-body">
             <form enctype="form-data" action="postblogcomment/{{dynamicData.id}}" onsubmit="return validateCommentForm()" method="POST">
               <div class="row">
-                {{!-- <div class="col-sm-2">
+                <div class="col-sm-2">
                   <p>Name:</p>
-                </div> --}}
-                <div class="col-sm-8">
+                </div>m-8">
+                lass="col-s
                   <input type="text" id="BlogCommentName" name="BlogCommentName" placeholder="John Smith" required/> 
                 </div>
               </div>
 
               <div class="row">
-                {{!-- <div class="col-sm-2">
+                <div class="col-sm-2">
                   <p>Headline:</p>
-                </div> --}}
-                <div class="col-sm-8">
+                </div>m-8">
+                lass="col-s
                   <input type="text" id="BlogCommentHeadline" name="BlogCommentHeadline" placeholder="Comment Headline" required/> 
                 </div>
               </div>
@@ -117,17 +115,17 @@
           </div>
         </div>
       </div>
-  </div>
+  </div> --}}
 </div>
 
   <script>
     //Track the comment being typed and inform the user how many characters remain.
-    $( document ).ready(function() {
+    /* $( document ).ready(function() {
       $("#BlogCommentText").keyup(function() {
         var max = 500;
         var currentCharCount = $("#BlogCommentText").val().length;
 
         $("#charCount").html( max - currentCharCount + " Characters remaining.");
       })
-    })
+    }) */
   </script>

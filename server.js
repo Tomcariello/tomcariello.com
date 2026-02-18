@@ -1,19 +1,21 @@
 const dotenv = require('dotenv').config();
+const db = require("./models");
 
 // Set up the server to use mySQL locally & Jaws once deployed
-const Sequelize = require('sequelize');
+// const Sequelize = require('sequelize');
 
-let connection;
+// let connection;
 
-if (process.env.JAWSDB_URL) {
-  connection = new Sequelize(process.env.JAWSDB_URL);
-} else {
-  connection = new Sequelize('tomcariello', 'root', 'su7tnven', {
-    host: 'localhost',
-    dialect: 'mysql',
-    port: '3306',
-  });
-}
+// if (process.env.JAWSDB_URL) {
+//   connection = new Sequelize(process.env.JAWSDB_URL);
+// } else {
+//   const pwd = "su7tnven"
+//   connection = new Sequelize('tomcariello', 'root', pwd, {
+//     host: 'localhost',
+//     dialect: 'mysql',
+//     port: '3306',
+//   });
+// }
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -70,11 +72,15 @@ app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
 
-// Routes
 const routes = require('./controllers/route_controller.js');
 
 app.use('/', routes);
 
-// Launch
-const PORT = 3000;
-app.listen(process.env.PORT || PORT);
+const PORT = process.env.PORT || 3000;
+db.sequelize.sync({ force: false }).then(() => {
+  app.listen(PORT, () => {
+    console.log(`==> 🌎  Listening on port ${PORT}.`);
+  });
+}).catch((err) => {
+  console.error("Unable to connect to the database:", err);
+});
