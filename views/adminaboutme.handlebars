@@ -1,7 +1,7 @@
 <section class="main">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.js"></script>
-  
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
   <form enctype="multipart/form-data" action="updateAboutMe" onsubmit="return validateAboutMeForm()" method="POST">
     <div class='row'>
       <div class="col-sm-12">
@@ -137,129 +137,57 @@
     </div>
   </form>
 
-
   <script>
     $(document).ready(function() {
-      //Initialize Summernote for the About Me (BIO) section
-      $('#summernoteAboutMe').summernote({
-          fontNames: [
-            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
-          ],
-          fontNamesIgnoreCheck: [
-            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
-          ],
-          toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['font', ['strikethrough', 'superscript', 'subscript']],
-            ['fontsize', ['fontsize']],
-            ["fontname", ["fontname"]],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['height', ['height']],
-            ['insert', ['link']],
-            ['view', ['codeview']]
-          ]
+      const summernoteConfig = {
+        fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica", "Impact", "Tahoma", "Times New Roman", "Verdana"],
+        fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica", "Impact", "Tahoma", "Times New Roman", "Verdana"],
+        toolbar: [
+          ['style', ['bold', 'italic', 'underline', 'clear']],
+          ['font', ['strikethrough', 'superscript', 'subscript']],
+          ['fontsize', ['fontsize']],
+          ["fontname", ["fontname"]],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['height', ['height']],
+          ['insert', ['link']],
+          ['view', ['codeview']]
+        ]
+      };
+
+      const summerNoteEditors = [
+        { editor: '#summernoteAboutMe', input: '#AboutMe' },
+        { editor: '#summernoteAboutMeCaption', input: '#AboutMeCaption' },
+        { editor: '#summernoteAboutPage', input: '#AboutPage' },
+        { editor: '#summernoteAboutPageCaption', input: '#AboutPageCaption' }
+      ];
+
+      summerNoteEditors.forEach(({ editor, input }) => {
+        const $editor = $(editor); // Summernote still needs the jQuery selector internally
+        const inputEl = document.querySelector(input);
+
+        $editor.summernote(summernoteConfig);
+
+        // Decode and Set Initial Content
+        if (inputEl && inputEl.value) {
+          const decodedContent = decodeURI(inputEl.value);
+          $editor.summernote('code', decodedContent);
+        }
       });
-      //Initialize Summernote for the About Me Caption section
-      $('#summernoteAboutMeCaption').summernote({
-          fontNames: [
-            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
-          ],
-          fontNamesIgnoreCheck: [
-            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
-          ],
-          toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['font', ['strikethrough', 'superscript', 'subscript']],
-            ['fontsize', ['fontsize']],
-            ["fontname", ["fontname"]],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['height', ['height']],
-            ['insert', ['link']],
-            ['view', ['codeview']]
-          ]
-      });
+    });
 
-      //Initialize Summernote for the About The Page section
-      $('#summernoteAboutPage').summernote({
-          fontNames: [
-            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
-          ],
-          fontNamesIgnoreCheck: [
-            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
-          ],
-          toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['font', ['strikethrough', 'superscript', 'subscript']],
-            ['fontsize', ['fontsize']],
-            ["fontname", ["fontname"]],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['height', ['height']],
-            ['insert', ['link']],
-            ['view', ['codeview']]
-          ]
-      });
-      //Initialize Summernote for the About Me Caption section
-      $('#summernoteAboutPageCaption').summernote({
-          fontNames: [
-            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
-          ],
-          fontNamesIgnoreCheck: [
-            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
-          ],
-          toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['font', ['strikethrough', 'superscript', 'subscript']],
-            ['fontsize', ['fontsize']],
-            ["fontname", ["fontname"]],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['height', ['height']],
-            ['insert', ['link']],
-            ['view', ['codeview']]
-          ]
-      });
-
-      //Encoded data is loaded into hidden forms from the database
-      //Decode contents And display them within the WSYWIG
-      var decodedBodyContent = decodeURI( $("#AboutMe").val() );
-      var decodedCaptionContent = decodeURI( $("#AboutMeCaption").val() );
-      var decodedAboutPageContent = decodeURI( $("#AboutPage").val() );
-      var decodedPageCaptionContent = decodeURI( $("#AboutPageCaption").val() );
-
-      //Insert decoded text into the proper field for rendering
-      $('#summernoteAboutMe').summernote('code', decodedBodyContent);
-      $('#summernoteAboutMeCaption').summernote('code', decodedCaptionContent);
-      $('#summernoteAboutPage').summernote('code', decodedAboutPageContent);
-      $('#summernoteAboutPageCaption').summernote('code', decodedPageCaptionContent);
-
-    })
-
-    //Listen for form submission
     function validateAboutMeForm() {
+      const summerNoteEditors = [
+        { editor: '#summernoteAboutMe', input: '#AboutMe' },
+        { editor: '#summernoteAboutMeCaption', input: '#AboutMeCaption' },
+        { editor: '#summernoteAboutPage', input: '#AboutPage' },
+        { editor: '#summernoteAboutPageCaption', input: '#AboutPageCaption' }
+      ];
 
-      //Encode the Summernote contents and store them in the form for submission
-      var aboutMeFormattedData = $('#summernoteAboutMe').summernote('code');
-      var aboutMeEncodedData = encodeURI(aboutMeFormattedData);
-      $("#AboutMe").val(aboutMeEncodedData);
-
-      var captionFormattedData = $('#summernoteAboutMeCaption').summernote('code');
-      var captionEncodedData = encodeURI(captionFormattedData);
-      $("#AboutMeCaption").val(captionEncodedData);
-
-      var aboutPageFormattedData = $('#summernoteAboutPage').summernote('code');
-      var aboutPageEncodedData = encodeURI(aboutPageFormattedData);
-      $("#AboutPage").val(aboutPageEncodedData);
-
-      var pageCaptionFormattedData = $('#summernoteAboutPageCaption').summernote('code');
-      var pageCaptionEncodedData = encodeURI(pageCaptionFormattedData);
-      $("#AboutPageCaption").val(pageCaptionEncodedData);
+      summerNoteEditors.forEach(({ editor, input }) => {
+        const formattedData = $(editor).summernote('code');
+        const encodedData = encodeURI(formattedData);
+        document.querySelector(input).value = encodedData;
+      });
 
       return true;
     }

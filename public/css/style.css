@@ -87,18 +87,18 @@ a:hover {
 	text-decoration: underline;
 }
 
-.navbar-default {
-	background-color: #68b4ff;
+.page-navbar {
+	background-color: #68b4ff !important;
 }
 
-.navbar-default .navbar-brand {
+.page-navbar .navbar-brand {
 	color: #ffffff;
     font-size: 30px;
 }
-.navbar-default .navbar-toggle .icon-bar {
+.page-navbar .navbar-toggle .icon-bar {
     background-color: #fff;
 }
-.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {
+.page-navbar .navbar-toggle:focus, .page-navbar .navbar-toggle:hover {
     background-color: #68b5ff;
 }
 
@@ -267,7 +267,7 @@ button:hover {
 .navbar .nav>li>a {
   font-size: 16px;
  }
- .navbar-default .navbar-nav>li>a {
+ .page-navbar .navbar-nav>li>a {
     color: #ffffff;
 }
  .navbar {
@@ -277,8 +277,11 @@ button:hover {
 .panel-heading {
 	padding: 1px 15px;
 }
+footer {
+	background-color: #68b4ff !important;
+}
 .footer-content {
-	color: #ffffff;
+	color: #ffffff !important;
 	text-align: center;
 }
 

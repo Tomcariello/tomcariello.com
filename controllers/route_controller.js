@@ -171,61 +171,6 @@ router.get('/contact', (req, res) => {
   res.render('contact', { dynamicData: payload.dynamicData, layout: 'main' });
 });
 
-// Load the frontend main blog page
-router.get('/blog', (req, res) => {
-  models.Blogs.findAll({ order: [['createdAt', 'DESC']] })
-    .then((data) => {
-      // Must convert from sequelize object to normal JSON
-      // Must be a better way...?
-      data = JSON.stringify(data);
-      data = JSON.parse(data);
-
-      const payload = { dynamicData: data };
-      checkAdminStatus(req, payload);
-      res.render('blog', { dynamicData: payload.dynamicData, layout: 'main-social' });
-    });
-});
-
-// Load Specific Blog Pages
-router.get('/blogpost', (req, res) => {
-  // If no ID provided, redirect back to main blog page
-  if (req.query.id == null) {
-    res.redirect('blog');
-  } else {
-    // Query database for specific blog
-    models.Blogs.findOne({
-      where: { id: req.query.id },
-    })
-      .then((blogData) => {
-        blogData = JSON.stringify(blogData);
-        blogData = JSON.parse(blogData);
-  
-        // If no matching entry, redirect back to the main blog page
-        if (blogData == null) {
-          res.redirect('blog');
-        } else { // blog found
-          const payload = { dynamicData: blogData };
-          checkAdminStatus(req, payload);
-
-          // Check for comments for this blog
-          models.Blogcomments.findAll({
-            where: { blogid: req.query.id },
-          })
-            .then((blogComments) => {
-              blogComments = JSON.stringify(blogComments);
-              blogComments = JSON.parse(blogComments);
-              payload.dynamicData.Comments = blogComments;
-
-              res.render('blogpost', { dynamicData: payload.dynamicData, layout: 'main-social' });
-            }).catch(() => {
-              // If there are no comments
-              res.render('blogpost', { dynamicData: payload.dynamicData, layout: 'main-social' });
-            });
-        }
-      });
-  }
-});
-
 // Registration page. Disabled since no more registrations are required
 router.get('/register', (req, res) => {
   // res.render('register');
@@ -243,87 +188,38 @@ router.get('/adminportal', isLoggedIn, (req, res) => {
   res.render('adminportal');
 });
 
-router.get('/viewmessages', isLoggedIn, (req, res) => {
-  // Pull message data from database
-  models.Messages.findAll({})
-    .then((data) => {
-      const payload = { dynamicData: data };
-      checkAdminStatus(req, payload);
-      res.render('viewmessages', { dynamicData: payload.dynamicData });
+router.get('/viewmessages', isLoggedIn, async (req, res) => {
+  try {
+    const messages = await models.Messages.findAll({
+      order: [['createdAt', 'DESC']]
     });
-});
 
-// List all blog entries for management
-router.get('/blogmanagement', isLoggedIn, (req, res) => {
-  // Pull blog data from database
-  models.Blogs.findAll({ order: [['createdAt', 'DESC']] })
-    .then((data) => {
-      const payload = { dynamicData: data };
-      checkAdminStatus(req, payload);
-      res.render('blogmanagement', { dynamicData: payload.dynamicData });
+    const cleanMessages = messages.map(msg => msg.get({ plain: true }));
+
+    const payload = { dynamicData: cleanMessages };
+    checkAdminStatus(req, payload);
+
+    res.render('viewmessages', { dynamicData: payload.dynamicData });
+
+  } catch (err) {
+    console.error("Error loading messages:", err);
+    res.status(500).render('error', { 
+      message: "Could not retrieve messages.", 
+      error: err 
     });
-});
-
-router.get('/createblog', isLoggedIn, (req, res) => {
-  // Add administrator credential to the created object
-  const payload = { dynamicData: 'administrator' };
-  checkAdminStatus(req, payload);
-  res.render('createblog', { dynamicData: payload.dynamicData });
-});
-
-router.get('/editblog', isLoggedIn, (req, res) => {
-  if (req.query.id == null) {
-    res.redirect('blogmanagement');
-  } else {
-    // Pull Blog data from database
-    models.Blogs.findOne({
-      where: { id: req.query.id },
-    })
-      .then((blog) => {
-        const payload = { dynamicData: blog };
-        checkAdminStatus(req, payload);
-        res.render('editblog', { dynamicData: payload.dynamicData });
-      });
   }
 });
 
-// Route to access the comments page per blog
-router.get('/blogcomments', isLoggedIn, (req, res) => {
-  if (req.query.id == null) {
-    res.redirect('blogmanagement');
-  } else {
-    // Pull Blog Comment data from database
-    models.Blogcomments.findAll({
-      where: { blogid: req.query.id },
-    })
-      .then((data) => {
-        const payload = { dynamicData: data };
-        checkAdminStatus(req, payload);
-
-        // Look up the main blog associated with these comments
-        models.Blogs.findOne({
-          where: { id: req.query.id },
-        })
-          .then((blogdata) => {
-            // Add the title of the blog to the object
-            payload.dynamicData.blogTitle = decodeURIComponent(blogdata.headline);
-            // Render the page
-            res.render('blogcomments', { dynamicData: payload.dynamicData });
-          });
-      });
+router.get('/adminaboutme', isLoggedIn, async (req, res) => {
+  try {
+    const data = await models.AboutMe.findOne({ where: { id: 1 } });
+    const payload = { dynamicData: data?.get({ plain: true }) };
+    
+    checkAdminStatus(req, payload);
+    res.render('adminaboutme', { dynamicData: payload.dynamicData });
+  } catch (err) {
+    res.status(500).render('error', { error: err });
   }
-});
-
-router.get('/adminaboutme', isLoggedIn, (req, res) => {
-  // Pull about me data from database
-  models.AboutMe.findOne({
-    where: { id: 1 },
-  })
-    .then((data) => {
-      const payload = { dynamicData: data };
-      checkAdminStatus(req, payload);
-      res.render('adminaboutme', { dynamicData: payload.dynamicData });
-    });
 });
 
 router.get('/adminportfolio', isLoggedIn, async (req, res) => {
@@ -331,7 +227,7 @@ router.get('/adminportfolio', isLoggedIn, async (req, res) => {
     // pull portfolio/project data from database
     const projects = await models.Project.findAll();
     const plainProjects = projects.map(project => project.get({ plain: true }));
-    const payload = { dynamicData: plainProjects };
+    let payload = { dynamicData: plainProjects };
     payload = checkAdminStatus(req, payload);
     res.render('adminportfolio', { 
       dynamicData: payload.dynamicData,
@@ -366,35 +262,6 @@ router.get('/deletemessage/:messageId', isLoggedIn, (req, res) => {
       res.redirect('../viewmessages');
     });
 });
-
-// Delete Message
-router.get('/deletecomment/:commentId', isLoggedIn, (req, res) => {
-  if (req.query.blogid == null) {
-    res.redirect('../blogmanagement');
-  } else {
-    // Use Sequelize to find the relevant DB object
-    models.Blogcomments.findOne({ where: { id: req.params.commentId } })
-      .then((id) => {
-        // Delete the object
-        id.destroy();
-      }).then(() => {
-        res.redirect(`../blogcomments?id= ${req.query.blogid}`);
-      });
-  }
-});
-
-// Delete Blog
-router.get('/deleteblog/:blogId', isLoggedIn, (req, res) => {
-  // Use Sequelize to find the relevant DB object
-  models.Blogs.findOne({ where: { id: req.params.blogId } })
-    .then((blogId) => {
-      // Delete the object
-      blogId.destroy();
-    }).then(() => {
-      res.redirect('../blogmanagement');
-    });
-});
-
 
 // ===============================================
 // =====POST routes to record to the database=====
@@ -459,24 +326,6 @@ router.post('/contact/message', (req, res) => {
     res.redirect('../contact');
   });
 });
-
-// Process New Blog Comments
-// Disabled since bots found the link & I don't want to setup actual 'Users'
-// router.post('/postblogcomment/:blogid', (req, res) => {
-//   const currentDate = new Date();
-
-//   // Use Sequelize to push to DB
-//   models.Blogcomments.create({
-//     blogid: req.params.blogid,
-//     commentheadline: req.body.BlogCommentHeadline,
-//     commenttext: req.body.BlogCommentText,
-//     commentauthor: req.body.BlogCommentName,
-//     createdAt: currentDate,
-//     updatedAt: currentDate,
-//   }).then(() => {
-//     res.redirect(`../blogpost?id= ${req.params.blogid}`);
-//   });
-// });
 
 // Process portfolio update requests
 router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoliopicture'), (req, res) => {
@@ -642,113 +491,6 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, (req, res) => {
   }
 });
 
-// *************************************
-// *************Blog Routes*************
-// *************************************
-
-// Process new Blog requests
-// Note: Image upload is not in place yet. These are just placeholders
-router.post('/newblog', upload.single('blogpicture'), isLoggedIn, (req, res) => {
-  // var blogImageToUpload;
-  const currentDate = new Date();
-
-  // Check if any image(s) were uploaded
-  if (typeof req.file !== 'undefined') {
-    // Process file being uploaded
-    const fileName = req.file.originalname;
-    const fileType = req.file.mimetype;
-    const stream = fs.createReadStream(req.file.path); // Create "stream" of the file
-
-    uploadToS3(fileName, stream, fileType)
-      .then((blogImagePath) => {
-        // Use Sequelize to push to DB
-        models.Blogs.create({
-          headline: req.body.NewBlogHeadline,
-          blogtext: req.body.NewBlogtext,
-          blogimage: blogImagePath,
-          imagecaption: req.body.NewImageCaption,
-          author: req.body.NewBlogAuthor,
-          createdAt: currentDate,
-          updatedAt: currentDate,
-        }).then(() => {
-          res.redirect('../blogmanagement');
-        })
-          .catch((err) => {
-            // print the error details
-            console.log(err);
-          });
-      });
-  } else { // no image to upload
-    models.Blogs.create({
-      headline: req.body.NewBlogHeadline,
-      blogtext: req.body.NewBlogtext,
-      imagecaption: req.body.NewImageCaption,
-      author: req.body.NewBlogAuthor,
-      createdAt: currentDate,
-      updatedAt: currentDate,
-    }).then(() => {
-      res.redirect('../blogmanagement');
-    })
-      .catch((err) => {
-        // print the error details
-        console.log(err);
-      });
-  }
-});
-
-// Process Blog update requests
-router.post('/updateblog/:blogId', upload.single('blogpicture'), isLoggedIn, (req, res) => {
-  // var blogImageToUpload;
-  const currentDate = new Date();
-
-  // Check if any image(s) were uploaded
-  if (typeof req.file !== 'undefined') {
-    // Process file being uploaded
-    const fileName = req.file.originalname;
-    const fileType = req.file.mimetype;
-    const stream = fs.createReadStream(req.file.path); // Create "stream" of the file
-
-    uploadToS3(fileName, stream, fileType)
-      .then((blogImagePath) => {
-        models.Blogs.findOne({ where: { id: req.params.blogId } })
-          .then((id) => {
-            id.update({
-              headline: req.body.BlogHeadline,
-              blogtext: req.body.Blogtext,
-              blogimage: blogImagePath,
-              imagecaption: req.body.ImageCaption,
-              author: req.body.BlogAuthor,
-              updatedAt: currentDate,
-            }).then(() => {
-              res.redirect(`../editblog?id= ${req.params.blogId}`);
-            })
-              .catch((err) => {
-                // print the error details
-                console.log(err);
-              });
-          });
-      });
-  } else { // no image to upload
-    models.Blogs.findOne({ where: { id: req.params.blogId } })
-      .then((blog) => {
-        // Update the data
-        blog.update({
-          headline: req.body.BlogHeadline,
-          blogtext: req.body.Blogtext,
-          imagecaption: req.body.ImageCaption,
-          author: req.body.BlogAuthor,
-          updatedAt: currentDate,
-        }).then(() => {
-          res.redirect(`../editblog?id= ${req.params.blogId}`);
-        })
-          .catch((err) => {
-            // print the error details
-            console.log(err);
-          });
-      });
-  }
-});
-
 router.post('/contact/message', (req, res) => {
   const currentDate = new Date();
 
@@ -774,4 +516,9 @@ router.post('/contact/message', (req, res) => {
     res.redirect('../contact');
   });
 });
-module.exports = router;
+
+router.isLoggedIn = isLoggedIn;
+router.checkAdminStatus = checkAdminStatus;
+router.uploadToS3 = uploadToS3;
+
+module.exports = router

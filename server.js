@@ -71,10 +71,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
-
 const routes = require('./controllers/route_controller.js');
+const blogRoutes = require('./controllers/blog_controller.js');
 
 app.use('/', routes);
+app.use('/', blogRoutes);
 
 const PORT = process.env.PORT || 3000;
 db.sequelize.sync({ force: false }).then(() => {

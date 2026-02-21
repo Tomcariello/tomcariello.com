@@ -1,5 +1,5 @@
 // Here is where you make the connection to the database and export and used by the O.R.M.
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 let connection;
 
