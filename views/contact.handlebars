@@ -1,29 +1,38 @@
-<section class="main">
-  <div class='row'>
-    <div class="col-sm-12 col-md-8">
-      <div class='row'>
-        <div class="aboutme">
-          <h3 class='messageIntro'>Send me a message!</h3>
-          <form action="contact/message" onsubmit="return validateContact()" method="POST">
-
-            {{#if dynamicData.messageSent}}
-            <div class='row'>
-              <div class="col-xs-12 messageSent">
-                Thank you for your message!
-              </div>
-            </div>
-            {{/if}}
-
-            {{!-- <p>Name:</p> --}}
-            <input type="text" id="fname" name="fname" placeholder="John Smith">
-            {{!-- <p>E-mail:</p> --}}
-            <input type="text" id="email" name="email" placeholder="example@gmail.com">
-            {{!-- <p>Message:</p> --}}
-            <textarea id="message" name="message" placeholder="Your message..."></textarea>
-            <p><button class="blueButton" id="submitContact" type="submit">Submit</button></p>
-          </form>
-        </div>
-      </div>
+<section class="page-contact">
+  <div class="col-sm-12 col-md-8 col-lg-6 mx-auto">
+    
+    <div class="contact-header text-center mb-5">
+      <h2 class="display-5">Get in Touch</h2>
+      <p class="text-secondary">Have a question or want to work together? Drop me a message below.</p>
     </div>
+
+    <form action="/send-message" method="POST" class="contact-form">
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="contactName" name="name" placeholder="Name" required>
+        <label for="contactName">Your Name</label>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input type="email" class="form-control" id="contactEmail" name="email" placeholder="name@example.com" required>
+        <label for="contactEmail">Email Address</label>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="contactSubject" name="subject" placeholder="Subject" required>
+        <label for="contactSubject">Subject</label>
+      </div>
+
+      <div class="form-floating mb-4">
+        <textarea class="form-control" placeholder="Leave a message here" id="contactMessage" name="message" style="height: 150px" required></textarea>
+        <label for="contactMessage">Message</label>
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary btn-lg rounded-pill">
+          <i class="fas fa-paper-plane me-2"></i> Send Message
+        </button>
+      </div>
+    </form>
+
   </div>
 </section>

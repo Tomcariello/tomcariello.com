@@ -1,48 +1,53 @@
-<div class="col-sm-12 col-md-8">
-    <div class="row">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3>What's happening...</h3>
-            </div>
-            <div class="panel-body">
-                <div class='row'>
-                    <div class="col-sm-12">
-                        <p>
-                            A place for me to keep my thoughts about various topics of interest (to me).
-                        </p>
-                    </div>
-                </div>
-            </div>    
-        </div>
+<section class="page-about page-blog">
+  <div class="col-sm-12 col-md-8 mx-auto">
+    
+    <div class="blog-intro mb-5">
+      <h2 class="display-6">What's happening...</h2>
+      <p class="lead text-secondary">
+        A place for me to keep my thoughts about various topics of interest (to me).
+      </p>
+      <hr class="section-divider">
     </div>
 
-    {{#each dynamicData}}
-        <div class="row">
-            <div class="col-sm-12 blogcontainer">
-                <div class="blogHeadline">
-                    <a href="/blogpost?id={{this.id}}">
-                        {{{decodeSummernote this.headline}}}
-                    </a>
-                </div>
-                <div class="blogauthor">
-                    {{this.author}}<br/>
-                </div>
-                <div class="blogdate">
-                    {{formatdate this.createdAt}}<br/>
-                </div>
-                <div class="row blogdetails">
-                    <div class="blogimagemaincontainer col-sm-6">
-                        <img class="blogimagemain" src="{{this.blogimage}}">
-                    </div>
-                    <div class="blogtext col-sm-6">
-                        <p>
-                            {{{limittext this.blogtext}}} <span class="keep_reading"><a href="/blogpost?id={{this.id}}">keep reading</a></span>
-                        </p>
-                    </div>
-                </div>
+    <div class="blog-feed">
+      {{#each dynamicData}}
+      <article class="blog-post-card mb-5" id="blog-{{this.id}}">
+        <header class="blog-post-header mb-3">
+          <a href="/blogpost?id={{this.id}}" class="text-decoration-none">
+            <h3 class="blog-headline">{{{decodeSummernote this.headline}}}</h3>
+          </a>
+          <div class="blog-meta text-muted small">
+            <span class="blog-author"><i class="fas fa-user-circle"></i> {{this.author}}</span>
+            <span class="mx-2">|</span>
+            <span class="blog-date"><i class="far fa-calendar-alt"></i> {{formatdate this.createdAt}}</span>
+          </div>
+        </header>
+
+        <div class="row blog-content-preview g-4">
+          {{#if this.blogimage}}
+          <div class="col-md-5 col-sm-12">
+            <a href="/blogpost?id={{this.id}}">
+              <div class="blog-image-wrapper">
+                <img src="{{this.blogimage}}" class="blog-img" alt="{{this.headline}}">
+              </div>
+            </a>
+          </div>
+          {{/if}}
+          
+          <div class="{{#if this.blogimage}}col-md-7{{else}}col-md-12{{/if}} col-sm-12">
+            <div class="blog-excerpt">
+              {{{limittext this.blogtext}}}
+              <div class="mt-3">
+                <a href="/blogpost?id={{this.id}}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                  Keep Reading <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+              </div>
             </div>
+          </div>
         </div>
+      </article>
+      {{/each}}
+    </div>
 
-    {{/each}}
-
-</div>
+  </div>
+</section>

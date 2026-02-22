@@ -23,7 +23,7 @@ Technologies Used:
     - **Summernote**: WYSYWIG used on the backend for styling  
 
 To-Do:  
-    - Css Cleanup pass
+    - CSS Cleanup pass
     - adminpuzzles.handlebars updates (just a placeholder)  
 	- Polish the Administration area visually  
     - Finish breaking routes into manageable file sizes (split auth as well)  
@@ -35,4 +35,6 @@ To-Do:
     - deleteFromS3 Utility: Create a function to deletes file(s) from S3  
     - Integrate deleteFromS3 for portfolio, blog, etc. deletion
 	- Add warning messages on misformed requests on login  
-    - Re-activate contact form with a different email provider  
+    - Re-activate contact form with a different email provider & avoid spam(?)  
+    - Remove or enable quiz game project  
+    - Remove or enable hangman project  

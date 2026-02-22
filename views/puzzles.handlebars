@@ -1,100 +1,99 @@
-<div class="row">
-    <div class="col-xs-12">
-        <h2 class="page-header">Springbok Collection <small>In progress</small></h2>
-        <h3 class="error">Just printing 50 puzzles for now. Filters are non-functional.</h3>
-        
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <form class="form-inline" id="puzzleFilterForm">
-                    
-                    <div class="form-group">
-                        <label for="startYear">From:</label>
-                        <input type="number" id="startYear" class="form-control" value="1980" style="width: 80px;">
-                    </div>
-                    <div class="form-group">
-                        <label for="endYear">To:</label>
-                        <input type="number" id="endYear" class="form-control" value="1990" style="width: 80px;">
-                    </div>
+<section class="page-puzzles">
+  <div class="puzzles-header mb-4">
+    <h2 class="display-6">Springbok Collection</h2>
+    <p class="text-secondary">Explore the archive of vintage and modern puzzles.</p>
+  </div>
 
-                    <div class="form-group" style="margin-left: 15px;">
-                        <label for="pieceFilter">Pieces:</label>
-                        <select id="pieceFilter" class="form-control">
-                            <option value="all">All</option>
-                            <option value="500" selected>500</option>
-                            <option value="1000">1000</option>
-                            <option value="1500">1500+</option>
-                        </select>
-                    </div>
-
-                    <div class="checkbox" style="margin-left: 15px;">
-                        <label title="Only show puzzles currently in your physical collection">
-                            <input type="checkbox" id="collectionOnly"> My Collection
-                        </label>
-                    </div>
-
-                    <div class="form-group pull-right">
-                        <input type="text" id="puzzleSearch" class="form-control" placeholder="Search by name...">
-                    </div>
-                </form>
-            </div>
+  <div class="filter-toolbar bg-light p-3 rounded-4 mb-5 border">
+    <form class="row g-3 align-items-center" id="puzzleFilterForm">
+      <div class="col-auto">
+        <label class="small text-muted d-block">Release Years</label>
+        <div class="input-group input-group-sm">
+          <input type="number" id="startYear" class="form-control" value="1980" style="width: 75px;">
+          <span class="input-group-text">to</span>
+          <input type="number" id="endYear" class="form-control" value="1990" style="width: 75px;">
         </div>
-    </div>
-</div>
+      </div>
 
-<div class="row" id="puzzleGrid">
+      <div class="col-auto">
+        <label for="pieceFilter" class="small text-muted d-block">Pieces</label>
+        <select id="pieceFilter" class="form-select form-select-sm">
+          <option value="all">All Sizes</option>
+          <option value="500" selected>500 pcs</option>
+          <option value="1000">1000 pcs</option>
+          <option value="1500">1500+ pcs</option>
+        </select>
+      </div>
+
+      <div class="col-auto pt-4">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="collectionOnly">
+          <label class="form-check-label small" for="collectionOnly">In My Collection</label>
+        </div>
+      </div>
+
+      <div class="col-md">
+        <label class="small text-muted d-block">Search Archive</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+          <input type="text" id="puzzleSearch" class="form-control border-start-0" placeholder="Search by name or ID...">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="row g-4" id="puzzleGrid">
     {{#each puzzles}}
-        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 puzzle-card" 
-            data-year="{{this.year}}" 
-            data-pieces="{{this.piece_count}}" 
-            data-owned="{{this.in_collection}}">
-            
-            <div class="thumbnail puzzle-thumbnail {{#if this.in_collection}}owned-card{{/if}}">
+    <div class="col-xl-3 col-lg-4 col-sm-6 puzzle-card-wrapper" 
+         data-year="{{this.year}}" 
+         data-pieces="{{this.piece_count}}" 
+         data-owned="{{this.in_collection}}"
+         data-search="{{this.puzzle_name}} {{this.puzzle_id}}">
+      
+      <div class="card h-100 puzzle-card border-0 shadow-sm {{#if this.in_collection}}is-owned{{/if}}">
         
-                {{#if this.image_box_front}}
-                    <div class="puzzle-img">
-                        <img src="{{../s3Base}}{{this.image_box_front}}.png" alt="{{this.puzzle_name}}" loading="lazy">
-                    </div>
-                {{else}}
-                    <div class="no-image-placeholder">
-                        <i class="fas fa-camera-retro"></i>
-                        <small>Image Pending</small>
-                    </div>
-                {{/if}}
-
-            <div class="caption">
-                <h4 class="text-primary"><i class="fas fa-hashtag"></i> {{this.puzzle_id}}</h4>
-                <p class="puzzle-name-text" title="{{this.puzzle_name}}">{{this.puzzle_name}}</p>
-                <p>
-                    <span class="badge">{{this.year}}</span>
-                    <span class="badge">{{this.piece_count}} pcs</span>
-                </p>
-                
-                <hr class="card-divider">
-
-                {{#if this.in_collection}}
-                    <div class="status-area">
-                        <div class="status-row">
-                            <span class="label label-success"><i class="fas fa-check"></i> Owned</span>
-                            {{#if this.is_complete}}
-                                <span class="label label-primary"><i class="fas fa-star"></i> Complete</span>
-                            {{else}}
-                                <span class="label label-warning"><i class="fas fa-puzzle-piece"></i> Unsolved</span>
-                            {{/if}}
-                        </div>
-                        
-                        {{#if this.how_acquired}}
-                            <div class="acquisition-text">
-                                <small><strong>Source:</strong> {{this.how_acquired}}</small>
-                            </div>
-                        {{/if}}
-                    </div>
-                {{else}}
-                    <div class="status-area missing">
-                        <small class="text-muted">Not in collection</small>
-                    </div>
-                {{/if}}
+        <div class="puzzle-img-wrapper">
+          {{#if this.image_box_front}}
+            <img src="{{../s3Base}}{{this.image_box_front}}.png" alt="{{this.puzzle_name}}" loading="lazy" class="card-img-top">
+          {{else}}
+            <div class="no-image-placeholder">
+              <i class="fas fa-camera-retro fa-2x mb-2"></i>
+              <span>Image Coming Soon</span>
             </div>
+          {{/if}}
+          
+          {{#if this.in_collection}}
+            <div class="owned-tag">
+              <i class="fas fa-home"></i> In Collection
+            </div>
+          {{/if}}
         </div>
+
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="text-primary small fw-bold">#{{this.puzzle_id}}</span>
+            <span class="badge rounded-pill bg-light text-dark border">{{this.year}}</span>
+          </div>
+          
+          <h5 class="card-title h6 fw-bold mb-3" title="{{this.puzzle_name}}">
+            {{this.puzzle_name}}
+          </h5>
+
+          <div class="puzzle-specs d-flex gap-2">
+            <span class="badge bg-secondary-subtle text-secondary border-0">{{this.piece_count}} pcs</span>
+            {{#if this.is_complete}}
+              <span class="badge bg-primary-subtle text-primary border-0"><i class="fas fa-star"></i> Complete</span>
+            {{/if}}
+          </div>
+        </div>
+
+        {{#if this.how_acquired}}
+        <div class="card-footer bg-light border-0 py-2">
+          <small class="text-muted"><i class="fas fa-shopping-cart me-1"></i> {{this.how_acquired}}</small>
+        </div>
+        {{/if}}
+      </div>
     </div>
     {{/each}}
-</div>
+  </div>
+</section>

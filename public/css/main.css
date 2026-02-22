@@ -1,0 +1,376 @@
+/* CSS to handle the shared header & footer elements */
+/* Ensure content doesn't hit the screen edges on tiny mobile devices */
+.container {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #ffffff;
+    font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+	color: #777;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* Connect Dropdown Styling */
+.dropdown-item i {
+    margin-right: 8px;
+    color: #555;
+}
+
+.dropdown-menu {
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 10px 0;
+}
+
+h3 {
+	font-size: 30px;
+    color: #777;
+}
+
+.page-navbar, footer.bg-light {
+	background-color: #68b4ff !important;
+}
+
+.page-navbar .navbar-brand {
+	color: #ffffff;
+    font-size: 30px;
+}
+.page-navbar .navbar-toggle .icon-bar {
+    background-color: #fff;
+}
+.page-navbar .navbar-toggle:focus, .page-navbar .navbar-toggle:hover {
+    background-color: #68b5ff;
+}
+
+.navbar-settings {
+    margin: 0;
+}
+.navbar .nav>li>a {
+  font-size: 16px;
+ }
+ .page-navbar .navbar-nav>li>a {
+    color: #ffffff;
+}
+.navbar {
+    border-radius: 0px;
+}
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #337ab7;
+}
+a {
+	color: #777777;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+footer {
+	background-color: #68b4ff !important;
+}
+.footer-content {
+	color: #ffffff !important;
+	text-align: center;
+}
+
+/* --- Page: About Me --- */
+
+.page-about .panel {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.page-about .about-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Stacked on mobile */
+    gap: 30px;
+    align-items: start;
+}
+
+/* Tablet and Desktop: Side-by-side */
+@media (min-width: 768px) {
+    .page-about .about-grid {
+        grid-template-columns: 35% 1fr; /* Image takes 35%, text takes the rest */
+    }
+}
+
+.page-about .profile-img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.page-about .profile-caption {
+    font-size: 0.85rem;
+    color: #666;
+    font-style: italic;
+    margin-top: 8px;
+    text-align: center;
+}
+
+.page-about .about-content {
+    line-height: 1.7;
+    font-size: 1.05rem;
+    color: #333;
+}
+
+.page-about .section-divider {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+    margin: 40px 0;
+}
+
+/* --- Page: Portfolio --- */
+
+/* Thumbnail Grid */
+.page-portfolio .project-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.page-portfolio .qap-item {
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.page-portfolio .qap-item:hover {
+    transform: translateY(-5px);
+}
+
+.page-portfolio .qap-img-wrapper {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 3px solid transparent;
+    transition: border-color 0.2s;
+    background: #eee;
+}
+
+.page-portfolio .qap-item:hover .qap-img-wrapper {
+    border-color: #0d6efd;
+}
+
+.page-portfolio .qap-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.page-portfolio .qap-label {
+    font-size: 0.8rem;
+    margin-top: 8px;
+    font-weight: 600;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Detail Card */
+.page-portfolio .portfolio-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.page-portfolio .detail-img {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    object-fit: cover;
+}
+
+.page-portfolio .project-title {
+    font-weight: 800;
+    color: #222;
+}
+
+/* Helper Class for JS toggling */
+.d-none { display: none !important; }
+
+/* --- Page: Blog --- */
+
+.page-blog .blog-headline {
+    color: #2c3e50;
+    font-weight: 700;
+    transition: color 0.2s ease;
+    margin-bottom: 0.25rem;
+}
+
+.page-blog .blog-headline:hover {
+    color: #0d6efd;
+}
+
+.page-blog .blog-meta {
+    font-family: 'Inter', sans-serif; /* Or your preferred sans-serif */
+    letter-spacing: 0.02em;
+}
+
+.page-blog .blog-image-wrapper {
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.page-blog .blog-post-card:hover .blog-image-wrapper {
+    transform: scale(1.02);
+}
+
+.page-blog .blog-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+.page-blog .blog-excerpt {
+    line-height: 1.8;
+    color: #4a4a4a;
+    font-size: 1.05rem;
+}
+
+.page-blog .blog-post-card {
+    padding-bottom: 3rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.page-blog .blog-post-card:last-child {
+    border-bottom: none;
+}
+
+/* Make sure images stack nicely on mobile */
+@media (max-width: 767px) {
+    .page-blog .blog-img {
+        height: 200px;
+        margin-bottom: 1rem;
+    }
+}
+
+/* --- Page: Blog Post (Single) --- */
+
+.page-blog-post .post-hero-image {
+    text-align: center; /* Centers the image if it's smaller than the container */
+    margin-bottom: 3rem;
+}
+
+.page-blog-post .post-hero-image img {
+    width: 100%;
+    max-width: 250px; /* As requested */
+    height: auto;
+    object-fit: cover;
+    border-radius: 12px;
+    /* Optional: adds a nice subtle frame to smaller images */
+    border: 1px solid rgba(0,0,0,0.05); 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* --- Page: Contact --- */
+
+.page-contact .contact-form {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+    border: 1px solid #f0f0f0;
+}
+
+.page-contact .form-control {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+}
+
+.page-contact .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+}
+
+/* Customizing the floating label color on focus */
+.page-contact .form-floating > .form-control:focus ~ label {
+    color: #0d6efd;
+}
+
+/* Ensure the form doesn't look weird on mobile */
+@media (max-width: 576px) {
+    .page-contact .contact-form {
+        padding: 1.5rem;
+        box-shadow: none;
+        border: none;
+    }
+}
+
+/* --- Page: Puzzles --- */
+
+.page-puzzles .puzzle-card {
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-radius: 12px;
+}
+
+.page-puzzles .puzzle-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.page-puzzles .puzzle-img-wrapper {
+    position: relative;
+    aspect-ratio: 4 / 3; /* Fixed ratio for all puzzle boxes */
+    background: #f8f9fa;
+    overflow: hidden;
+}
+
+.page-puzzles .puzzle-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.page-puzzles .no-image-placeholder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.page-puzzles .owned-tag {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(25, 135, 84, 0.9); /* Success Green with transparency */
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    backdrop-filter: blur(4px);
+}
+
+.page-puzzles .is-owned {
+    border: 1px solid rgba(25, 135, 84, 0.2);
+}
+
+.page-puzzles .card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 2.4em; /* Ensures title area is consistent */
+}

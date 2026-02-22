@@ -1,59 +1,45 @@
-<div class="col-sm-12 col-md-8">
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3>About Me</h3>
-        </div>
-        <div class="panel-body">
-          <div class='row'>
-            <div class="col-md-7 col-sm-12 profilePictureContainer">
-              <div>
-                <img class="profile" src="{{dynamicData.image}}" alt="Tom's profile image">
-              </div>
-              <div class="profileImageCaption">
-                {{{decodeSummernote dynamicData.caption}}}
-              </div>
-
+<section class="page-about">
+  <div class="col-sm-12 col-md-8 mx-auto">
+    
+    <div class="panel panel-default mb-5">
+      <div class="panel-heading">
+        <h3>About Me</h3>
+      </div>
+      <div class="panel-body">
+        <div class="about-grid">
+          <div class="about-media">
+            <img class="profile-img" src="{{dynamicData.image}}" alt="Tom's profile image">
+            <div class="profile-caption">
+              {{{decodeSummernote dynamicData.caption}}}
             </div>
-            <div class="bodyText">
-              <p>
-                {{{decodeSummernote dynamicData.bio}}}
-              </p>
-            </div>
+          </div>
+          <div class="about-content">
+            {{{decodeSummernote dynamicData.bio}}}
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <hr>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3>About This Page</h3>
-        </div>
-        <div class="panel-body">
-          <div class='row'>
-            <div class="col-md-7 col-sm-12 profilePictureContainer">
-              <div>
-                <img class="profile" src="{{dynamicData.aboutpageimage}}" alt="About the site image">
-              </div>
-              <div class="profileImageCaption">
-                {{{decodeSummernote dynamicData.aboutpagecaption}}}
-              </div>
 
+    <hr class="section-divider">
+
+    <div class="panel panel-default mt-5">
+      <div class="panel-heading">
+        <h3>About This Page</h3>
+      </div>
+      <div class="panel-body">
+        <div class="about-grid">
+          <div class="about-media">
+            <img class="profile-img" src="{{dynamicData.aboutpageimage}}" alt="About the site image">
+            <div class="profile-caption">
+              {{{decodeSummernote dynamicData.aboutpagecaption}}}
             </div>
-            <div class="bodyText">
-              <p>
-                {{{decodeSummernote dynamicData.aboutpagetext}}}
-              </p>
-            </div>
+          </div>
+          <div class="about-content">
+            {{{decodeSummernote dynamicData.aboutpagetext}}}
           </div>
         </div>
       </div>
     </div>
+
   </div>
-</div>
+</section>

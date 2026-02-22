@@ -121,7 +121,8 @@ router.get('/index', (req, res) => {
 
       res.render('index', { 
         dynamicData: payload.dynamicData, 
-        layout: 'main-social' 
+        // layout: 'main-social' 
+        layout: 'main' 
       });
     });
 });
@@ -164,23 +165,23 @@ router.get("/puzzles", (req, res) => {
   });
 });
 
-router.get('/contact', (req, res) => {
-  const payload = {
-    dynamicData: {
-      messageSent: false,
-    },
-  };
+// router.get('/contact', (req, res) => {
+//   const payload = {
+//     dynamicData: {
+//       messageSent: false,
+//     },
+//   };
 
-  checkAdminStatus(req, payload);
+//   checkAdminStatus(req, payload);
 
-  // Add messageSent credential to the created object
-  if (req.session.messageSent) {
-    payload.dynamicData.messageSent = true;
-    req.session.messageSent = false;
-  }
+//   // Add messageSent credential to the created object
+//   if (req.session.messageSent) {
+//     payload.dynamicData.messageSent = true;
+//     req.session.messageSent = false;
+//   }
 
-  res.render('contact', { dynamicData: payload.dynamicData, layout: 'main' });
-});
+//   res.render('contact', { dynamicData: payload.dynamicData, layout: 'main' });
+// });
 
 // Registration page. Disabled since no more registrations are required
 router.get('/register', (req, res) => {
@@ -323,31 +324,31 @@ router.post('/newportfolio', isLoggedIn, multerUpload.single('portfoliopicture')
   }
 });
 
-router.post('/contact/message', (req, res) => {
-  const currentDate = new Date();
+// router.post('/contact/message', (req, res) => {
+//   const currentDate = new Date();
 
-  // Use Sequelize to push to DB
-  models.Messages.create({
-    name: req.body.fname,
-    email: req.body.email,
-    message: req.body.message,
-    createdAt: currentDate,
-    updatedAt: currentDate,
-  }).then(() => {
-    // Send email to alert the admin that a message was recieved
-    const mailOptions = {
-      from: 'contact@tomcariello.com', // sender address
-      to: 'tomcariello@gmail.com', // list of receivers
-      subject: 'Someone left you a message', // Subject line
-      text: `Name: ${req.body.fname} \n Message: ${req.body.message}`,
-    };
+//   // Use Sequelize to push to DB
+//   models.Messages.create({
+//     name: req.body.fname,
+//     email: req.body.email,
+//     message: req.body.message,
+//     createdAt: currentDate,
+//     updatedAt: currentDate,
+//   }).then(() => {
+//     // Send email to alert the admin that a message was recieved
+//     const mailOptions = {
+//       from: 'contact@tomcariello.com', // sender address
+//       to: 'tomcariello@gmail.com', // list of receivers
+//       subject: 'Someone left you a message', // Subject line
+//       text: `Name: ${req.body.fname} \n Message: ${req.body.message}`,
+//     };
 
-    sendAutomaticEmail(mailOptions);
-    req.session.messageSent = true;
+//     sendAutomaticEmail(mailOptions);
+//     req.session.messageSent = true;
 
-    res.redirect('../contact');
-  });
-});
+//     res.redirect('../contact');
+//   });
+// });
 
 // Process portfolio update requests
 router.post('/updateportfolio/:portfolioId', isLoggedIn, multerUpload.single('portfoliopicture'), async (req, res) => {
@@ -440,31 +441,31 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, async (req, res) => {
   }
 });
 
-router.post('/contact/message', (req, res) => {
-  const currentDate = new Date();
+// router.post('/contact/message', (req, res) => {
+//   const currentDate = new Date();
 
-  // Use Sequelize to push to DB
-  models.Messages.create({
-    name: req.body.fname,
-    email: req.body.email,
-    message: req.body.message,
-    createdAt: currentDate,
-    updatedAt: currentDate,
-  }).then(() => {
-    // Send email to alert the admin that a message was recieved
-    const mailOptions = {
-      from: 'contact@tomcariello.com', // sender address
-      to: 'tomcariello@gmail.com', // list of receivers
-      subject: 'Someone left you a message', // Subject line
-      text: `Name: ${req.body.fname} \n Message: ${req.body.message}`,
-    };
+//   // Use Sequelize to push to DB
+//   models.Messages.create({
+//     name: req.body.fname,
+//     email: req.body.email,
+//     message: req.body.message,
+//     createdAt: currentDate,
+//     updatedAt: currentDate,
+//   }).then(() => {
+//     // Send email to alert the admin that a message was recieved
+//     const mailOptions = {
+//       from: 'contact@tomcariello.com', // sender address
+//       to: 'tomcariello@gmail.com', // list of receivers
+//       subject: 'Someone left you a message', // Subject line
+//       text: `Name: ${req.body.fname} \n Message: ${req.body.message}`,
+//     };
 
-    sendAutomaticEmail(mailOptions);
-    req.session.messageSent = true;
+//     sendAutomaticEmail(mailOptions);
+//     req.session.messageSent = true;
 
-    res.redirect('../contact');
-  });
-});
+//     res.redirect('../contact');
+//   });
+// });
 
 router.isLoggedIn = isLoggedIn;
 router.checkAdminStatus = checkAdminStatus;

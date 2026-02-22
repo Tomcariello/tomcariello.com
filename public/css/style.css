@@ -78,29 +78,6 @@ h3 {
 	background-size: 100%;
 	padding: 0px;
 }
-a {
-	color: #777777;
-	text-decoration: none;
-}
-
-a:hover {
-	text-decoration: underline;
-}
-
-.page-navbar {
-	background-color: #68b4ff !important;
-}
-
-.page-navbar .navbar-brand {
-	color: #ffffff;
-    font-size: 30px;
-}
-.page-navbar .navbar-toggle .icon-bar {
-    background-color: #fff;
-}
-.page-navbar .navbar-toggle:focus, .page-navbar .navbar-toggle:hover {
-    background-color: #68b5ff;
-}
 
 /*Profile Image properties*/
 .profilePictureContainer {
@@ -261,30 +238,9 @@ button:hover {
     text-align: center;
     font-style: italic;
 }
-.navbar-settings {
-    margin: 0;
-}
-.navbar .nav>li>a {
-  font-size: 16px;
- }
- .page-navbar .navbar-nav>li>a {
-    color: #ffffff;
-}
- .navbar {
-    border-radius: 0px;
-  }
-
 .panel-heading {
 	padding: 1px 15px;
 }
-footer {
-	background-color: #68b4ff !important;
-}
-.footer-content {
-	color: #ffffff !important;
-	text-align: center;
-}
-
 .projecttitle {
 	font-size: 42px;
 	text-align: center;

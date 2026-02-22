@@ -72,22 +72,37 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Portfolio Navigation
-  document.querySelectorAll('.qap-nav').forEach(navItem => {
-    navItem.addEventListener('click', (e) => {
-      const clickedId = e.currentTarget.id;
+  // document.querySelectorAll('.qap-nav').forEach(navItem => {
+  //   navItem.addEventListener('click', (e) => {
+  //     const clickedId = e.currentTarget.id;
 
-      // Hide all sections, then show the specific one
-      document.querySelectorAll('.portfolio-section').forEach(section => {
-        section.classList.remove('fade-in');
-        section.style.display = 'none';
-      });
+  //     // Hide all sections, then show the specific one
+  //     document.querySelectorAll('.portfolio-section').forEach(section => {
+  //       section.classList.remove('fade-in');
+  //       section.style.display = 'none';
+  //     });
 
-      const targetSection = document.querySelector(`#main-${clickedId}`);
-      if (targetSection) {
-        targetSection.classList.add('fade-in');
-        targetSection.style.display = 'inherit';
-      }
-    });
+  //     const targetSection = document.querySelector(`#main-${clickedId}`);
+  //     if (targetSection) {
+  //       targetSection.classList.add('fade-in');
+  //       targetSection.style.display = 'inherit';
+  //     }
+  //   });
+  // });
+
+  $('.qap-item').on('click', function() {
+      const projectId = $(this).attr('id');
+      
+      // 1. Hide the placeholder and all other cards
+      $('.portfolio-card').addClass('d-none');
+      
+      // 2. Show the selected card
+      $(`#main-${projectId}`).removeClass('d-none');
+      
+      // 3. Optional: Smooth scroll down to the card
+      $('html, body').animate({
+          scrollTop: $(".portfolio-display-area").offset().top - 100
+      }, 400);
   });
 
   // Footer

@@ -25,7 +25,8 @@ router.get('/blog', async (req, res) => {
 
     res.render('blog', { 
       dynamicData: payload.dynamicData, 
-      layout: 'main-social' 
+      // layout: 'main-social' 
+      layout: 'main' 
     });
 
   } catch (error) {
@@ -59,9 +60,9 @@ router.get('/blogpost', (req, res) => {
               blogComments = JSON.parse(blogComments);
               payload.dynamicData.Comments = blogComments;
 
-              res.render('blogpost', { dynamicData: payload.dynamicData, layout: 'main-social' });
+              res.render('blogpost', { dynamicData: payload.dynamicData, layout: 'main' });
             }).catch(() => {
-              res.render('blogpost', { dynamicData: payload.dynamicData, layout: 'main-social' });
+              res.render('blogpost', { dynamicData: payload.dynamicData, layout: 'main' });
             });
         }
       });

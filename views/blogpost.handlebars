@@ -1,131 +1,42 @@
-<div class="col-sm-12 col-md-8">
-  {{!-- Blog Post --}}
-  <div class="row">
-      <div class="panel panel-default">
-          <div class="panel-heading">
-            <div class="row">
-              <div class="col-sm-9">
-                <h3>{{{decodeSummernote dynamicData.headline}}}</h3>
-              </div>
-              <div class="col-sm-3">
-                <div class="row">
-                  <div class="col-sm-12 blogauthor">
-                      {{dynamicData.author}}<br/>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-12 blogdate">
-                      {{formatdate dynamicData.createdAt}}<br/>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="blogimagecontainer col-sm-12">
-              <img class="blogimage" src="{{dynamicData.blogimage}}">
-          </div>
-          <div class="panel-body">
-              <div class='row'>
-                  <div class="col-sm-12">
-                      <p>
-                          {{{decodeSummernote dynamicData.blogtext}}}
-                      </p>
-                  </div>
-              </div>
-          </div>    
+<section class="page-blog-post">
+  <div class="col-sm-12 col-md-10 col-lg-8 mx-auto">
+    
+    <header class="post-header text-center mb-5">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center">
+          <li class="breadcrumb-item"><a href="/blog">Blog</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Post</li>
+        </ol>
+      </nav>
+      
+      <h1 class="display-4 post-headline mb-3">
+        {{{decodeSummernote dynamicData.headline}}}
+      </h1>
+
+      <div class="post-meta text-muted">
+        <span class="author"><i class="fas fa-user-circle"></i> {{dynamicData.author}}</span>
+        <span class="mx-3">•</span>
+        <span class="date"><i class="far fa-calendar-alt"></i> {{formatdate dynamicData.createdAt}}</span>
       </div>
+    </header>
+
+    {{#if dynamicData.blogimage}}
+    <figure class="post-hero-image mb-5">
+      <img src="{{dynamicData.blogimage}}" class="img-fluid rounded-4 shadow-sm" alt="{{dynamicData.headline}}">
+    </figure>
+    {{/if}}
+
+    <article class="post-body">
+      <div class="content-wrapper">
+        {{{decodeSummernote dynamicData.blogtext}}}
+      </div>
+
+      <div class="mt-5">
+        <a href="/blog" class="back-to-feed-link">
+          <i class="fas fa-arrow-left me-2"></i>Back to Blog Feed
+        </a>
+      </div>
+    </article>
+
   </div>
-  {{!-- Comment Section removed due to bots
-  <div class="row">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-          <h3>Comments</h3>
-      </div>
-      <div class="panel-body">
-        Display previous comments}}
-        dynamicData.Comme
-          {{#each dynamicData.Comments}}
-            <div class='row commentrow'>
-              <div class="col-sm-3 commentUser">
-                {{this.commentauthor}}
-                <Br/>                    
-                {{formatdate this.createdAt}}
-              </div>
-              
-              <div class="col-sm-9">
-                <div class='row'>
-                  <div class="col-sm-12 commentheadline">
-                    {{{this.commentheadline}}}
-                  </div>
-                </div>
-                <div class='row'>
-                  <div class="col-sm-12 commenttext">
-                    {{{this.commenttext}}}
-                  </div>
-                </div>
-              </div>
-            </div>
-          {{/each}}
-        {{else}}
-          <div class='row commentrow'>
-            <div class="col-sm-9 commentheadline">
-              No comments yet!
-            </div>
-          </div> 
-        {{/if}}
-      </div>
-    </div>ments
-  Post New Comrow">
-      <div class="
-        <div class="panel-body">
-          <div class="panel-heading">
-            <h3>Add A New Comment</h3>
-          </div>
-          <div class="panel-body">
-            <form enctype="form-data" action="postblogcomment/{{dynamicData.id}}" onsubmit="return validateCommentForm()" method="POST">
-              <div class="row">
-                <div class="col-sm-2">
-                  <p>Name:</p>
-                </div>m-8">
-                lass="col-s
-                  <input type="text" id="BlogCommentName" name="BlogCommentName" placeholder="John Smith" required/> 
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-sm-2">
-                  <p>Headline:</p>
-                </div>m-8">
-                lass="col-s
-                  <input type="text" id="BlogCommentHeadline" name="BlogCommentHeadline" placeholder="Comment Headline" required/> 
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-10">
-                  <textarea rows="4" cols="50" id="BlogCommentText" name="BlogCommentText" maxlength="500" required></textarea>
-                  <div id="charCount"></div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-10">
-                  <button class="blueButton" type="submit" id="update">Submit</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-  </div> --}}
-</div>
-
-  <script>
-    //Track the comment being typed and inform the user how many characters remain.
-    /* $( document ).ready(function() {
-      $("#BlogCommentText").keyup(function() {
-        var max = 500;
-        var currentCharCount = $("#BlogCommentText").val().length;
-
-        $("#charCount").html( max - currentCharCount + " Characters remaining.");
-      })
-    }) */
-  </script>
+</section>
