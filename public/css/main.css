@@ -406,30 +406,41 @@ footer {
     margin-right: 0;
 }
 
-/* 3. Mobile-Specific Adjustments (Under 768px) */
-@media (max-width: 767.98px) {
-    .page-puzzles .display-6 {
-        font-size: 1.5rem; /* Shrink header slightly for small screens */
+/* Tighten the filter toolbar for real-world mobile screens */
+@media (max-width: 576px) {
+    .page-puzzles .filter-toolbar {
+        padding: 1rem !important;
+        overflow: hidden; /* Ensure nothing pokes out */
     }
 
-    /* Force filter inputs to stack or stay tidy */
+    /* Force columns to stack and remove the 'auto' width logic */
     .page-puzzles .filter-toolbar .col-auto {
-        width: 100%; 
-        margin-bottom: 10px;
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        margin-bottom: 1rem;
     }
 
-    .page-puzzles .input-group {
-        width: 100% !important; /* Ensure search bar takes full width */
+    /* Make the Year inputs more flexible */
+    .page-puzzles .filter-toolbar .input-group {
+        width: 100% !important;
     }
 
-    /* Prevent the Modal from being too cramped */
-    .page-puzzles .modal-dialog {
-        margin: 0.5rem;
+    .page-puzzles .filter-toolbar input[type="number"] {
+        width: 1% !important; /* Let Bootstrap's flex take over */
+        flex: 1 1 auto !important;
     }
-    
-    .page-puzzles .carousel-item img {
-        height: 250px !important; /* Shorter carousel on mobile */
+
+    /* Align the switch better on mobile */
+    .page-puzzles .form-switch {
+        padding-left: 2.5em;
+        margin-top: 5px;
     }
+}
+
+/* Specific fix for the 'row' negative margin bleed */
+.page-puzzles #puzzleFilterForm {
+    margin-left: 0;
+    margin-right: 0;
 }
 
 /* 4. Card Polish */
