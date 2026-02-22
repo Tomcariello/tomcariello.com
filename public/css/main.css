@@ -385,6 +385,77 @@ footer {
     border: 2px solid rgba(13, 110, 253, 0.3) !important;
 }
 
+/* Specific Scoping for the Puzzle Frontend */
+.page-puzzles {
+    overflow-x: hidden; /* Hard stop for any horizontal bleed */
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* 1. Fix the Filter Toolbar Bleed */
+.page-puzzles .filter-toolbar {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 15px !important;
+}
+
+/* 2. Grid & Row Cleanup */
+.page-puzzles .row {
+    --bs-gutter-x: 1rem; /* Tightens the horizontal gap between cards on mobile */
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* 3. Mobile-Specific Adjustments (Under 768px) */
+@media (max-width: 767.98px) {
+    .page-puzzles .display-6 {
+        font-size: 1.5rem; /* Shrink header slightly for small screens */
+    }
+
+    /* Force filter inputs to stack or stay tidy */
+    .page-puzzles .filter-toolbar .col-auto {
+        width: 100%; 
+        margin-bottom: 10px;
+    }
+
+    .page-puzzles .input-group {
+        width: 100% !important; /* Ensure search bar takes full width */
+    }
+
+    /* Prevent the Modal from being too cramped */
+    .page-puzzles .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .page-puzzles .carousel-item img {
+        height: 250px !important; /* Shorter carousel on mobile */
+    }
+}
+
+/* 4. Card Polish */
+.page-puzzles .puzzle-img-wrapper {
+    position: relative;
+    aspect-ratio: 4 / 3; /* Keeps all cards uniform regardless of image shape */
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.page-puzzles .puzzle-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Prevents long box images from stretching the card */
+}
+
+.page-puzzles .no-image-placeholder {
+    color: #dee2e6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .carousel-item img {
   height: 400px;
   object-fit: contain;
