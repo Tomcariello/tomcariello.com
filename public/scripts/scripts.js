@@ -52,12 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Modal listener
-  document.querySelector('#addnewproject')?.addEventListener('click', () => {
-    // Note: If you're using Bootstrap's JS for the modal, 
-    // it likely still wants the jQuery syntax unless you update to Bootstrap 5+
-    $('#myModal').modal(); 
-  });
-
+  const addBtn = document.querySelector('#addnewproject');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      // Explicitly tell Bootstrap to 'show' the modal
+      // We use jQuery here because Bootstrap 3/4 JS is built on it
+      $('#myModal').modal('show'); 
+    });
+  }
   // Social Media Toggle
   document.querySelector('#socialMediaParent')?.addEventListener('click', () => {
     const links = document.querySelector('#socialMediaLinks');

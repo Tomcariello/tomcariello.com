@@ -1,109 +1,78 @@
-var connection = require('../config/connection.js');
-var LocalStrategy = require('passport-local').Strategy;
-var bcrypt = require('bcrypt');
+const LocalStrategy = require('passport-local').Strategy;
+const db = require('../models'); // This loads your modernized models/index.js
 
+module.exports = (passport) => {
+  // 1. Serialize: Store the user ID in the session
+  passport.serializeUser((user, done) => {
+    done(null, user.id);
+  });
 
-// load up the user model
-var User = require('../models/userschema.js');
+  // 2. Deserialize: Look up the user by ID when they return
+  passport.deserializeUser(async (id, done) => {
+    try {
+      const user = await db.users.findByPk(id);
+      done(null, user);
+    } catch (err) {
+      done(err, null);
+    }
+  });
 
-// expose this function to our app using module.exports
-module.exports = function(passport) {
+  // =======================
+  // == Register New User ==
+  // =======================
+  passport.use('local-signup', new LocalStrategy({
+    usernameField: 'email',
+    passReqToCallback: true 
+  }, async (req, email, password, done) => {
+    try {
+      // Check if email already exists using Sequelize
+      const existingUser = await db.users.findOne({ where: { email: email } });
+      
+      if (existingUser) {
+        return done(null, false, { message: 'That email is already taken.' });
+      }
 
-    // passport needs ability to serialize and unserialize users out of session
+      // Create new user (Sequelize handles the INSERT and timestamps)
+      const newUser = await db.users.create({
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        email: email,
+        password: db.users.generateHash(password) // Using our model's helper
+      });
 
-    // used to serialize the user for the session
-    passport.serializeUser(function(user, done) {
-        done(null, user.id);
-    });
+      return done(null, newUser);
+    } catch (err) {
+      return done(err);
+    }
+  }));
 
-    // used to deserialize the user
-    passport.deserializeUser(function(id, done) {
-        connection.query("SELECT * FROM users WHERE id = ? ",[id], function(err, rows){
-            done(err, rows[0]);
-        });
-    });
-    
+  // =======================
+  // == Login User =========
+  // =======================
+  passport.use('local-login', new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password',
+    passReqToCallback: true
+  }, async (req, email, password, done) => {
+    try {
+      const user = await db.users.findOne({ where: { email: email } });
 
-    //=======================
-    //== Register New User ==
-    //=======================
-    passport.use('local-signup', new LocalStrategy({
-        usernameField : 'email',
-        passReqToCallback : true // allows us to pass back the entire request to the callback
-    },
+      if (!user) {
+        console.log('User not found');
+        return done(null, false);
+      }
 
-    function(req, email, password, done) {
+      // Using the instance method we added to the User model prototype
+      if (!user.validatePassword(password)) {
+        console.log('Invalid Password');
+        return done(null, false);
+      }
 
-        //Create MySQL query string using the email provided
-        var emailQuery = 'SELECT * FROM users WHERE email = "' + email + '"';
-
-        //connect to MySQL and search for the username
-        connection.query(emailQuery, function(err, rows) {
-
-            if (err)
-                return done(err);
-            if (rows.length) {
-                return done(null, false);
-            } else { // if there is no user with that username create the user
-
-                var newUserMysql = {
-                    firstname: req.body.firstname,
-                    lastname: req.body.lastname,
-                    email: email,
-                    password: bcrypt.hashSync(password, bcrypt.genSaltSync(9), null),  // use the generateHash function in our user model
-                    //createdAt: CURDATE(), -- Not working
-                    //updatedAt: CURDATE() -- Not working
-                 };
-
-                //Update string to populate registration information
-                var insertQuery = "INSERT INTO users (firstname, lastname, email, password) values (?,?,?,?)";
-
-                //Connect 
-                connection.query(insertQuery,[newUserMysql.firstname, newUserMysql.lastname, newUserMysql.email, newUserMysql.password],function(err, rows) {
-                    newUserMysql.id = rows.insertId;
-
-                    return done(null, newUserMysql);
-                });
-            }
-        });
-    }))
-
-    //=======================
-    //== Login User =========
-    //=======================
-
-    passport.use(
-        'local-login',
-        new LocalStrategy({
-            // by default, local strategy uses username and password, we will override with email
-            usernameField : 'email',
-            passwordField : 'password',
-            passReqToCallback : true // allows us to pass back the entire request to the callback
-        },
-        function(req, email, password, done) { // callback with email and password from our form
-
-            var emailQuery = 'SELECT * FROM users WHERE email = "' + email + '"';
-
-            connection.query(emailQuery, function(err, rows){
-                if (err) {
-                    console.log('Error recieved', err);
-                    return done(err);
-                }
-                if (!rows.length) {
-                    console.log('User not found');
-                    return done(null, false); //User not found
-                }
-
-                // if the user is found but the password is wrong
-                if (!bcrypt.compareSync(password, rows[0].password)) {
-                    console.log('Invalid Password');
-                    return done(null, false); 
-                }
-
-                // all is well, return successful user
-                console.log('User found, proceed!');
-                return done(null, rows[0]);
-            });
-        })
-    );
+      console.log('User found, proceed!');
+      return done(null, user);
+    } catch (err) {
+      console.log('Login Error:', err);
+      return done(err);
+    }
+  }));
 };

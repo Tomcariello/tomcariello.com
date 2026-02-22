@@ -104,14 +104,26 @@
         </div>
         
         <div class="modal-body">
-          <form action="newportfolio" method="POST">
-            <p>ProjectName:</p><input type="text" id="NewProjectName" name="NewProjectName"/>
-            <p>ProjectBlurb:</p><input type="text" id="NewProjectBlurb" name="NewProjectBlurb"/> 
-            <p>ProjectURL:</p><input type="text" id="NewProjectURL" name="NewProjectURL"/> 
-            <p>GithubURL:</p><input type="text" id="NewGithubURL" name="NewGithubURL"/> 
-            <p>ProjectIMG:</p><input type="text" id="NewProjectIMG" name="NewProjectIMG"/> 
-            <p><button type="submit" class="blueButton" id="update">Submit</button></p>
-            <p><button type="cancel" class="redButton" id="cancel" data-dismiss="modal">Cancel</button></p>
+          <form action="newportfolio" method="POST" enctype="multipart/form-data">
+            <p>Project Name:</p>
+            <input type="text" id="NewProjectName" name="NewProjectName" required/>
+            
+            <p>Project Blurb:</p>
+            <input type="text" id="NewProjectBlurb" name="NewProjectBlurb"/> 
+            
+            <p>Project URL:</p>
+            <input type="url" id="NewProjectURL" name="NewProjectURL"/> 
+            
+            <p>Github URL:</p>
+            <input type="url" id="NewGithubURL" name="NewGithubURL"/> 
+            
+            <p>Project Image:</p>
+            <input type="file" name="portfoliopicture" id="NewProjectIMG" required/> 
+            
+            <p>
+              <button type="submit" class="blueButton" id="update">Submit</button>
+              <button type="button" class="redButton" id="cancel" data-dismiss="modal">Cancel</button>
+            </p>
           </form>
         </div>
       </div>

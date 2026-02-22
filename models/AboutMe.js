@@ -1,18 +1,17 @@
 'use strict';
-module.exports = function(sequelize, DataTypes) {
-  var AboutMe = sequelize.define('AboutMe', {
-    bio: DataTypes.STRING,
+
+module.exports = (sequelize, DataTypes) => {
+  const AboutMe = sequelize.define('AboutMe', {
+    bio: DataTypes.TEXT,
     caption: DataTypes.STRING,
     image: DataTypes.STRING,
+    
     aboutpageimage: DataTypes.STRING,
     aboutpagecaption: DataTypes.STRING,
-    aboutpagetext: DataTypes.STRING
+    aboutpagetext: DataTypes.TEXT
   }, {
-    classMethods: {
-      associate: function(models) {
-      }
-    },
-  freezeTableName: true
+    freezeTableName: true
   });
+
   return AboutMe;
 };

@@ -1,7 +1,8 @@
 const express = require('express');
-const models = require('../models/index.js');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
+const models = require('../models/index.js');
 const mainRouter = require('./route_controller');
 
 const isLoggedIn = mainRouter.isLoggedIn;
@@ -9,7 +10,7 @@ const checkAdminStatus = mainRouter.checkAdminStatus;
 const uploadToS3 = mainRouter.uploadToS3;
 
 const router = express.Router();
-const upload = multer({ dest: path.join(__dirname, '/public/images/') });
+const multerUpload = multer({ dest: path.join(__dirname, '/public/images/') });
 
 router.get('/blog', (req, res) => {
   models.Blogs.findAll({ order: [['createdAt', 'DESC']] })
@@ -232,102 +233,79 @@ router.get('/deletecomment/:commentId', isLoggedIn, async (req, res) => {
 // *************************************
 
 // Process new Blog requests
-router.post('/newblog', upload.single('blogpicture'), isLoggedIn, (req, res) => {
-  const currentDate = new Date();
+router.post('/newblog', isLoggedIn, multerUpload.single('blogpicture'), async (req, res) => {
+  try {
+    const currentDate = new Date();
+    let blogImagePath = null;
 
-  // Check if any image(s) were uploaded
-  if (typeof req.file !== 'undefined') {
-    // Process file being uploaded
-    const fileName = req.file.originalname;
-    const fileType = req.file.mimetype;
-    const stream = fs.createReadStream(req.file.path); // Create "stream" of the file
+    if (req.file) {
+      blogImagePath = await uploadToS3(
+        req.file.originalname, 
+        req.file.path, 
+        req.file.mimetype
+      );
+    }
 
-    uploadToS3(fileName, stream, fileType)
-      .then((blogImagePath) => {
-        // Use Sequelize to push to DB
-        models.Blogs.create({
-          headline: req.body.NewBlogHeadline,
-          blogtext: req.body.NewBlogtext,
-          blogimage: blogImagePath,
-          imagecaption: req.body.NewImageCaption,
-          author: req.body.NewBlogAuthor,
-          createdAt: currentDate,
-          updatedAt: currentDate,
-        }).then(() => {
-          res.redirect('../blogmanagement');
-        })
-          .catch((err) => {
-            // print the error details
-            console.log(err);
-          });
-      });
-  } else { // no image to upload
-    models.Blogs.create({
+    await models.Blogs.create({
       headline: req.body.NewBlogHeadline,
       blogtext: req.body.NewBlogtext,
+      blogimage: blogImagePath,
       imagecaption: req.body.NewImageCaption,
       author: req.body.NewBlogAuthor,
       createdAt: currentDate,
       updatedAt: currentDate,
-    }).then(() => {
-      res.redirect('../blogmanagement');
-    })
-      .catch((err) => {
-        // print the error details
-        console.log(err);
-      });
+    });
+
+    res.redirect('../blogmanagement');
+
+  } catch (err) {
+    console.error("Error in /newblog route:", err);
+    res.status(500).send("Something went wrong with the blog upload.");
   }
 });
 
 // Process Blog update requests
-router.post('/updateblog/:blogId', upload.single('blogpicture'), isLoggedIn, (req, res) => {
-  const currentDate = new Date();
+router.post('/updateblog/:blogId', isLoggedIn, multerUpload.single('blogpicture'), async (req, res) => {
+  try {
+    const { blogId } = req.params;
+    const currentDate = new Date();
 
-  // Check if any image(s) were uploaded
-  if (typeof req.file !== 'undefined') {
-    // Process file being uploaded
-    const fileName = req.file.originalname;
-    const fileType = req.file.mimetype;
-    const stream = fs.createReadStream(req.file.path); // Create "stream" of the file
+    // 1. Determine the image path
+    // Default to the existing image sent in the body (if no new file is uploaded)
+    let blogImagePath = req.body.existingBlogImage; 
 
-    uploadToS3(fileName, stream, fileType)
-      .then((blogImagePath) => {
-        models.Blogs.findOne({ where: { id: req.params.blogId } })
-          .then((id) => {
-            id.update({
-              headline: req.body.BlogHeadline,
-              blogtext: req.body.Blogtext,
-              blogimage: blogImagePath,
-              imagecaption: req.body.ImageCaption,
-              author: req.body.BlogAuthor,
-              updatedAt: currentDate,
-            }).then(() => {
-              res.redirect(`../editblog?id= ${req.params.blogId}`);
-            })
-              .catch((err) => {
-                // print the error details
-                console.log(err);
-              });
-          });
-      });
-  } else { // no image to upload
-    models.Blogs.findOne({ where: { id: req.params.blogId } })
-      .then((blog) => {
-        // Update the data
-        blog.update({
-          headline: req.body.BlogHeadline,
-          blogtext: req.body.Blogtext,
-          imagecaption: req.body.ImageCaption,
-          author: req.body.BlogAuthor,
-          updatedAt: currentDate,
-        }).then(() => {
-          res.redirect(`../editblog?id= ${req.params.blogId}`);
-        })
-          .catch((err) => {
-            // print the error details
-            console.log(err);
-          });
-      });
+    if (req.file) {
+      // Use our bulletproof S3 function (passing the path string, not a stream!)
+      blogImagePath = await uploadToS3(
+        req.file.originalname,
+        req.file.path,
+        req.file.mimetype
+      );
+    }
+
+    // 2. Find the blog entry
+    const blog = await models.Blogs.findOne({ where: { id: blogId } });
+
+    if (!blog) {
+      return res.status(404).send("Blog post not found.");
+    }
+
+    // 3. Update everything in one go
+    await blog.update({
+      headline: req.body.BlogHeadline,
+      blogtext: req.body.Blogtext,
+      blogimage: blogImagePath, // Will be the NEW S3 URL or the OLD one
+      imagecaption: req.body.ImageCaption,
+      author: req.body.BlogAuthor,
+      updatedAt: currentDate,
+    });
+
+    // 4. Redirect (Note: removed the extra space in the query string)
+    res.redirect(`../editblog?id=${blogId}`);
+
+  } catch (err) {
+    console.error("Error in /updateblog route:", err);
+    res.status(500).send("Update failed.");
   }
 });
 

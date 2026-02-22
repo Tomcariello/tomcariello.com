@@ -23,10 +23,16 @@ Technologies Used:
     - **Summernote**: WYSYWIG used on the backend for styling  
 
 To-Do:  
-    - npm outdated
+    - Finish processing `npm outdated` output  
+    - Css Cleanup pass
 	- Polish the Administration area visually  
 	- Add warning messages on misformed requests on login  
     - Re-activate contact form with a different email provider  
+    - Finish breaking routes into manageable file sizes (split auth as well)  
     - Make puzzle filters functional  
     - Create Admin puzzle page(s) to allow editing & image upload of each puzzle  
     - Create & Activate puzzle-detail page  
+    - Enable Handlebars linter  
+    - Organize AWS S3 image storage paths  
+    - deleteFromS3 Utility: Create a function to deletes file(s) from S3  
+    - Integrate deleteFromS3 for portfolio, blog, etc. deletion

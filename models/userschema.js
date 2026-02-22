@@ -1,27 +1,33 @@
-var bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
-'use strict';
-module.exports = function(sequelize,DataTypes) {
-  var users = sequelize.define('users', {
-    firstname: DataTypes.STRING,
-    lastname: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING
-  }, {
-    classMethods: {
-      associate: function(models) {
-      }
-  }
-});
+module.exports = (sequelize, DataTypes) => {
+  const Users = sequelize.define('users', {
+    firstname: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    lastname: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: { isEmail: true }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  });
 
-users.generateHash = function(password) {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(9), null);
-}
+  // Modern Sequelize way to add instance/class methods
+  Users.generateHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(9));
 
-users.validatePassword = function(userProvidedPassword, databasePassword) {
-    return bcrypt.compareSync(userProvidedPassword, databasePassword)
-}
+  Users.prototype.validatePassword = function (password) {
+    return bcrypt.compareSync(password, this.password);
+  };
 
-return users;
-
+  return Users;
 };

@@ -2,7 +2,9 @@ const express = require('express');
 const passport = require('passport');
 const multer = require('multer');
 const fs = require('fs');
-const aws = require('aws-sdk');
+// const aws = require('aws-sdk');
+const { Upload } = require("@aws-sdk/lib-storage");
+const { S3Client } = require('@aws-sdk/client-s3');
 const path = require('path');
 const models = require('../models');
 const transporter = require('../config/transporter.js');
@@ -10,7 +12,7 @@ const { Op } = require("sequelize");
 
 const router = express.Router();
 // const sequelizeConnection = models.sequelize;
-const upload = multer({ dest: path.join(__dirname, '/public/images/') });
+const multerUpload = multer({ dest: path.join(__dirname, '/public/images/') });
 
 // amazon S3 configuration
 const { S3_BUCKET } = process.env;
@@ -53,37 +55,46 @@ function checkAdminStatus(req, payload) {
   return payload;
 }
 
-// Function to upload an image to Amazon S3
-const uploadToS3 = (fileName, stream, fileType) =>
-  // Create a Promise to control the Async of the file upload
-  new Promise((resolve, reject) => {
-    // Instantiate Amazon S3 module
-    const s3 = new aws.S3();
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION || 'us-east-1',
+  followRegionRedirects: true,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+  endpoint: "https://s3.us-east-1.amazonaws.com", 
+  forcePathStyle: true, 
+  apiVersion: 'latest'
+});
 
-    // Create object to upload to S3
-    const params = {
-      Bucket: S3_BUCKET, // My S3 Bucket
-      Key: fileName, // This is what S3 will use to store the data uploaded.
-      Body: stream, // the actual *file* being uploaded
-      ContentType: fileType, // type of file being uploaded
-      ACL: 'public-read', // Set permissions so everyone can see the image
-      processData: false,
-      accessKeyId: S3AccessKeyId, // My Key
-      secretAccessKey: S3SecretAccessKey, // My Secret Key
-    };
+const uploadToS3 = async (fileName, filePath, fileType) => {
+  try {
+    const fileBuffer = fs.readFileSync(filePath);
 
-    // Upload the object
-    s3.upload(params, (err, data) => {
-      if (err) {
-        reject(Error('It broke'));
-      } else {
-        // Return the filepath to the uploaded image
-        resolve(data.Location);
-      }
+    const parallelUploads3 = new Upload({
+      client: s3Client,
+      params: {
+        Bucket: process.env.S3_BUCKET,
+        Key: fileName,
+        Body: fileBuffer,
+        ContentType: fileType,
+        ACL: 'public-read',
+      },
     });
-  })
-;
 
+    const result = await parallelUploads3.done();
+
+    // 3. Cleanup local disk
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    return result.Location;
+  } catch (err) {
+    console.error("S3 Upload Error:", err);
+    throw err;
+  }
+};
 
 // ==================================
 // =====GET routes to load pages=====
@@ -280,25 +291,36 @@ router.post('/login', passport.authenticate('local-login', {
 }));
 
 // Process new portfolio object requests
-router.post('/newportfolio', isLoggedIn, (req, res) => {
+router.post('/newportfolio', isLoggedIn, multerUpload.single('portfoliopicture'), async (req, res) => {
   const currentDate = new Date();
 
-  // Use Sequelize to push to DB
-  models.Project.create({
-    ProjectName: req.body.NewProjectName,
-    ProjectBlurb: req.body.NewProjectBlurb,
-    ProjectURL: req.body.NewProjectURL,
-    GithubURL: req.body.NewGithubURL,
-    ProjectIMG: req.body.NewProjectIMG,
-    createdAt: currentDate,
-    updatedAt: currentDate,
-  }).then(() => {
-    res.redirect('../adminportfolio');
-  })
-    .catch((err) => {
-      // print the error details
-      console.log(err);
+  try {
+    let portfolioImagePath = null;
+
+    if (req.file) {
+      portfolioImagePath = await uploadToS3(
+        req.file.originalname, 
+        req.file.path, 
+        req.file.mimetype
+      );
+    }
+
+    await models.Project.create({
+      ProjectName: req.body.NewProjectName,
+      ProjectBlurb: req.body.NewProjectBlurb,
+      ProjectURL: req.body.NewProjectURL,
+      GithubURL: req.body.NewGithubURL,
+      ProjectIMG: portfolioImagePath,
+      createdAt: currentDate,
+      updatedAt: currentDate,
     });
+
+    res.redirect('../adminportfolio');
+
+  } catch (err) {
+    console.error("Error in newportfolio route:", err);
+    res.status(500).send("Failed to create new project.");
+  }
 });
 
 router.post('/contact/message', (req, res) => {
@@ -328,166 +350,93 @@ router.post('/contact/message', (req, res) => {
 });
 
 // Process portfolio update requests
-router.post('/updateportfolio/:portfolioId', isLoggedIn, upload.single('portfoliopicture'), (req, res) => {
-  const currentDate = new Date();
+router.post('/updateportfolio/:portfolioId', isLoggedIn, multerUpload.single('portfoliopicture'), async (req, res) => {
+  try {
+    const { portfolioId } = req.params;
+    
+    // 1. Handle the dynamic naming from your EJS template
+    // Your template uses name="ProjectIMG{{this.id}}"
+    const existingImageFieldName = `ProjectIMG${portfolioId}`;
+    let portfolioImagePath = req.body[existingImageFieldName];
 
-  // Retain previous image location
-  const portfolioImageToUpload = req.body[`ProjectIMG ${req.params.portfolioId}`];
+    // 2. Handle New Image Upload
+    if (req.file) {
+      portfolioImagePath = await uploadToS3(
+        req.file.originalname,
+        req.file.path,
+        req.file.mimetype
+      );
+    }
 
-  // Check if any image(s) were uploaded
-  if (typeof req.file !== 'undefined') {
-    // Process file being uploaded
-    const fileName = req.file.originalname;
-    const fileType = req.file.mimetype;
-    const stream = fs.createReadStream(req.file.path); // Create "stream" of the file
+    // 3. Update Database
+    const project = await models.Project.findOne({ where: { id: portfolioId } });
 
-    uploadToS3(fileName, stream, fileType)
-      .then((portfolioImagePath) => {
-        // Use Sequelize to find the relevant DB object
-        models.Project.findOne({ where: { id: req.params.portfolioId } })
+    if (!project) {
+      return res.status(404).send("Project not found.");
+    }
 
-          .then((id) => {
-            // Update the data
-            id.update({
-              ProjectName: req.body.ProjectName,
-              ProjectBlurb: req.body[`ProjectBlurb ${req.params.portfolioId}`],
-              ProjectURL: req.body.ProjectURL,
-              GithubURL: req.body.GithubURL,
-              ProjectIMG: portfolioImagePath,
-              updatedAt: currentDate,
-            }).then(() => {
-              res.redirect('../adminportfolio');
-            });
-          });
-      });
-  } else { // No image to upload, just update the text
-    // Use Sequelize to find the relevant DB object
-    models.Project.findOne({ where: { id: req.params.portfolioId } })
-      .then((project) => {
-        // Update the data
-        project.update({
-          ProjectName: req.body.ProjectName,
-          ProjectBlurb: req.body[`ProjectBlurb ${req.params.portfolioId}`],
-          ProjectURL: req.body.ProjectURL,
-          GithubURL: req.body.GithubURL,
-          ProjectIMG: portfolioImageToUpload,
-          updatedAt: currentDate,
-        }).then(() => {
-          res.redirect('../adminportfolio');
-        });
-      });
+    await project.update({
+      ProjectName: req.body.ProjectName,
+      // Your EJS uses name="ProjectBlurb{{this.id}}"
+      ProjectBlurb: req.body[`ProjectBlurb${portfolioId}`], 
+      ProjectURL: req.body.ProjectURL,
+      GithubURL: req.body.GithubURL,
+      ProjectIMG: portfolioImagePath,
+      updatedAt: new Date(),
+    });
+
+    res.redirect('../adminportfolio');
+
+  } catch (err) {
+    console.error("Portfolio Update Error:", err);
+    res.status(500).send("Failed to update portfolio.");
   }
 });
 
 // Create variable to simplify the updateAboutMe post route
-const fileUpload = upload.fields([{ name: 'profilepicture', maxCount: 1 }, { name: 'aboutpagepicture', maxCount: 8 }]);
+const fileUpload = multerUpload.fields([{ name: 'profilepicture', maxCount: 1 }, { name: 'aboutpagepicture', maxCount: 8 }]);
 
 // Process portfolio update requests
-router.post('/updateAboutMe', isLoggedIn, fileUpload, (req, res) => {
-  let profileImageToUpload;
-  const currentDate = new Date();
+router.post('/updateAboutMe', isLoggedIn, fileUpload, async (req, res) => {
+  try {
+    const currentDate = new Date();
+    
+    // 1. Fetch current data to preserve existing images if no new ones are uploaded
+    const aboutMe = await models.AboutMe.findOne({ where: { id: 1 } });
+    if (!aboutMe) return res.status(404).send("About Me record not found.");
 
-  // If both images have been uploaded, procede
-  if (req.files.profilepicture && req.files.aboutpagepicture) {
-    // Isolate profilepicture elements
-    const fileName = req.files.profilepicture[0].originalname;
-    const stream = fs.createReadStream(req.files.profilepicture[0].path); // Create "stream" of the file
-    const fileType = req.files.profilepicture[0].mimetype;
+    // 2. Initialize image paths with current values
+    let profileImagePath = aboutMe.image;
+    let aboutPageImagePath = aboutMe.aboutpageimage;
 
-    // Uploads the profilepicture to S3
-    profileImageToUpload = uploadToS3(fileName, stream, fileType)
-      .then((profileImagePath) => {
-        // Isolate aboutpagepicture elements
-        const aboutfileName = req.files.aboutpagepicture[0].originalname;
-        const aboutfileType = req.files.aboutpagepicture[0].mimetype;
-        const aboutstream = fs.createReadStream(req.files.aboutpagepicture[0].path); // Create "stream" of the file
+    // 3. Handle Profile Picture Upload (if provided)
+    if (req.files?.profilepicture) {
+      const file = req.files.profilepicture[0];
+      profileImagePath = await uploadToS3(file.originalname, file.path, file.mimetype);
+    }
 
-        // Uploads the aboutpagepicture to S3
-        uploadToS3(aboutfileName, aboutstream, aboutfileType)
-          .then((pageImagePath) => {
-            // Use Sequelize to push to DB
-            models.AboutMe.findOne({ where: { id: 1 } })
-              .then((id) => {
-                id.update({
-                  bio: req.body.AboutMe,
-                  caption: req.body.AboutMeCaption,
-                  image: profileImagePath,
-                  aboutpagetext: req.body.AboutPage,
-                  aboutpagecaption: req.body.AboutPageCaption,
-                  aboutpageimage: pageImagePath,
-                  updatedAt: currentDate,
-                }).then(() => {
-                  res.redirect('../adminaboutme');
-                });
-              });
-          });
-      });
-    // If only profilepicture has been updated
-  } else if (req.files.profilepicture) {
-    // Isolate profilepicture elements
-    const fileName = req.files.profilepicture[0].originalname;
-    const stream = fs.createReadStream(req.files.profilepicture[0].path); // Create "stream" of the file
-    const fileType = req.files.profilepicture[0].mimetype;
+    // 4. Handle About Page Picture Upload (if provided)
+    if (req.files?.aboutpagepicture) {
+      const file = req.files.aboutpagepicture[0];
+      aboutPageImagePath = await uploadToS3(file.originalname, file.path, file.mimetype);
+    }
 
-    // Uploads the profilepicture to S3
-    profileImageToUpload = uploadToS3(fileName, stream, fileType)
-      .then((profileImagePath) => {
-        // Use Sequelize to push to DB
-        models.AboutMe.findOne({ where: { id: 1 } })
-          .then((id) => {
-            id.update({
-              bio: req.body.AboutMe,
-              caption: req.body.AboutMeCaption,
-              image: profileImagePath,
-              aboutpagetext: req.body.AboutPage,
-              aboutpagecaption: req.body.AboutPageCaption,
-              updatedAt: currentDate,
-            }).then(() => {
-              res.redirect('../adminaboutme');
-            });
-          });
-      });
-  } else if (req.files.aboutpagepicture) {
-    // Isolate aboutpagepicture elements
-    const aboutfileName = req.files.aboutpagepicture[0].originalname;
-    const aboutfileType = req.files.aboutpagepicture[0].mimetype;
-    const aboutstream = fs.createReadStream(req.files.aboutpagepicture[0].path);
+    // 5. Update everything in one single Database call
+    await aboutMe.update({
+      bio: req.body.AboutMe,
+      caption: req.body.AboutMeCaption,
+      image: profileImagePath,
+      aboutpagetext: req.body.AboutPage,
+      aboutpagecaption: req.body.AboutPageCaption,
+      aboutpageimage: aboutPageImagePath,
+      updatedAt: currentDate,
+    });
 
-    // Uploads the aboutpagepicture to S3
-    uploadToS3(aboutfileName, aboutstream, aboutfileType)
-      .then((pageImagePath) => {
-        // Use Sequelize to push to DB
-        models.AboutMe.findOne({ where: { id: 1 } })
-          .then((id) => {
-            id.update({
-              bio: req.body.AboutMe,
-              caption: req.body.AboutMeCaption,
-              aboutpagetext: req.body.AboutPage,
-              aboutpagecaption: req.body.AboutPageCaption,
-              aboutpageimage: pageImagePath,
-              updatedAt: currentDate,
-            }).then(() => {
-              res.redirect('../adminaboutme');
-            });
-          });
-      });
-    // If no images uploaded simply update the text
-  } else {
-    // Use Sequelize to push to DB
-    models.AboutMe.findOne({ where: { id: 1 } })
-      .then((id) => {
-        // Update the data
-        id.update({
-          bio: req.body.AboutMe,
-          caption: req.body.AboutMeCaption,
-          image: profileImageToUpload,
-          aboutpagetext: req.body.AboutPage,
-          aboutpagecaption: req.body.AboutPageCaption,
-          updatedAt: currentDate,
-        }).then(() => {
-          res.redirect('../adminaboutme');
-        });
-      });
+    res.redirect('../adminaboutme');
+
+  } catch (err) {
+    console.error("Error updating About Me:", err);
+    res.status(500).send("Update failed.");
   }
 });
 
