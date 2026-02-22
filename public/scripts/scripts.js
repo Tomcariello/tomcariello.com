@@ -6,7 +6,6 @@ const hideSubmitButton = () => {
 };
 
 const validateRegistration = () => {
-  // Select all our elements
   const fields = {
     fname: document.querySelector('#fname'),
     lname: document.querySelector('#lname'),
@@ -16,26 +15,47 @@ const validateRegistration = () => {
   };
   const submitBtn = document.querySelector('#submitButton');
 
-  // 1. Reset all borders first
+  // Helper to safely check and style elements
+  const setError = (el) => {
+    if (el) {
+      el.style.borderColor = '#dc3545'; // Bootstrap 'danger' red
+      el.focus();
+    }
+    if (submitBtn) submitBtn.style.display = 'none';
+    return false;
+  };
+
+  // 1. Reset all borders
   Object.values(fields).forEach(el => {
-    if (el) el.style.borderColor = 'initial';
-    if (el) el.style.borderBottom = 'none'; 
+    if (el) el.style.borderColor = '#dee2e6'; 
   });
 
-  // 2. Early Returns (The "Fail Fast" approach)
-  if (!fields.fname.value) return handleError(fields.fname);
-  if (!fields.lname.value) return handleError(fields.lname);
-  if (!fields.email.value) return handleError(fields.email);
-  if (!fields.pass.value) return handleError(fields.pass);
+  // 2. Validate existence and value
+  // This check ensures the element exists before trying to read .value
+  if (fields.fname && !fields.fname.value) return setError(fields.fname);
+  if (fields.lname && !fields.lname.value) return setError(fields.lname);
+  if (fields.email && !fields.email.value) return setError(fields.email);
+  if (fields.pass && !fields.pass.value) return setError(fields.pass);
 
-  // 3. Password Match Check
-  if (fields.pass.value !== fields.confirm.value) {
-    return handleError(fields.confirm);
+  // 3. Password Match Check (Only if both fields exist)
+  if (fields.pass && fields.confirm) {
+    if (fields.pass.value !== fields.confirm.value) {
+      return setError(fields.confirm);
+    }
   }
 
-  // 4. Success - Show the button
-  if (submitBtn) submitBtn.style.display = 'inherit';
+  // 4. Success
+  if (submitBtn) submitBtn.style.display = 'block';
 };
+
+function updateFileName(input, targetId) {
+  const fileName = input.files[0] ? input.files[0].name : "No file chosen";
+  const target = document.getElementById(targetId);
+  
+  if (input.files[0]) {
+    target.innerHTML = `<span class="text-success fw-bold"><i class="fas fa-file-import"></i> New: ${fileName}</span>`;
+  }
+}
 
 // Helper to keep the main logic clean
 const handleError = (element) => {

@@ -140,31 +140,6 @@ router.get('/portfolio', (req, res) => {
     });
 });
 
-router.get("/puzzles", (req, res) => {
-  models.Puzzles.findAll({
-   where: {
-      piece_count: 500,
-      year: {
-        [Op.between]: [1985, 1986]
-      }
-    },
-    // limit: 50, // Keeping your limit for performance
-    order: [['year', 'ASC'], ['id', 'ASC']]
-  }).then((dbPuzzles) => {
-    // Map the Sequelize objects to plain JSON for Handlebars
-    const puzzles = dbPuzzles.map(puzzle => puzzle.get({ plain: true }));
-
-    res.render("puzzles", {
-      puzzles: puzzles,
-      s3Base: "https://tomcarielloimages.s3.amazonaws.com/puzzle_images/"
-    });
-  })
-  .catch(err => {
-    console.log(err);
-    res.status(500).send("Error retrieving puzzles");
-  });
-});
-
 // router.get('/contact', (req, res) => {
 //   const payload = {
 //     dynamicData: {

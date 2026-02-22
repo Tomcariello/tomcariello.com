@@ -1,149 +1,124 @@
-<section class="main">
+<section class="page-blog-edit">
+
   <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-  
-  <div class='row'>
-    <div class="col-sm-12">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3>Edit Blog</h3>
-        </div>
-        <div class="panel-body">
-        
-          <form enctype="multipart/form-data" action="updateblog/{{dynamicData.id}}" onsubmit="return validateUpdateBlogForm({{this.id}})" method="POST">
-        
-            <p>Author:</p><input type="text" id="BlogAuthor" name="BlogAuthor" value="{{dynamicData.author}}"/> 
 
-            {{!-- Hidden element to contain encoded text for headline --}}
-            <div class="hideElement adminTextArea col-md-12">      
-              <textarea rows="4" cols="50" id="BlogHeadline" name="BlogHeadline" maxlength="250">{{dynamicData.headline}}</textarea> 
-            </div>
-            {{!-- Summernote Headline --}}
-            <div class="row">
-              <div class="col-md-8">
-                <div class="row">
-                  <p>Headline:</p>
-                  <div id="summernoteheadline" data-id="{{dynamicData.id}}">
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {{!-- Hidden element to contain encoded text for body --}}
-            <div class="hideElement adminTextArea col-md-12">      
-              <textarea rows="4" cols="50" id="Blogtext" name="Blogtext" maxlength="100000">{{dynamicData.blogtext}}</textarea> 
-            </div>
-            <div class="row">
-              <div class="col-md-8">
-                <div class="row">
-                  <p>Body:</p>
-                  <div id="summernotebody" data-id="{{dynamicData.id}}">
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-2">
-                <p>Image:</p>
-                <input type="file" name="blogpicture" id="blogpicture{{this.id}}" class="hideElement">
-                <input type="hidden" id="ProjectIMG{{this.id}}" name="ProjectIMG{{this.id}}" value="{{this.ProjectIMG}}"/> 
-                <label for="blogpicture{{this.id}}" class="labelButton image-selection">Select Image</label>
-              </div>
-              <div class='col-sm-10'>
-                <img class="blogAdminImage" src="{{dynamicData.blogimage}}">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <input class="hideElement" type="text" id="BlogImage" name="BlogImage" value="{{dynamicData.blogimage}}"/> 
-                <p>Image Caption:</p><input type="text" id="ImageCaption" name="ImageCaption" value="{{dynamicData.imagecaption}}"/> 
-              </div>
-            </div>  
-
-            <div class="row">
-              <div class="col-sm-2">
-                <p><button class="blueButton" type="submit" id="update">Submit</button></p>
-              </div>
-              <div class="col-sm-2">
-                <p><button class="redButton" type="cancel" id="cancel" onclick="window.location='blogmanagement';return false;">Cancel</button></p>
-              </div>
-            </div>  
-         </form>
-        </div>  
-      </div>
-    </div>
+  <div class="admin-header mb-4">
+    <h2 class="fw-bold">Edit Blog Post</h2>
+    <p class="text-secondary">Refine your headline, update the story, or swap out the featured image.</p>
   </div>
 
-   <script>
-    $(document).ready(function() {
-      //For each summernote div in the DOM
-      $('div[id^=summernote]').each(function() {
-        //Get the ID for the current summernote DIV
-        var summerNoteID = $(this).data("id");
+  <form enctype="multipart/form-data" action="updateblog/{{dynamicData.id}}" onsubmit="return validateUpdateBlogForm()"
+    method="POST">
 
-        //Initialize Summernote for this Headline
-        $('#summernoteheadline' + summerNoteID).summernote({
-          fontNames: [
-            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
-          ],
-          fontNamesIgnoreCheck: [
-            "Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-            "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"
-          ],
-          toolbar: [
-              ['style', ['bold', 'italic', 'underline', 'clear']],
-              ['font', ['strikethrough', 'superscript', 'subscript']],
-              ['fontsize', ['fontsize']],
-              ["fontname", ["fontname"]],
-              ['para', ['ul', 'ol', 'paragraph']],
-              ['height', ['height']],
-              ['insert', ['link']],
-              ['view', ['codeview']]
-            ]
-        });
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+      <div class="card-body p-4">
+        <div class="form-floating mb-4">
+          <input type="text" class="form-control" id="BlogAuthor" name="BlogAuthor" placeholder="Author Name"
+            value="{{dynamicData.author}}">
+          <label for="BlogAuthor">Post Author</label>
+        </div>
 
-        //Initialize Summernote for this Body
-        $('#summernotebody' + summerNoteID).summernote({
-          fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-                      "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
-          fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica Neue", "Helvetica", 
-                      "Impact", "Lucida Grande", "Tahoma", "Times New Roman", "Verdana"],
-          toolbar: [
-              ['style', ['bold', 'italic', 'underline', 'clear']],
-              ['font', ['strikethrough', 'superscript', 'subscript']],
-              ['fontsize', ['fontsize']],
-              ["fontname", ["fontname"]],
-              ['para', ['ul', 'ol', 'paragraph']],
-              ['height', ['height']],
-              ['insert', ['link']],
-              ['view', ['codeview']]
-            ]
-        });
+        <div class="mb-4">
+          <label class="form-label fw-bold text-primary"><i class="fas fa-heading me-1"></i> Headline</label>
+          <div id="summernoteheadline"></div>
+          <textarea class="d-none" id="BlogHeadline" name="BlogHeadline">{{dynamicData.headline}}</textarea>
+        </div>
 
-        //Read coded contents from the database & decode them
-        var decodedHeadlineContent = decodeURI( $('#BlogHeadline').val() );
-        var decodedBodyContent = decodeURI( $('#Blogtext').val() );
+        <div class="mb-4">
+          <label class="form-label fw-bold text-primary"><i class="fas fa-pen-nib me-1"></i> Blog Content</label>
+          <div id="summernotebody"></div>
+          <textarea class="d-none" id="Blogtext" name="Blogtext">{{dynamicData.blogtext}}</textarea>
+        </div>
 
-        //Insert decoded text into the proper field  
-        $('#summernoteheadline').summernote('code', decodedHeadlineContent);
-        $('#summernotebody').summernote('code', decodedBodyContent);
-      })
-    })
+        <div class="row align-items-center mb-4 bg-light p-3 rounded-3 mx-1">
+          <div class="col-md-7">
+            <label class="form-label fw-bold d-block">Featured Image</label>
+            <div class="d-flex align-items-center gap-3">
+              <input type="file" class="d-none" name="blogpicture" id="blogpicture"
+                onchange="updateFileName(this, 'blog-file-name')">
+              <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3"
+                onclick="document.getElementById('blogpicture').click()">
+                <i class="fas fa-image me-1"></i> Replace Image
+              </button>
+              <span id="blog-file-name" class="small text-muted italic">Existing: blog-image.jpg</span>
+            </div>
+          </div>
+          <div class="col-md-5 text-center text-md-end">
+            <img class="img-thumbnail rounded-3" src="{{dynamicData.blogimage}}"
+              style="max-height: 120px; width: auto; object-fit: contain;">
+          </div>
+        </div>
 
-    //Listen for updates
-    function validateUpdateBlogForm(event) {
-      //Update Headline Data
-      var headlineFormattedData = $('#summernoteheadline').summernote('code');
-      var headlineEncodedData = encodeURI(headlineFormattedData);
-      $("#BlogHeadline").val(headlineEncodedData);
+        <div class="form-floating mb-2">
+          <input type="text" class="form-control" id="ImageCaption" name="ImageCaption" placeholder="Image Caption"
+            value="{{dynamicData.imagecaption}}">
+          <label for="ImageCaption">Image Caption / Alt Text</label>
+        </div>
+      </div>
+    </div>
 
-      //Update Body Data
-      var bodyFormattedData = $('#summernotebody').summernote('code');
-      var bodyEncodedData = encodeURI(bodyFormattedData);
-      $("#Blogtext").val(bodyEncodedData);
+    <div class="admin-sticky-actions bg-white border-top p-3 text-end shadow-sm">
+      <button type="button" class="btn btn-outline-secondary rounded-pill px-4 me-2"
+        onclick="window.location='blogmanagement'">Cancel</button>
+      <button type="submit" id="update" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Save Post
+        Updates</button>
+    </div>
+  </form>
+  <script>
+    $(document).ready(function () {
+      const summernoteConfig = {
+        height: 100, // Shorter for headlines
+        toolbar: [
+          ['style', ['bold', 'italic', 'underline', 'clear']],
+          ['insert', ['link']],
+          ['view', ['codeview']]
+        ]
+      };
 
+      const bodyConfig = {
+        ...summernoteConfig,
+        height: 400, // Taller for body
+        toolbar: [
+          ['style', ['style', 'bold', 'italic', 'underline', 'clear']],
+          ['font', ['strikethrough', 'superscript', 'subscript']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['insert', ['link', 'picture', 'video']],
+          ['view', ['codeview']]
+        ]
+      };
+
+      // Initialize
+      $('#summernoteheadline').summernote(summernoteConfig);
+      $('#summernotebody').summernote(bodyConfig);
+
+      // Load Content
+      const loadContent = (inputSelector, editorSelector) => {
+        const rawValue = $(inputSelector).val();
+        if (rawValue) {
+          try {
+            $(editorSelector).summernote('code', decodeURIComponent(rawValue));
+          } catch (e) {
+            $(editorSelector).summernote('code', decodeURI(rawValue));
+          }
+        }
+      };
+
+      loadContent('#BlogHeadline', '#summernoteheadline');
+      loadContent('#Blogtext', '#summernotebody');
+    });
+
+    function validateUpdateBlogForm() {
+      // Prep data for submission
+      $("#BlogHeadline").val(encodeURIComponent($('#summernoteheadline').summernote('code')));
+      $("#Blogtext").val(encodeURIComponent($('#summernotebody').summernote('code')));
       return true;
+    }
+
+    // Reuse our filename helper
+    function updateFileName(input, targetId) {
+      const fileName = input.files[0] ? input.files[0].name : "No file chosen";
+      document.getElementById(targetId).innerHTML = `<span class="text-success fw-bold"><i class="fas fa-check"></i> New: ${fileName}</span>`;
     }
   </script>
 </section>

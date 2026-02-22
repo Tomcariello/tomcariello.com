@@ -33,6 +33,9 @@ app.engine('handlebars', exphbs.engine({
     decodeSummernote(data) {
       return decodeURIComponent(data || '');
     },
+    json: function (context) {
+      return JSON.stringify(context);
+    },
   },
 }));
 app.set('view engine', 'handlebars');

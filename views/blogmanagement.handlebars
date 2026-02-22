@@ -1,70 +1,61 @@
-<section class="main">
-  <div class='row'>
-    <div class="col-sm-12">
-        <div class="row">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h3>Manage Blog Entries</h3>
-                        </div>
-                        <div class="col-sm-6 newblogcontainer">
-                            <h3>Create Blog
-                                <a href="createblog">
-                                    <i class="fa fa-plus-square" id="addblog"></i>
-                                </a>
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    
-    
-                    <div class='row'>
-                        <div class="col-sm-1 deleteblog"></div>
-                        <div class="col-sm-1 editblog"></div>
-                        <div class="col-sm-1 blogcomments"></div>
-                        <div class="blogmessagetitle col-sm-4">
-                            Blog Title
-                        </div>
-                        <div class="blogmessagetitle col-sm-4">
-                            Date Created
-                        </div>
-                    </div>
+<section class="page-blog-admin">
+    <div class="admin-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Blog Management</h2>
+            <p class="text-secondary mb-0">Manage your stories, drafts, and reader discussions.</p>
+        </div>
+        <a href="createblog" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="fas fa-plus-circle me-2"></i> Create New Post
+        </a>
+    </div>
 
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-muted small text-uppercase" style="width: 40%;">Blog Title</th>
+                        <th class="py-3 text-muted small text-uppercase" style="width: 25%;">Date Created</th>
+                        <th class="py-3 text-muted small text-uppercase text-end pe-4" style="width: 35%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
                     {{#each dynamicData}}
-
-                    <div class="row blogmessagerow">
-                        <div class="col-sm-1 center deleteblog">
-                            <a href="deleteblog/{{this.id}}">
-                                <i class="fa fa-2x fa-times-circle" aria-hidden="true" title="Delete Blog"></i>
-                            </a>
-                        </div>
-                        <div class="col-sm-1 center editblog">
-                            <a href="editblog?id={{this.id}}">
-                                <i class="fa fa-2x fa-edit" aria-hidden="true" title="Edit Blog"></i>
-                            </a>
-                        </div>
-                        <div class="col-sm-1 center commentblog">
-                            <a href="blogcomments?id={{this.id}}">
-                                <i class="fa fa-2x fa-comment" aria-hidden="true" title="Edit Comments"></i>
-                            </a>
-                        </div>
-
-                        <div class="col-sm-4">
-                            {{{decodeSummernote this.headline}}}
-                        </div>
-                        <div class="col-sm-4 blogdate">
-                            {{formatdate this.createdAt}}<br/>
-                        </div>
-                    </div>
-
+                    <tr>
+                        <td class="ps-4">
+                            <div class="fw-bold text-dark">
+                                {{{decodeSummernote this.headline}}}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="text-secondary">{{formatdate this.createdAt}}</span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+                                <a href="blogcomments?id={{this.id}}" class="btn btn-white btn-sm border"
+                                    title="Comments">
+                                    <i class="fas fa-comment text-info"></i>
+                                </a>
+                                <a href="editblog?id={{this.id}}" class="btn btn-white btn-sm border" title="Edit Post">
+                                    <i class="fas fa-edit text-warning"></i>
+                                </a>
+                                <button type="button" class="btn btn-white btn-sm border"
+                                    onclick="confirmDelete('{{this.id}}')" title="Delete Post">
+                                    <i class="fas fa-trash-alt text-danger"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                     {{/each}}
-
-                </div>    
-            </div>
+                </tbody>
+            </table>
         </div>
     </div>
-  </div>
+    <script>
+        function confirmDelete(id) {
+            if (confirm("Are you sure you want to delete this blog post? This cannot be undone.")) {
+                window.location.href = `/deleteblog/${id}`;
+            }
+        }
+    </script>
 </section>

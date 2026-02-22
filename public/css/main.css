@@ -315,62 +315,400 @@ footer {
     }
 }
 
-/* --- Page: Puzzles --- */
+/* --- Puzzle Page Enhancements --- */
 
-.page-puzzles .puzzle-card {
-    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-    border-radius: 12px;
+.puzzle-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0,0,0,0.05) !important;
 }
 
-.page-puzzles .puzzle-card:hover {
+.puzzle-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 12px 20px rgba(0,0,0,0.1) !important;
 }
 
-.page-puzzles .puzzle-img-wrapper {
+.puzzle-card.is-owned {
+    border: 1px solid rgba(13, 110, 253, 0.2) !important;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.puzzle-img-wrapper {
     position: relative;
-    aspect-ratio: 4 / 3; /* Fixed ratio for all puzzle boxes */
-    background: #f8f9fa;
+    aspect-ratio: 4/3;
     overflow: hidden;
+    background: #f1f3f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.page-puzzles .puzzle-img-wrapper img {
+.puzzle-img-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.page-puzzles .no-image-placeholder {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #dee2e6;
-    background-color: #f8f9fa;
-}
-
-.page-puzzles .owned-tag {
+.owned-tag {
     position: absolute;
     bottom: 10px;
-    left: 10px;
-    background: rgba(25, 135, 84, 0.9); /* Success Green with transparency */
+    right: 10px;
+    background: rgba(13, 110, 253, 0.9);
     color: white;
-    padding: 4px 10px;
-    border-radius: 6px;
+    padding: 4px 12px;
+    border-radius: 50px;
     font-size: 0.7rem;
     font-weight: bold;
     backdrop-filter: blur(4px);
 }
 
-.page-puzzles .is-owned {
-    border: 1px solid rgba(25, 135, 84, 0.2);
+.no-image-placeholder {
+    color: #adb5bd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.page-puzzles .card-title {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    height: 2.4em; /* Ensures title area is consistent */
+/* Puzzles NOT in your collection get a slight transparency and grayscale */
+.puzzle-card:not(.is-owned) .puzzle-img-wrapper img {
+    filter: grayscale(40%);
+    opacity: 0.8;
+    transition: all 0.3s ease;
 }
+
+.puzzle-card:not(.is-owned):hover .puzzle-img-wrapper img {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+/* Make the 'Owned' cards pop with a subtle border */
+.puzzle-card.is-owned {
+    border: 2px solid rgba(13, 110, 253, 0.3) !important;
+}
+
+.carousel-item img {
+  height: 400px;
+  object-fit: contain;
+  background: #f8f9fa;
+}
+
+#modalBody .info-row label {
+  letter-spacing: 0.5px;
+  font-size: 0.7rem;
+}
+
+/* Ensure carousel controls don't hide the image content */
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-size: 50%;
+}
+
+/* Adjust the caption for the Front/Back/Complete labels */
+.carousel-caption {
+    bottom: 10px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Fix for any remaining stretch issues on the modal badges */
+#modalBody .badge {
+    height: fit-content;
+    align-self: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* --- Page: Login --- */
+
+.page-login .login-card {
+    border: 1px solid rgba(0,0,0,0.08);
+    background-color: #ffffff;
+}
+
+.page-login .form-control {
+    border-radius: 10px;
+}
+
+.page-login .form-control:focus {
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+}
+
+/* Ensure the floating labels don't get lost */
+.page-login .form-floating > label {
+    padding-left: 1rem;
+}
+
+/* Styling the "Blue Button" replacement */
+.page-login .btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #004dc0 100%);
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.page-login .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+}
+
+/* --- Page: Admin Portal --- */
+
+.page-admin-portal .admin-card {
+    border-radius: 20px;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.page-admin-portal .admin-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.08) !important;
+    background-color: #fff;
+}
+
+.page-admin-portal .admin-icon {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    margin: 0 auto;
+    transition: transform 0.3s ease;
+}
+
+.page-admin-portal .admin-card:hover .admin-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.page-admin-portal h4 {
+    color: #333;
+    font-size: 1.25rem;
+}
+
+/* Background subtles for 2026 aesthetics */
+.bg-primary-subtle { background-color: #e7f1ff; }
+.bg-success-subtle { background-color: #e6fcf5; }
+.bg-info-subtle { background-color: #e3faff; }
+.bg-warning-subtle { background-color: #fff9db; }
+.bg-danger-subtle { background-color: #fff5f5; }
+
+/* --- Page: Admin About Me Update --- */
+
+.page-admin-about .card {
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.page-admin-about .note-editor.note-frame {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.page-admin-about .note-toolbar {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Sticky Action Bar at the bottom of the screen */
+.page-admin-about .admin-sticky-actions {
+    position: sticky;
+    bottom: 0;
+    margin: 0 -1.5rem; /* Offsets container padding if needed */
+    z-index: 1000;
+}
+
+.page-admin-about .img-thumbnail {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border: 2px solid #fff;
+}
+
+/* --- Page: Admin Image Management --- */
+
+.page-admin-about .current-img-preview {
+    display: inline-block;
+    padding: 10px;
+    background: #fdfdfd;
+    border-radius: 12px;
+    border: 1px dashed #dee2e6;
+}
+
+.page-admin-about .italic {
+    font-style: italic;
+}
+
+/* Give the 'Replace' button a little more pop on hover */
+.page-admin-about .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.page-admin-about .tech-preview {
+    border-color: rgba(25, 135, 84, 0.2); /* Success green tint */
+}
+
+/* Add a hover effect to the specific tech button */
+.page-admin-about .btn-outline-success:hover {
+    background-color: #198754;
+    color: white;
+}
+
+/* --- Page: Blog Management --- */
+
+.page-blog-admin .table thead th {
+    border-bottom: none;
+    font-weight: 600;
+}
+
+.page-blog-admin .table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.page-blog-admin .table tbody tr:hover {
+    background-color: #fbfcfe;
+}
+
+/* Styling the Action Button Group */
+.page-blog-admin .btn-group .btn {
+    padding: 0.5rem 0.75rem;
+    background-color: #fff;
+    transition: all 0.2s ease;
+}
+
+.page-blog-admin .btn-group .btn:hover {
+    background-color: #f8f9fa;
+}
+
+.page-blog-admin .btn-group .btn i {
+    font-size: 1rem;
+}
+
+/* Ensure the title doesn't break the layout if it's huge */
+.page-blog-admin td .fw-bold {
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Page: Blog Edit / Create --- */
+
+.page-blog-edit {
+    /* This ensures the page is long enough so the content 
+       clears the fixed bar at the bottom */
+    padding-bottom: 120px !important; 
+}
+
+/* Let's refine the fixed bar to be more "aware" of the layout */
+.page-blog-edit .admin-sticky-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95); /* Slight transparency looks modern */
+    backdrop-filter: blur(10px); /* Frosty glass effect */
+    border-top: 1px solid #dee2e6;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.08);
+    z-index: 1060; /* Higher than the site footer */
+    padding: 1rem 2rem;
+}
+
+/* Prevent the sticky bar from looking weird on ultra-wide screens */
+@media (min-width: 1400px) {
+    .page-blog-edit .admin-sticky-actions {
+        padding: 1rem 15%; 
+    }
+}
+/* --- Admin Layout & Panels --- */
+.main {
+    background-color: #f4f7f6;
+    min-height: 100vh;
+    padding-top: 20px;
+}
+
+.panel {
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.panel-heading.bg-dark {
+    background-color: #2c3e50 !important;
+    color: white !important;
+    padding: 15px 20px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+/* --- Search UI --- */
+.input-lg {
+    height: 55px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    box-shadow: none !important;
+}
+
+.input-lg:focus {
+    border-color: #3498db;
+}
+
+/* --- Asset Audit Icons --- */
+.text-success { color: #27ae60 !important; }
+.text-danger { color: #e74c3c !important; }
+.opacity-25 { opacity: 0.25; }
+
+/* Tooltip style on hover */
+[title]:hover:after {
+    content: attr(title);
+    padding: 4px 8px;
+    background: #333;
+    color: #fff;
+    font-size: 11px;
+    position: absolute;
+    border-radius: 4px;
+}
+
+/* --- Edit Page Styling --- */
+.well {
+    background-color: #fff;
+    border: 1px solid #e1e8ed;
+    box-shadow: none;
+    border-radius: 8px;
+}
+
+.border-left {
+    border-left: 1px solid #eee;
+}
+
+/* Thumbnail Previews */
+.thumbnail {
+    border-radius: 6px;
+    padding: 10px;
+    background: #fdfdfd;
+    margin-bottom: 15px;
+}
+
+.thumbnail img {
+    height: 140px;
+    width: 100%;
+    object-fit: contain; /* Prevents stretching */
+    background: #f0f0f0;
+    margin-bottom: 10px;
+}
+
+/* --- Table Polish --- */
+.table-hover tbody tr:hover {
+    background-color: #f0faff !important;
+}
+
+.table > tbody > tr > td {
+    vertical-align: middle;
+    padding: 12px 8px;
+}
+
+/* Utility for spacing */
+.mt-4 { margin-top: 20px; }
+.mb-3 { margin-bottom: 15px; }
+.fw-bold { font-weight: 700; }

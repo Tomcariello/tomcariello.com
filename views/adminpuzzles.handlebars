@@ -1,109 +1,129 @@
-<section class="main">
+<section class="main container-fluid">
   <div class="row">
-    <div class="col-sm-12">
-      
-      <p><a href="/adminportal"><i class="fas fa-arrow-left"></i> Back to Administrative Portal</a></p>
+    <div class="col-md-12">
+      <p><a href="/adminportal" class="btn btn-link"><i class="fas fa-arrow-left"></i> Back to Portal</a></p>
 
-      <div class="panel panel-default">
-        <div class="panel-heading admin-panel-heading">
-          <h3>Puzzle Management</h3>
+      <div class="panel panel-default border-0 shadow-sm">
+        <div class="panel-heading bg-dark text-white">
+          <h3 class="panel-title">Puzzle Archive Search & Entry</h3>
         </div>
-        
-        <div class="panel-body">
-          <fieldset>
-            <legend>Add New Puzzle</legend>
-            <form action="/adminpuzzles/new" method="POST" enctype="multipart/form-data" class="form-horizontal">
-              
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Puzzle Name</label>
-                <div class="col-sm-10">
-                  <input type="text" name="name" class="form-control" placeholder="e.g. Starry Night" required>
-                </div>
+        <div class="panel-body bg-light">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="fw-bold">Step 1: Find Existing Puzzle</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fas fa-search"></i></span>
+                <input type="text" id="adminSearchInput" class="form-control input-lg" placeholder="Enter Puzzle ID (e.g. PZL4190) or Name...">
               </div>
-
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Brand</label>
-                <div class="col-sm-4">
-                  <input type="text" name="brand" class="form-control" placeholder="e.g. Springbok">
-                </div>
-                <label class="col-sm-2 control-label">Piece Count</label>
-                <div class="col-sm-4">
-                  <input type="number" name="pieceCount" class="form-control" placeholder="1000">
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Status</label>
-                <div class="col-sm-10">
-                  <select name="status" class="form-control">
-                    <option value="Unopened">Unopened</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Missing Pieces">Missing Pieces</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Box Image</label>
-                <div class="col-sm-10">
-                  <input type="file" name="puzzleImage" class="form-control">
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Notes</label>
-                <div class="col-sm-10">
-                  <textarea name="notes" class="form-control" rows="3"></textarea>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                  <button type="submit" class="btn btn-primary">Save Puzzle</button>
-                </div>
-              </div>
-            </form>
-          </fieldset>
-
-          <hr>
-
-          <h3>Current Collection</h3>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Brand</th>
-                  <th>Pieces</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {{#each puzzles}}
-                <tr>
-                  <td><img src="{{this.image}}" alt="" style="width: 50px;"></td>
-                  <td>{{this.name}}</td>
-                  <td>{{this.brand}}</td>
-                  <td>{{this.pieceCount}}</td>
-                  <td>{{this.status}}</td>
-                  <td>
-                    <a href="/adminpuzzles/edit/{{this.id}}" class="btn btn-xs btn-default">Edit</a>
-                  </td>
-                </tr>
-                {{else}}
-                <tr>
-                  <td colspan="6" class="text-center">No puzzles found in the collection.</td>
-                </tr>
-                {{/each}}
-              </tbody>
-            </table>
+              <p class="help-block small text-muted">Always search before adding a new record to prevent duplicates.</p>
+            </div>
+            <div class="col-md-6 text-right">
+                <label class="d-block">&nbsp;</label>
+                <button class="btn btn-success btn-lg" onclick="toggleAddForm()">
+                    <i class="fas fa-plus"></i> Add New Unique Puzzle
+                </button>
+            </div>
           </div>
-
         </div>
+      </div>
+
+      <div id="resultsWrapper" style="display:none;" class="panel panel-default mt-4">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Year</th>
+                <th>In Collection</th>
+                <th class="text-center">Images</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminSearchResultsBody">
+              </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="addNewForm" style="display:none;" class="panel panel-info mt-4">
+          <div class="panel-heading"><strong>Create New Archive Entry</strong></div>
+          <div class="panel-body">
+              <form action="/adminpuzzles/new" method="POST" class="form-horizontal">
+                  <div class="form-group">
+                      <label class="col-sm-2 control-label">Puzzle ID</label>
+                      <div class="col-sm-4">
+                          <input type="text" name="puzzle_id" class="form-control" placeholder="PZL####" required>
+                      </div>
+                      <label class="col-sm-2 control-label">Year</label>
+                      <div class="col-sm-4">
+                          <input type="number" name="year" class="form-control" value="1980">
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-2 control-label">Name</label>
+                      <div class="col-sm-10">
+                          <input type="text" name="puzzle_name" class="form-control" required>
+                      </div>
+                  </div>
+                  <div class="text-right">
+                      <button type="submit" class="btn btn-primary">Create & Proceed to Details</button>
+                  </div>
+              </form>
+          </div>
       </div>
     </div>
   </div>
 </section>
+
+<script id="puzzleData" type="application/json">{{{json puzzles}}}</script>
+
+<script>
+  const allPuzzles = JSON.parse(document.getElementById('puzzleData').innerHTML);
+  const searchInput = document.getElementById('adminSearchInput');
+  const resultsWrapper = document.getElementById('resultsWrapper');
+  const resultsBody = document.getElementById('adminSearchResultsBody');
+  const addNewForm = document.getElementById('addNewForm');
+
+  function toggleAddForm() {
+      addNewForm.style.display = addNewForm.style.display === 'none' ? 'block' : 'none';
+      resultsWrapper.style.display = 'none';
+  }
+
+  searchInput.addEventListener('input', (e) => {
+    const val = e.target.value.toLowerCase();
+    if(val.length < 2) {
+      resultsWrapper.style.display = 'none';
+      return;
+    }
+
+    const matches = allPuzzles.filter(p => 
+      p.puzzle_id.toLowerCase().includes(val) || 
+      p.puzzle_name.toLowerCase().includes(val)
+    ).slice(0, 10); // Only show top 10 matches for speed
+
+    resultsBody.innerHTML = matches.map(p => `
+      <tr>
+        <td><strong>${p.puzzle_id}</strong></td>
+        <td>${p.puzzle_name}</td>
+        <td>${p.year}</td>
+        <td class="text-center">
+          ${p.in_collection 
+            ? '<span class="label label-success"><i class="fas fa-check"></i> Owned</span>' 
+            : '<span class="label label-default opacity-50">Missing</span>'}
+        </td>
+        <td class="text-center">
+            <i class="fas fa-image ${p.image_box_front ? 'text-success' : 'text-danger opacity-15'}"></i>
+            <i class="fas fa-file-image ${p.image_box_back ? 'text-success' : 'text-danger opacity-15'}"></i>
+            <i class="fas fa-check-circle ${p.image_complete ? 'text-success' : 'text-danger opacity-15'}"></i>
+        </td>
+        <td class="text-right">
+          <a href="/adminpuzzles/edit/${p.id}" class="btn btn-sm btn-primary">Update Details</a>
+        </td>
+      </tr>
+    `).join('');
+
+    resultsWrapper.style.display = matches.length > 0 ? 'block' : 'none';
+    addNewForm.style.display = 'none';
+  });
+</script>

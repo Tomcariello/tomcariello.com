@@ -1,22 +1,22 @@
 <section class="page-puzzles">
   <div class="puzzles-header mb-4">
-    <h2 class="display-6">Springbok Collection</h2>
+    <h2 class="display-6 fw-bold">Springbok Collection</h2>
     <p class="text-secondary">Explore the archive of vintage and modern puzzles.</p>
   </div>
 
-  <div class="filter-toolbar bg-light p-3 rounded-4 mb-5 border">
+  <div class="filter-toolbar bg-light p-3 rounded-4 mb-5 border shadow-sm">
     <form class="row g-3 align-items-center" id="puzzleFilterForm">
       <div class="col-auto">
-        <label class="small text-muted d-block">Release Years</label>
+        <label class="small text-muted d-block fw-bold">Release Years</label>
         <div class="input-group input-group-sm">
-          <input type="number" id="startYear" class="form-control" value="1980" style="width: 75px;">
+          <input type="number" id="startYear" class="form-control" value="1980" style="width: 80px;">
           <span class="input-group-text">to</span>
-          <input type="number" id="endYear" class="form-control" value="1990" style="width: 75px;">
+          <input type="number" id="endYear" class="form-control" value="1990" style="width: 80px;">
         </div>
       </div>
 
       <div class="col-auto">
-        <label for="pieceFilter" class="small text-muted d-block">Pieces</label>
+        <label for="pieceFilter" class="small text-muted d-block fw-bold">Pieces</label>
         <select id="pieceFilter" class="form-select form-select-sm">
           <option value="all">All Sizes</option>
           <option value="500" selected>500 pcs</option>
@@ -25,75 +25,233 @@
         </select>
       </div>
 
-      <div class="col-auto pt-4">
+      <div class="col-auto pt-3">
         <div class="form-check form-switch">
           <input class="form-check-input" type="checkbox" id="collectionOnly">
-          <label class="form-check-label small" for="collectionOnly">In My Collection</label>
+          <label class="form-check-label small fw-bold" for="collectionOnly">Only My Collection</label>
         </div>
       </div>
 
       <div class="col-md">
-        <label class="small text-muted d-block">Search Archive</label>
+        <label class="small text-muted d-block fw-bold">Search Archive</label>
         <div class="input-group input-group-sm">
           <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-          <input type="text" id="puzzleSearch" class="form-control border-start-0" placeholder="Search by name or ID...">
+          <input type="text" id="puzzleSearch" class="form-control border-start-0"
+            placeholder="Search by name or ID...">
         </div>
       </div>
     </form>
   </div>
 
-  <div class="row g-4" id="puzzleGrid">
-    {{#each puzzles}}
-    <div class="col-xl-3 col-lg-4 col-sm-6 puzzle-card-wrapper" 
-         data-year="{{this.year}}" 
-         data-pieces="{{this.piece_count}}" 
-         data-owned="{{this.in_collection}}"
-         data-search="{{this.puzzle_name}} {{this.puzzle_id}}">
-      
-      <div class="card h-100 puzzle-card border-0 shadow-sm {{#if this.in_collection}}is-owned{{/if}}">
-        
-        <div class="puzzle-img-wrapper">
-          {{#if this.image_box_front}}
-            <img src="{{../s3Base}}{{this.image_box_front}}.png" alt="{{this.puzzle_name}}" loading="lazy" class="card-img-top">
-          {{else}}
-            <div class="no-image-placeholder">
-              <i class="fas fa-camera-retro fa-2x mb-2"></i>
-              <span>Image Coming Soon</span>
-            </div>
-          {{/if}}
-          
-          {{#if this.in_collection}}
-            <div class="owned-tag">
-              <i class="fas fa-home"></i> In Collection
-            </div>
-          {{/if}}
-        </div>
+  <div class="row g-4" id="puzzleGrid"></div>
 
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <span class="text-primary small fw-bold">#{{this.puzzle_id}}</span>
-            <span class="badge rounded-pill bg-light text-dark border">{{this.year}}</span>
-          </div>
-          
-          <h5 class="card-title h6 fw-bold mb-3" title="{{this.puzzle_name}}">
-            {{this.puzzle_name}}
-          </h5>
-
-          <div class="puzzle-specs d-flex gap-2">
-            <span class="badge bg-secondary-subtle text-secondary border-0">{{this.piece_count}} pcs</span>
-            {{#if this.is_complete}}
-              <span class="badge bg-primary-subtle text-primary border-0"><i class="fas fa-star"></i> Complete</span>
-            {{/if}}
-          </div>
+  <div id="loadMoreContainer" class="text-center mt-5 mb-5">
+    <button id="loadMoreBtn" class="btn btn-outline-primary rounded-pill px-5 fw-bold shadow-sm">
+      <i class="fas fa-plus-circle me-2"></i> Load More Puzzles
+    </button>
+    <p class="text-muted small mt-2" id="resultsCount"></p>
+  </div>
+  <div class="modal fade" id="puzzleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header border-0 pb-0">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-
-        {{#if this.how_acquired}}
-        <div class="card-footer bg-light border-0 py-2">
-          <small class="text-muted"><i class="fas fa-shopping-cart me-1"></i> {{this.how_acquired}}</small>
+        <div class="modal-body pt-0" id="modalBody">
         </div>
-        {{/if}}
       </div>
     </div>
-    {{/each}}
   </div>
+
+
+  <script id="puzzleData" type="application/json">
+    {{{json puzzles}}}
+  </script>
+  <input type="hidden" id="s3BaseUrl" value="{{s3Base}}">
+
+  <script>
+    // Move these to the top so both the listener and the modal function can see them
+    let allPuzzles = [];
+    let filteredResults = [];
+    let itemsToShow = 40;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const puzzleRaw = document.getElementById('puzzleData');
+      const filterForm = document.getElementById('puzzleFilterForm');
+      const grid = document.getElementById('puzzleGrid');
+      const s3BaseInput = document.getElementById('s3BaseUrl');
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
+      const loadMoreContainer = document.getElementById('loadMoreContainer');
+      const resultsCount = document.getElementById('resultsCount');
+
+      if (!puzzleRaw || !filterForm || !grid) return;
+
+      allPuzzles = JSON.parse(puzzleRaw.innerHTML);
+      const s3Base = s3BaseInput.value;
+
+      const renderGrid = () => {
+        const displayList = filteredResults.slice(0, itemsToShow);
+        resultsCount.innerText = `Showing ${displayList.length} of ${filteredResults.length} puzzles`;
+
+        if (filteredResults.length > displayList.length) {
+          loadMoreContainer.classList.remove('d-none');
+        } else {
+          loadMoreContainer.classList.add('d-none');
+        }
+
+        if (displayList.length === 0) {
+          grid.innerHTML = '<div class="col-12 text-center py-5 text-muted"><h4>No puzzles match those filters.</h4></div>';
+          return;
+        }
+
+        // CLEANED UP MAPPING (No more double nesting)
+        grid.innerHTML = displayList.map(p => `
+        <div class="col-xl-3 col-lg-4 col-sm-6 animate-in">
+          <div class="card h-100 puzzle-card border-0 shadow-sm ${p.in_collection ? 'is-owned' : ''}" 
+               onclick="showPuzzleDetails('${p.puzzle_id}')" style="cursor: pointer;">
+            <div class="puzzle-img-wrapper">
+              ${p.image_box_front
+            ? `<img src="${s3Base}${p.image_box_front}.png" alt="${p.puzzle_name}" loading="lazy" class="card-img-top">`
+            : `<div class="no-image-placeholder"><i class="fas fa-camera-retro fa-2x mb-2"></i><span>Coming Soon</span></div>`
+          }
+              ${p.in_collection ? `<div class="owned-tag"><i class="fas fa-home"></i> In Collection</div>` : ''}
+            </div>
+            <div class="card-body p-3">
+               <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="text-primary small fw-bold">#${p.puzzle_id}</span>
+                <span class="badge rounded-pill bg-light text-dark border">${p.year}</span>
+              </div>
+              <h5 class="card-title h6 fw-bold mb-3">${p.puzzle_name}</h5>
+              <div class="puzzle-specs d-flex gap-2">
+                <span class="badge bg-secondary-subtle text-secondary border-0">${p.piece_count} pcs</span>
+                ${p.is_complete ? `<span class="badge bg-primary-subtle text-primary border-0"><i class="fas fa-star"></i> Done</span>` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      };
+
+      const applyFilters = () => {
+        const startYear = parseInt(document.getElementById('startYear').value) || 0;
+        const endYear = parseInt(document.getElementById('endYear').value) || 9999;
+        const pieceLimit = document.getElementById('pieceFilter').value;
+        const collectionOnly = document.getElementById('collectionOnly').checked;
+        const searchTerm = document.getElementById('puzzleSearch').value.toLowerCase();
+
+        itemsToShow = 40;
+
+        filteredResults = allPuzzles.filter(p => {
+          const year = parseInt(p.year);
+          const matchesYear = year >= startYear && year <= endYear;
+          const matchesPieces = pieceLimit === "all" || String(p.piece_count) === pieceLimit;
+          const matchesCollection = !collectionOnly || p.in_collection;
+          const matchesSearch = p.puzzle_name.toLowerCase().includes(searchTerm) ||
+            p.puzzle_id.toLowerCase().includes(searchTerm);
+          return matchesYear && matchesPieces && matchesCollection && matchesSearch;
+        });
+
+        renderGrid();
+      };
+
+      loadMoreBtn.addEventListener('click', () => {
+        itemsToShow += 40;
+        renderGrid();
+      });
+
+      filterForm.addEventListener('input', applyFilters);
+      applyFilters();
+    });
+
+    // MODAL FUNCTION (Defined globally)
+    window.showPuzzleDetails = (id) => {
+      const p = allPuzzles.find(item => item.puzzle_id === id);
+      if (!p) return;
+
+      const modalBody = document.getElementById('modalBody');
+      const s3Base = document.getElementById('s3BaseUrl').value;
+
+      // Build the Carousel Items array dynamically
+      const images = [];
+      if (p.image_box_front) images.push({ src: p.image_box_front, label: 'Front' });
+      if (p.image_box_back) images.push({ src: p.image_box_back, label: 'Back' });
+      if (p.image_complete) images.push({ src: p.image_complete, label: 'Completed' });
+
+      // If no images exist at all, use a placeholder
+      if (images.length === 0) images.push({ src: null, label: 'No Image' });
+
+      modalBody.innerHTML = `
+    <div class="row">
+      <div class="col-md-6">
+        <div id="puzzleCarousel" class="carousel slide shadow-sm rounded-3 overflow-hidden bg-light" data-bs-ride="false">
+          <div class="carousel-inner">
+            ${images.map((img, index) => `
+              <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                ${img.src
+          ? `<img src="${s3Base}${img.src}.png" class="d-block w-100 p-2" style="height: 400px; object-fit: contain;" alt="${img.label}">`
+          : `<div class="d-flex flex-column align-items-center justify-content-center bg-light text-muted" style="height: 400px;">
+                       <i class="fas fa-camera-retro fa-3x mb-2"></i><span>No ${img.label} Image</span>
+                     </div>`
+        }
+                <div class="carousel-caption d-none d-md-block">
+                  <span class="badge bg-dark opacity-75">${img.label}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          
+          ${images.length > 1 ? `
+            <button class="carousel-control-prev" type="button" data-bs-target="#puzzleCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#puzzleCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+            </button>
+          ` : ''}
+        </div>
+      </div>
+
+      <div class="col-md-6 mt-3 mt-md-0">
+        <div class="d-flex justify-content-between align-items-start">
+          <span class="badge bg-primary-subtle text-primary mb-2">#${p.puzzle_id}</span>
+          <div class="d-inline-block">
+            <span class="badge rounded-pill bg-light text-dark border px-3">${p.year}</span>
+          </div>
+        </div>
+        
+        <h2 class="fw-bold h3 mb-1 text-dark">${p.puzzle_name}</h2>
+        <p class="text-muted fw-bold small mb-4">${p.piece_count} Pieces</p>
+        
+        <div class="mb-3">
+          <label class="small text-uppercase text-muted fw-bold d-block mb-1" style="font-size: 0.65rem;">Collection Status</label>
+          <p class="mb-0 fw-medium">${p.in_collection ? '✅ In My Collection' : '🔎 Still Searching'}</p>
+        </div>
+
+        ${p.how_acquired ? `
+        <div class="mb-3">
+          <label class="small text-uppercase text-muted fw-bold d-block mb-1" style="font-size: 0.65rem;">Provenance</label>
+          <p class="mb-0 small text-secondary">${p.how_acquired}</p>
+        </div>` : ''}
+
+        <div class="mb-3">
+          <label class="small text-uppercase text-muted fw-bold d-block mb-1" style="font-size: 0.65rem;">Notes</label>
+          <p class="text-secondary small mb-0" style="line-height: 1.5;">${p.notes || 'No notes archived.'}</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+      const modalEl = document.getElementById('puzzleModal');
+      const myModal = new bootstrap.Modal(modalEl);
+      myModal.show();
+
+      const carouselEl = document.getElementById('puzzleCarousel');
+      if (carouselEl && images.length > 1) {
+        new bootstrap.Carousel(carouselEl, {
+          interval: false, // Don't auto-slide
+          ride: false
+        });
+      }
+    };
+  </script>
 </section>

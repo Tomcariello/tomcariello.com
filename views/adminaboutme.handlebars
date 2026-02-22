@@ -1,195 +1,167 @@
-<section class="main">
+<section class="page-admin-about">
   <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
-  <form enctype="multipart/form-data" action="updateAboutMe" onsubmit="return validateAboutMeForm()" method="POST">
-    <div class='row'>
-      <div class="col-sm-12">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3>Update About Me Information</h3>
-          </div>
-          <div class="panel-body">
-            <div class="row">
-              <div class="col-sm-12">
-                <p>About Me (limit 10,000 characters):</p>
-              </div>
-            </div>
-        
-            {{!-- Hidden element to contain encoded text for form submission --}}
-            <div class="hideElement adminTextArea col-md-12">      
-              <textarea rows="4" cols="50" id="AboutMe" name="AboutMe" maxlength="1000">{{dynamicData.bio}}</textarea> 
-            </div>
-            <div class="row">
-              <div class="col-md-8">
-                <div class="row">
-                  <div id="summernoteAboutMe" data-id="1">
-                  </div>
-                </div>
-              </div>
-            </div>
+  <div class="admin-header mb-4">
+    <h2 class="fw-bold">Update About Information</h2>
+    <p class="text-secondary">Modify your bio and the "About This Page" technical section.</p>
+  </div>
 
-            <div class="row">
-              <div class='col-sm-2'>
-                <p>Image:</p>
-                <input type="file" name="profilepicture" id="profilepicture">
-                {{!-- <input type="text" id="AboutMeImage" name="AboutMeImage" value="{{dynamicData.image}}"/> --}}
-                <label for="profilepicture" class="labelButton">Select file</label>
-              </div>
-              <div class='col-sm-10'>
-                <img class="aboutAdminImage" src="{{dynamicData.image}}">
-              </div>
+  <form enctype="multipart/form-data" action="updateAboutMe" onsubmit="return validateAboutMeForm()" method="POST">
+    
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+      <div class="card-header bg-white py-3 border-bottom">
+        <h5 class="mb-0 fw-bold text-primary"><i class="fas fa-user-edit me-2"></i>Personal Bio</h5>
+      </div>
+      <div class="card-body p-4">
+        
+        <div class="mb-4">
+          <label class="form-label fw-bold">About Me Content</label>
+          <div id="summernoteAboutMe"></div>
+          <textarea class="d-none" id="AboutMe" name="AboutMe">{{dynamicData.bio}}</textarea> 
+        </div>
+
+        <div class="row align-items-center mb-4">
+          <div class="col-md-7">
+            <label class="form-label fw-bold d-block">Profile Image</label>
+            
+            <div class="d-flex align-items-center gap-3">
+              <input type="file" class="d-none" name="profilepicture" id="profilepicture" onchange="updateFileName(this, 'profile-file-name')">
+              
+              <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="document.getElementById('profilepicture').click()">
+                <i class="fas fa-sync-alt me-1"></i> Replace Photo
+              </button>
+
+              <span id="profile-file-name" class="small text-muted italic">Existing file: profile.jpg</span>
             </div>
             
-            <div class="row imageCaptionRow">
-              <div class="col-sm-12">
-                <p>Image Caption:</p>
-              </div>
-            </div>
-
-
-            {{!-- Hidden element to contain encoded text for form submission of AboutMeCaption --}}
-            <div class="hideElement adminTextArea col-md-12">      
-              <textarea rows="4" cols="50" id="AboutMeCaption" name="AboutMeCaption" maxlength="1000">{{dynamicData.caption}}</textarea> 
-            </div>
-            {{!-- Visible WYSYWIG Editor for AboutMeCaption --}}
-            <div class="row">
-              <div class="col-md-8">
-                <div class="row">
-                  <div id="summernoteAboutMeCaption" data-id="2">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>  
-        </div>
-      </div>
-    </div>
-
-    <div class='row'>
-      <div class="col-sm-12">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3>Update About This Page Information</h3>
+            <div class="form-text mt-2">Uploading a new file will overwrite the current image.</div>
           </div>
-          <div class="panel-body">
-              <div class="row">
-                <div class="col-sm-12">
-                  <p>About Me (limit 10,000 characters):</p>
-                </div>
-              </div>
-          
-              {{!-- Hidden element to contain encoded text for form submission --}}
-              <div class="hideElement adminTextArea col-md-12">      
-                <textarea rows="4" cols="50" id="AboutPage" name="AboutPage" maxlength="1000">{{dynamicData.aboutpagetext}}</textarea> 
-              </div>
-              <div class="row">
-                <div class="col-md-8">
-                  <div class="row">
-                    <div id="summernoteAboutPage" data-id="3">
-                    </div>
-                  </div>
-                </div>
-              </div>
 
-              <div class="row">
-                <div class='col-sm-2'>
-                  <p>Image:</p>
-                  <input type="file" name="aboutpagepicture" id="aboutpagepicture">
-                  <input type="text" id="AboutPageImage" name="AboutPageImage" value="{{dynamicData.aboutpageimage}}"/>
-                  <label for="aboutpagepicture" class="labelButton">Select file</label>
-                </div>
-                <div class='col-sm-10'>
-                  <img class="aboutAdminImage" src="{{dynamicData.aboutpageimage}}">
-                </div>
-              </div>
-              
-              <div class="row imageCaptionRow">
-                <div class="col-sm-12">
-                  <p>Image Caption:</p>
-                </div>
-              </div>
-
-
-              {{!-- Hidden element to contain encoded text for form submission of AboutPageCaption --}}
-              <div class="hideElement adminTextArea col-md-12">      
-                <textarea rows="4" cols="50" id="AboutPageCaption" name="AboutPageCaption" maxlength="1000">{{dynamicData.aboutpagecaption}}</textarea> 
-              </div>
-              {{!-- Visible WYSYWIG Editor for AboutPageCaption --}}
-              <div class="row">
-                <div class="col-md-8">
-                  <div class="row">
-                    <div id="summernoteAboutPageCaption" data-id="4">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-
-              <div class="row">
-                <div class='col-sm-12'>
-                  <p><button type="submit" id="update" class="blueButton">Update About Me</button></p>
-                </div>
-              </div>
-          </div>  
+          <div class="col-md-5 text-center text-md-end">
+            <div class="current-img-preview">
+              <small class="d-block text-uppercase text-muted fw-bold mb-1" style="font-size: 0.65rem;">Currently Active</small>
+              <img class="img-thumbnail rounded-circle" src="{{dynamicData.image}}" style="width: 100px; height: 100px; object-fit: cover;">
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="card border-0 shadow-sm rounded-4 mb-5">
+      <div class="card-header bg-white py-3 border-bottom">
+        <h5 class="mb-0 fw-bold text-success"><i class="fas fa-code me-2"></i>About This Page</h5>
+      </div>
+      <div class="card-body p-4">
+        
+        <div class="mb-4">
+          <label class="form-label fw-bold">Technical Description</label>
+          <div id="summernoteAboutPage"></div>
+          <textarea class="d-none" id="AboutPage" name="AboutPage">{{dynamicData.aboutpagetext}}</textarea> 
+        </div>
+
+        <div class="row align-items-center mb-4">
+          <div class="col-md-7">
+            <label class="form-label fw-bold d-block">Tech Stack Illustration</label>
+            
+            <div class="d-flex align-items-center gap-3">
+              <input type="file" class="d-none" name="aboutpagepicture" id="aboutpagepicture" onchange="updateFileName(this, 'tech-file-name')">
+              
+              <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3" onclick="document.getElementById('aboutpagepicture').click()">
+                <i class="fas fa-upload me-1"></i> Replace Tech Image
+              </button>
+
+              <span id="tech-file-name" class="small text-muted italic">Existing file: tech-stack.png</span>
+            </div>
+            <div class="form-text mt-2">Recommended: Landscape orientation (e.g., 1200x800).</div>
+          </div>
+
+          <div class="col-md-5 text-center text-md-end">
+            <div class="current-img-preview tech-preview">
+              <small class="d-block text-uppercase text-muted fw-bold mb-1" style="font-size: 0.65rem;">Currently Active</small>
+              <img class="img-thumbnail rounded-3" src="{{dynamicData.aboutpageimage}}" style="width: 150px; height: auto; max-height: 100px; object-fit: contain; background: #fff;">
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold">Tech Image Caption</label>
+          <div id="summernoteAboutPageCaption"></div>
+          <textarea class="d-none" id="AboutPageCaption" name="AboutPageCaption">{{dynamicData.aboutpagecaption}}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-sticky-actions bg-white border-top p-3 text-end shadow-sm">
+      <a href="/adminportal" class="btn btn-outline-secondary rounded-pill px-4 me-2">Cancel</a>
+      <button type="submit" id="update" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Save All Changes</button>
+    </div>
+
   </form>
-
   <script>
-    $(document).ready(function() {
-      const summernoteConfig = {
-        fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica", "Impact", "Tahoma", "Times New Roman", "Verdana"],
-        fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica", "Impact", "Tahoma", "Times New Roman", "Verdana"],
-        toolbar: [
-          ['style', ['bold', 'italic', 'underline', 'clear']],
-          ['font', ['strikethrough', 'superscript', 'subscript']],
-          ['fontsize', ['fontsize']],
-          ["fontname", ["fontname"]],
-          ['para', ['ul', 'ol', 'paragraph']],
-          ['height', ['height']],
-          ['insert', ['link']],
-          ['view', ['codeview']]
-        ]
-      };
+  $(document).ready(function() {
+    // 1. Summernote Configuration
+    const summernoteConfig = {
+      height: 250, // Added a default height so it doesn't look collapsed
+      fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica", "Impact", "Tahoma", "Times New Roman", "Verdana"],
+      fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica", "Impact", "Tahoma", "Times New Roman", "Verdana"],
+      toolbar: [
+        ['style', ['bold', 'italic', 'underline', 'clear']],
+        ['font', ['strikethrough', 'superscript', 'subscript']],
+        ['fontsize', ['fontsize']],
+        ["fontname", ["fontname"]],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['height', ['height']],
+        ['insert', ['link']],
+        ['view', ['codeview']]
+      ]
+    };
 
-      const summerNoteEditors = [
-        { editor: '#summernoteAboutMe', input: '#AboutMe' },
-        { editor: '#summernoteAboutMeCaption', input: '#AboutMeCaption' },
-        { editor: '#summernoteAboutPage', input: '#AboutPage' },
-        { editor: '#summernoteAboutPageCaption', input: '#AboutPageCaption' }
-      ];
+    // 2. Editor Mapping
+    const summerNoteEditors = [
+      { editor: '#summernoteAboutMe', input: '#AboutMe' },
+      { editor: '#summernoteAboutMeCaption', input: '#AboutMeCaption' },
+      { editor: '#summernoteAboutPage', input: '#AboutPage' },
+      { editor: '#summernoteAboutPageCaption', input: '#AboutPageCaption' }
+    ];
 
-      summerNoteEditors.forEach(({ editor, input }) => {
-        const $editor = $(editor); // Summernote still needs the jQuery selector internally
-        const inputEl = document.querySelector(input);
+    // 3. Initialize and Load Data
+    summerNoteEditors.forEach(({ editor, input }) => {
+      const $editor = $(editor);
+      const inputEl = document.querySelector(input);
 
-        $editor.summernote(summernoteConfig);
+      $editor.summernote(summernoteConfig);
 
-        // Decode and Set Initial Content
-        if (inputEl && inputEl.value) {
-          const decodedContent = decodeURI(inputEl.value);
+      // Populate with existing data from DB
+      if (inputEl && inputEl.value) {
+        try {
+          // Changed to decodeURIComponent to handle complex HTML strings better
+          const decodedContent = decodeURIComponent(inputEl.value);
           $editor.summernote('code', decodedContent);
+        } catch (e) {
+          // Fallback to your original decodeURI if the encoding format differs
+          $editor.summernote('code', decodeURI(inputEl.value));
         }
-      });
+      }
+    });
+  });
+
+  // 4. Form Validation & Data Preparation for POST
+  function validateAboutMeForm() {
+    const summerNoteEditors = [
+      { editor: '#summernoteAboutMe', input: '#AboutMe' },
+      { editor: '#summernoteAboutMeCaption', input: '#AboutMeCaption' },
+      { editor: '#summernoteAboutPage', input: '#AboutPage' },
+      { editor: '#summernoteAboutPageCaption', input: '#AboutPageCaption' }
+    ];
+
+    summerNoteEditors.forEach(({ editor, input }) => {
+      const formattedData = $(editor).summernote('code');
+      // Syncing the editor back to the hidden textarea for submission
+      document.querySelector(input).value = encodeURIComponent(formattedData);
     });
 
-    function validateAboutMeForm() {
-      const summerNoteEditors = [
-        { editor: '#summernoteAboutMe', input: '#AboutMe' },
-        { editor: '#summernoteAboutMeCaption', input: '#AboutMeCaption' },
-        { editor: '#summernoteAboutPage', input: '#AboutPage' },
-        { editor: '#summernoteAboutPageCaption', input: '#AboutPageCaption' }
-      ];
-
-      summerNoteEditors.forEach(({ editor, input }) => {
-        const formattedData = $(editor).summernote('code');
-        const encodedData = encodeURI(formattedData);
-        document.querySelector(input).value = encodedData;
-      });
-
-      return true;
-    }
-  </script>
+    return true;
+  }
+</script>
 </section>

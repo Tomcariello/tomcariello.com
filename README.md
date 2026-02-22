@@ -23,13 +23,8 @@ Technologies Used:
     - **Summernote**: WYSYWIG used on the backend for styling  
 
 To-Do:  
-    - CSS Cleanup pass
-    - adminpuzzles.handlebars updates (just a placeholder)  
-	- Polish the Administration area visually  
     - Finish breaking routes into manageable file sizes (split auth as well)  
-    - Make puzzle filters functional  
     - Create Admin puzzle page(s) to allow editing & image upload of each puzzle  
-    - Create & Activate puzzle-detail page  
     - Enable Handlebars linter  
     - Organize AWS S3 image storage paths  
     - deleteFromS3 Utility: Create a function to deletes file(s) from S3  
@@ -38,3 +33,4 @@ To-Do:
     - Re-activate contact form with a different email provider & avoid spam(?)  
     - Remove or enable quiz game project  
     - Remove or enable hangman project  
+    - Address Edit Blog page footer clash  
