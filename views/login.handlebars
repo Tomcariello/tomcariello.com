@@ -10,14 +10,20 @@
 
       <form action="login" method="POST">
         <div class="form-floating mb-3">
-          <input type="email" class="form-control" id="email" name="email" 
-                 placeholder="name@example.com" autocomplete="username" required>
+          <input type="text" 
+                name="username" 
+                id="username" 
+                autocomplete="username" 
+                autocorrect="off" 
+                autocapitalize="none">
           <label for="email">E-mail Address</label>
         </div>
 
         <div class="form-floating mb-4">
-          <input type="password" class="form-control" id="password" name="password" 
-                 placeholder="Password" autocomplete="current-password" required>
+          <input type="password" 
+                name="password" 
+                id="password" 
+                autocomplete="current-password">
           <label for="password">Password</label>
         </div>
 
