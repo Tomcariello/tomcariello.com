@@ -26,7 +26,6 @@
     "express-session": "^1.19.0",
     "handlebars": "^4.7.7",
     "method-override": "^3.0.0",
-    "minimatch": "^3.0.4",
     "moment": "^2.20.1",
     "multer": "^2.0.2",
     "mysql2": "^3.17.4",
@@ -37,9 +36,11 @@
     "sequelize-cli": "^6.6.1"
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.29.1",
+    "eslint": "^10.0.1",
+    "eslint-config-airbnb-base": "^7.1.0",
+    "eslint-plugin-import": "^1.14.0",
+    "glob": "^13.0.6",
+    "minimatch": "^10.2.2",
     "nodemon": "^3.1.14"
   },
   "repository": {

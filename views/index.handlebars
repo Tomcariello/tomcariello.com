@@ -2,9 +2,11 @@
   <div class="row">
     <div class="col-xs-12">
       <div class="panel panel-default">
-        <div class="panel-heading"><h3>About Me</h3></div>
+        <div class="panel-heading">
+          <h3>About Me</h3>
+        </div>
         <div class="panel-body">
-            <div class='row'>
+          <div class='row'>
             <div class="col-md-7 col-sm-12 profilePictureContainer">
               <div>
                 <img class="profile" src="{{dynamicData.image}}" alt="Tom's profile image">
@@ -12,25 +14,29 @@
               <div class="profileImageCaption">
                 {{{decodeSummernote dynamicData.caption}}}
               </div>
-                
+
             </div>
             <div class="bodyText">
               <p>
                 {{{decodeSummernote dynamicData.bio}}}
               </p>
-              </div>
+            </div>
           </div>
-        </div>    
+        </div>
       </div>
     </div>
   </div>
-
-    <div class="row">
+  <div class="row">
+    <hr>
+  </div>
+  <div class="row">
     <div class="col-xs-12">
       <div class="panel panel-default">
-        <div class="panel-heading"><h3>About This Page</h3></div>
+        <div class="panel-heading">
+          <h3>About This Page</h3>
+        </div>
         <div class="panel-body">
-            <div class='row'>
+          <div class='row'>
             <div class="col-md-7 col-sm-12 profilePictureContainer">
               <div>
                 <img class="profile" src="{{dynamicData.aboutpageimage}}" alt="About the site image">
@@ -38,15 +44,15 @@
               <div class="profileImageCaption">
                 {{{decodeSummernote dynamicData.aboutpagecaption}}}
               </div>
-                
+
             </div>
             <div class="bodyText">
               <p>
                 {{{decodeSummernote dynamicData.aboutpagetext}}}
               </p>
-              </div>
+            </div>
           </div>
-        </div>    
+        </div>
       </div>
     </div>
   </div>

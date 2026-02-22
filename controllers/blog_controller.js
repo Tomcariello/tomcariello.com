@@ -12,16 +12,26 @@ const uploadToS3 = mainRouter.uploadToS3;
 const router = express.Router();
 const multerUpload = multer({ dest: path.join(__dirname, '/public/images/') });
 
-router.get('/blog', (req, res) => {
-  models.Blogs.findAll({ order: [['createdAt', 'DESC']] })
-    .then((data) => {
-      data = JSON.stringify(data);
-      data = JSON.parse(data);
-
-      const payload = { dynamicData: data };
-      checkAdminStatus(req, payload);
-      res.render('blog', { dynamicData: payload.dynamicData, layout: 'main-social' });
+router.get('/blog', async (req, res) => {
+  try {
+    const blogs = await models.Blogs.findAll({ 
+      order: [['createdAt', 'DESC']] 
     });
+
+    const plainBlogs = blogs.map(blog => blog.get({ plain: true }));
+
+    const payload = { dynamicData: plainBlogs };
+    checkAdminStatus(req, payload);
+
+    res.render('blog', { 
+      dynamicData: payload.dynamicData, 
+      layout: 'main-social' 
+    });
+
+  } catch (error) {
+    console.error("Blog fetch error:", error);
+    res.status(500).send("Error loading blog posts");
+  }
 });
 
 router.get('/blogpost', (req, res) => {

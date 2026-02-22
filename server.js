@@ -49,8 +49,10 @@ app.use(passport.session());
 // 5. Routes
 const routes = require('./controllers/route_controller.js');
 const blogRoutes = require('./controllers/blog_controller.js');
+const puzzleRoutes = require('./controllers/puzzle_controller.js');
 app.use('/', routes);
 app.use('/', blogRoutes);
+app.use('/', puzzleRoutes);
 
 // 6. Database Sync & Start
 const PORT = process.env.PORT || 3000;

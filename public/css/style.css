@@ -310,11 +310,62 @@ input[type=text] {
 .aboutAdminImage {
     width: 50%;
 }
-.adminPortalIcons {
+/* .adminPortalIcons {
 	text-align: center;
 }
 .adminPortalRow {
     margin: 20px 0;
+} */
+.admin-panel-heading.panel-heading {
+	border: 1px solid #bbbbbb;
+	width: 100%;
+	text-align: center;
+	font-weight: bold;
+	background-color: #f2f2f2;
+}
+ /* Container for the spacing between cards */
+.admin-card-wrapper {
+  padding: 15px;
+}
+
+/* The actual clickable card */
+.admin-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-decoration: none !important;
+  color: #333;
+  transition: all 0.3s ease;
+  height: 100%; /* Ensures all cards in a row are same height */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.admin-card:hover {
+  border-color: #337ab7;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+  background-color: #fcfcfc;
+}
+
+.admin-card-icon {
+  flex: 0 0 80px; /* Fixed width for icon area */
+  color: #337ab7;
+  text-align: center;
+}
+
+.admin-card-content h2 {
+  margin: 0 0 5px 0;
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.admin-card-content p {
+  margin: 0;
+  color: #777;
+  font-size: 0.9rem;
 }
 .right {
     text-align: right;

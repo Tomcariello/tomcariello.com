@@ -1,0 +1,109 @@
+<section class="main">
+  <div class="row">
+    <div class="col-sm-12">
+      
+      <p><a href="/adminportal"><i class="fas fa-arrow-left"></i> Back to Administrative Portal</a></p>
+
+      <div class="panel panel-default">
+        <div class="panel-heading admin-panel-heading">
+          <h3>Puzzle Management</h3>
+        </div>
+        
+        <div class="panel-body">
+          <fieldset>
+            <legend>Add New Puzzle</legend>
+            <form action="/adminpuzzles/new" method="POST" enctype="multipart/form-data" class="form-horizontal">
+              
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Puzzle Name</label>
+                <div class="col-sm-10">
+                  <input type="text" name="name" class="form-control" placeholder="e.g. Starry Night" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Brand</label>
+                <div class="col-sm-4">
+                  <input type="text" name="brand" class="form-control" placeholder="e.g. Springbok">
+                </div>
+                <label class="col-sm-2 control-label">Piece Count</label>
+                <div class="col-sm-4">
+                  <input type="number" name="pieceCount" class="form-control" placeholder="1000">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Status</label>
+                <div class="col-sm-10">
+                  <select name="status" class="form-control">
+                    <option value="Unopened">Unopened</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Missing Pieces">Missing Pieces</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Box Image</label>
+                <div class="col-sm-10">
+                  <input type="file" name="puzzleImage" class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Notes</label>
+                <div class="col-sm-10">
+                  <textarea name="notes" class="form-control" rows="3"></textarea>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-primary">Save Puzzle</button>
+                </div>
+              </div>
+            </form>
+          </fieldset>
+
+          <hr>
+
+          <h3>Current Collection</h3>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Name</th>
+                  <th>Brand</th>
+                  <th>Pieces</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each puzzles}}
+                <tr>
+                  <td><img src="{{this.image}}" alt="" style="width: 50px;"></td>
+                  <td>{{this.name}}</td>
+                  <td>{{this.brand}}</td>
+                  <td>{{this.pieceCount}}</td>
+                  <td>{{this.status}}</td>
+                  <td>
+                    <a href="/adminpuzzles/edit/{{this.id}}" class="btn btn-xs btn-default">Edit</a>
+                  </td>
+                </tr>
+                {{else}}
+                <tr>
+                  <td colspan="6" class="text-center">No puzzles found in the collection.</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
