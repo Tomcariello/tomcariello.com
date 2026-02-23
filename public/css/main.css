@@ -318,59 +318,24 @@ footer {
     }
 }
 
-/* 1. RESET & LAYOUT BASE */
 .page-puzzles {
     overflow-x: hidden;
     width: 100%;
 }
 
-/* Force rows to behave - kills the -15px negative margin bleed */
 .page-puzzles .row {
     margin-right: 0 !important;
     margin-left: 0 !important;
     --bs-gutter-x: 1rem; 
 }
 
-/* 2. FILTER TOOLBAR (The main culprit) */
 .filter-toolbar {
     max-width: 100%;
     border-radius: 0 !important; /* Edge-to-edge on mobile */
     margin-bottom: 2rem !important;
 }
 
-/* 3. BREAKPOINT: 800px and below */
-@media (max-width: 800px) {
-    .page-puzzles {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
 
-    .filter-toolbar {
-        padding: 1rem !important;
-        border-left: none !important;
-        border-right: none !important;
-    }
-
-    /* Stack the filter columns */
-    .filter-toolbar .col-auto, 
-    .filter-toolbar .col-md {
-        width: 100% !important;
-        flex: 0 0 100% !important;
-        margin-bottom: 1rem;
-    }
-
-    /* Fix the Search Bar stretching */
-    .filter-toolbar .input-group {
-        width: 100% !important;
-    }
-
-    /* Carousel height for mobile */
-    .carousel-item img {
-        height: 280px !important;
-    }
-}
-
-/* 4. PUZZLE CARDS (The Visuals) */
 .puzzle-card {
     transition: transform 0.2s ease;
     height: 100%;
@@ -392,7 +357,6 @@ footer {
     object-fit: cover;
 }
 
-/* Visual state for owned puzzles */
 .is-owned {
     border: 2px solid rgba(13, 110, 253, 0.3) !important;
 }
@@ -409,7 +373,6 @@ footer {
     font-weight: bold;
 }
 
-/* Non-owned: Grayscale style */
 .puzzle-card:not(.is-owned) img {
     filter: grayscale(60%);
     opacity: 0.8;
@@ -420,7 +383,6 @@ footer {
     opacity: 1;
 }
 
-/* 5. MODAL & MISC */
 .carousel-item img {
     height: 400px;
     object-fit: contain;
@@ -430,6 +392,148 @@ footer {
 .no-image-placeholder {
     color: #adb5bd;
     font-size: 0.8rem;
+}
+
+.puzzle-archive-header {
+    color: #ffffff;
+}
+
+.row.puzzle-search-row {
+    margin-top: 25px;
+}
+
+#adminSearchInput {
+ flex: .5 1 auto !important;   
+}
+
+.admin-image-strip {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.admin-thumb-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-table-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-thumb-wrapper.empty {
+    color: #ced4da;
+    font-size: 0.7rem;
+    background: #fdfdfe;
+}
+
+@media (max-width: 800px) {
+    .admin-image-strip {
+        justify-content: flex-end; 
+    }
+    
+    .w-100-mobile {
+        width: 100% !important;
+        padding: 10px !important;
+    }
+
+    #adminSearchInput {
+        flex: 1 1 auto !important;
+    }
+
+    .page-puzzles {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    #resultsWrapper, 
+    .table-responsive, 
+    .table, 
+    #adminSearchResultsBody {
+        display: block !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .panel-body, .panel {
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .filter-toolbar .col-auto, 
+    .filter-toolbar .col-md {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        margin-bottom: 1rem;
+    }
+
+    #adminSearchResultsBody thead, 
+    table thead {
+        display: none !important; 
+    }
+
+    #adminSearchResultsBody tr {
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        padding: 1rem;
+        background: #fff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        box-sizing: border-box;
+    }
+
+    #adminSearchResultsBody td {
+        display: flex !important;
+        width: 100% !important;
+        justify-content: flex-end;
+        align-items: center;
+        min-height: 45px;
+        position: relative;
+        padding: 8px 0 !important;
+        border-bottom: 1px solid #f8f9fa;
+        box-sizing: border-box;
+    }
+
+    /* Labels */
+    #adminSearchResultsBody td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 40%;
+        font-weight: bold;
+        text-align: left;
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+
+    #adminSearchResultsBody td:last-child {
+        display: block !important;
+        padding-left: 0 !important;
+        text-align: center;
+        border-top: 1px solid #eee;
+        border-bottom: none;
+        margin-top: 10px;
+        padding-top: 15px !important;
+    }
+
+    #adminSearchResultsBody td:last-child::before {
+        display: none;
+    }
 }
 
 /* --- Page: Admin Portal --- */
@@ -613,7 +717,7 @@ footer {
 }
 
 .panel-heading.bg-dark {
-    background-color: #2c3e50 !important;
+    background-color: #69b3fd !important;
     color: white !important;
     padding: 15px 20px;
     border-top-left-radius: 8px;

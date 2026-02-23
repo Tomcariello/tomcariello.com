@@ -5,23 +5,23 @@
 
       <div class="panel panel-default border-0 shadow-sm">
         <div class="panel-heading bg-dark text-white">
-          <h3 class="panel-title">Puzzle Archive Search & Entry</h3>
+          <h3 class="panel-title puzzle-archive-header">Puzzle Archive Search & Entry</h3>
         </div>
         <div class="panel-body bg-light">
-          <div class="row">
-            <div class="col-md-6">
-              <label class="fw-bold">Step 1: Find Existing Puzzle</label>
+          <div class="row puzzle-search-row">
+            <div class="col-md-12">
               <div class="input-group">
-                <span class="input-group-addon"><i class="fas fa-search"></i></span>
-                <input type="text" id="adminSearchInput" class="form-control input-lg" placeholder="Enter Puzzle ID (e.g. PZL4190) or Name...">
+                <input type="text" id="adminSearchInput" class="form-control input-lg"
+                  placeholder="Search by Puzzle ID (e.g. PZL4190) or Name">
               </div>
-              <p class="help-block small text-muted">Always search before adding a new record to prevent duplicates.</p>
             </div>
-            <div class="col-md-6 text-right">
-                <label class="d-block">&nbsp;</label>
-                <button class="btn btn-success btn-lg" onclick="toggleAddForm()">
-                    <i class="fas fa-plus"></i> Add New Unique Puzzle
-                </button>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <label class="d-block">&nbsp;</label>
+              <button class="btn btn-success btn-lg" onclick="toggleAddForm()">
+                <i class="fas fa-plus"></i> Add New Unique Puzzle
+              </button>
             </div>
           </div>
         </div>
@@ -41,36 +41,36 @@
               </tr>
             </thead>
             <tbody id="adminSearchResultsBody">
-              </tbody>
+            </tbody>
           </table>
         </div>
       </div>
 
       <div id="addNewForm" style="display:none;" class="panel panel-info mt-4">
-          <div class="panel-heading"><strong>Create New Archive Entry</strong></div>
-          <div class="panel-body">
-              <form action="/adminpuzzles/new" method="POST" class="form-horizontal">
-                  <div class="form-group">
-                      <label class="col-sm-2 control-label">Puzzle ID</label>
-                      <div class="col-sm-4">
-                          <input type="text" name="puzzle_id" class="form-control" placeholder="PZL####" required>
-                      </div>
-                      <label class="col-sm-2 control-label">Year</label>
-                      <div class="col-sm-4">
-                          <input type="number" name="year" class="form-control" value="1980">
-                      </div>
-                  </div>
-                  <div class="form-group">
-                      <label class="col-sm-2 control-label">Name</label>
-                      <div class="col-sm-10">
-                          <input type="text" name="puzzle_name" class="form-control" required>
-                      </div>
-                  </div>
-                  <div class="text-right">
-                      <button type="submit" class="btn btn-primary">Create & Proceed to Details</button>
-                  </div>
-              </form>
-          </div>
+        <div class="panel-heading"><strong>Create New Archive Entry</strong></div>
+        <div class="panel-body">
+          <form action="/adminpuzzles/new" method="POST" class="form-horizontal">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Puzzle ID</label>
+              <div class="col-sm-4">
+                <input type="text" name="puzzle_id" class="form-control" placeholder="PZL####" required>
+              </div>
+              <label class="col-sm-2 control-label">Year</label>
+              <div class="col-sm-4">
+                <input type="number" name="year" class="form-control" value="1980">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Name</label>
+              <div class="col-sm-10">
+                <input type="text" name="puzzle_name" class="form-control" required>
+              </div>
+            </div>
+            <div class="text-right">
+              <button type="submit" class="btn btn-primary">Create & Proceed to Details</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -84,44 +84,51 @@
   const resultsWrapper = document.getElementById('resultsWrapper');
   const resultsBody = document.getElementById('adminSearchResultsBody');
   const addNewForm = document.getElementById('addNewForm');
+  const s3Base = "https://tomcarielloimages.s3.amazonaws.com/puzzle_images/"
 
   function toggleAddForm() {
-      addNewForm.style.display = addNewForm.style.display === 'none' ? 'block' : 'none';
-      resultsWrapper.style.display = 'none';
+    addNewForm.style.display = addNewForm.style.display === 'none' ? 'block' : 'none';
+    resultsWrapper.style.display = 'none';
   }
 
   searchInput.addEventListener('input', (e) => {
     const val = e.target.value.toLowerCase();
-    if(val.length < 2) {
+    if (val.length < 2) {
       resultsWrapper.style.display = 'none';
       return;
     }
 
-    const matches = allPuzzles.filter(p => 
-      p.puzzle_id.toLowerCase().includes(val) || 
+    const matches = allPuzzles.filter(p =>
+      p.puzzle_id.toLowerCase().includes(val) ||
       p.puzzle_name.toLowerCase().includes(val)
     ).slice(0, 10); // Only show top 10 matches for speed
 
-    resultsBody.innerHTML = matches.map(p => `
-      <tr>
-        <td><strong>${p.puzzle_id}</strong></td>
-        <td>${p.puzzle_name}</td>
-        <td>${p.year}</td>
-        <td class="text-center">
-          ${p.in_collection 
-            ? '<span class="label label-success"><i class="fas fa-check"></i> Owned</span>' 
-            : '<span class="label label-default opacity-50">Missing</span>'}
-        </td>
-        <td class="text-center">
-            <i class="fas fa-image ${p.image_box_front ? 'text-success' : 'text-danger opacity-15'}"></i>
-            <i class="fas fa-file-image ${p.image_box_back ? 'text-success' : 'text-danger opacity-15'}"></i>
-            <i class="fas fa-check-circle ${p.image_complete ? 'text-success' : 'text-danger opacity-15'}"></i>
-        </td>
-        <td class="text-right">
-          <a href="/adminpuzzles/edit/${p.id}" class="btn btn-sm btn-primary">Update Details</a>
-        </td>
-      </tr>
-    `).join('');
+    resultsBody.innerHTML = matches.map(p => {
+      // Helper to generate a thumb or a placeholder
+      const getThumb = (path, label) => path 
+        ? `<div class= "admin-thumb-wrapper" > <img src="${s3Base}${path}.png" title="${label}" class="admin-table-thumb"></div>`
+        : `<div class= "admin-thumb-wrapper empty" title = "Missing ${label}" > <i class="fas fa-times"></i></div> `;
+
+      return `
+        <tr>
+          <td data-label="ID">#${p.puzzle_id}</td>
+          <td data-label="Name" class="fw-bold">${p.puzzle_name}</td>
+          <td data-label="Year">${p.year}</td>
+          <td data-label="Collection">${p.in_collection ? '✅' : '❌'}</td>
+          <td data-label="Images" class="text-center">
+            <div class="admin-image-strip">
+                ${getThumb(p.image_box_front, 'Front')}
+                ${getThumb(p.image_box_back, 'Back')}
+                    ${getThumb(p.image_complete, 'Complete')}
+                </div>
+            </td>
+            <td class="text-right">
+              <a href="/adminpuzzles/edit/${p.puzzle_id}" class="btn btn-sm btn-outline-primary w-100-mobile">
+                <i class="fas fa-edit"></i> Edit
+              </a>
+            </td>
+        </tr >`;
+      }).join('');
 
     resultsWrapper.style.display = matches.length > 0 ? 'block' : 'none';
     addNewForm.style.display = 'none';
