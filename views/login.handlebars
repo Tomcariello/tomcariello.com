@@ -1,41 +1,57 @@
-<section class="page-login d-flex align-items-center justify-content-center" style="min-height: 70vh;">
-  <div class="col-sm-10 col-md-6 col-lg-4">
-    
-    <div class="login-card shadow-lg p-4 p-md-5 rounded-4 border bg-white">
+<section class="page-login d-flex align-items-center justify-content-center">
+  <div class="login-container">
+
+    <div class="login-card">
       <div class="text-center mb-4">
-        <i class="fas fa-user-shield fa-3x text-primary mb-3"></i>
+        <div class="icon-circle">
+          <i class="fas fa-user-shield"></i>
+        </div>
         <h2 class="fw-bold">Admin Portal</h2>
         <p class="text-muted small">Please enter your credentials to continue.</p>
       </div>
 
-      <form action="login" method="POST">
+      <form action="login" method="POST" novalidate>
+
         <div class="form-floating mb-3">
-          <input type="email" class="form-control" id="email" name="email" 
-                 placeholder="name@example.com" autocomplete="username" required>
+          <input type="email" class="form-control" id="email" name="email" placeholder=" " autocomplete="off"
+            autocorrect="off" autocapitalize="off" required>
           <label for="email">E-mail Address</label>
         </div>
 
         <div class="form-floating mb-4">
-          <input type="password" class="form-control" id="password" name="password" 
-                 placeholder="Password" autocomplete="current-password" required>
+          <input type="password" class="form-control" id="password" name="password" placeholder=" "
+            autocomplete="new-password" required>
           <label for="password">Password</label>
         </div>
-        <div>
-          <Br><Br><Br>
-        </div>
-        <div class="d-grid">
-          <button class="btn btn-primary btn-lg rounded-pill fw-bold py-3" type="submit">
+
+        <div class="d-grid mt-2">
+          <button class="btn-login" type="submit">
             Sign In <i class="fas fa-sign-in-alt ms-2"></i>
           </button>
         </div>
       </form>
-      
+
       <div class="text-center mt-4">
-        <a href="/index" class="text-decoration-none small text-secondary">
+        <a href="/index" class="back-link">
           <i class="fas fa-arrow-left me-1"></i> Back to Public Site
         </a>
       </div>
     </div>
 
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const emailInput = document.getElementById('email');
+
+      // Stop the 'input' event from bubbling up if it's trying to trigger a jump
+      emailInput.addEventListener('input', (e) => {
+        e.stopPropagation();
+      }, { passive: true });
+
+      // Force focus to stay put on the first tap
+      emailInput.addEventListener('touchstart', (e) => {
+        emailInput.focus();
+      });
+    });
+  </script>
 </section>

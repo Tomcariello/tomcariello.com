@@ -432,56 +432,6 @@ footer {
     font-size: 0.8rem;
 }
 
-/* --- Page: Login --- */
-
-.page-login .login-card {
-    border: 1px solid rgba(0,0,0,0.08);
-    background-color: #ffffff;
-}
-
-.page-login .form-control {
-    border-radius: 10px;
-}
-
-.page-login .form-control:focus {
-    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
-}
-
-/* Ensure the floating labels don't get lost */
-.page-login .form-floating > label {
-position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding: .1rem .75rem;
-    overflow: hidden;
-    text-align: start;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    pointer-events: none;
-    transform-origin: 0 0;
-    transition: opacity .1s ease-in-out, transform .1s ease-in-out;
-}
-
-.form-floating > .form-control:focus ~ label,
-.form-floating > .form-control:not(:placeholder-shown) ~ label {
-    opacity: .65;
-    transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
-}
-
-/* Styling the "Blue Button" replacement */
-.page-login .btn-primary {
-    background: linear-gradient(135deg, #0d6efd 0%, #004dc0 100%);
-    border: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.page-login .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
-}
-
 /* --- Page: Admin Portal --- */
 
 .page-admin-portal .admin-card {
@@ -741,3 +691,105 @@ position: absolute;
 .mt-4 { margin-top: 20px; }
 .mb-3 { margin-bottom: 15px; }
 .fw-bold { font-weight: 700; }
+
+/* --- Login Reset & Layout --- */
+.page-login {
+    min-height: 100vh; /* Better for mobile viewports */
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px; /* Perfect for both mobile and desktop */
+}
+
+.login-card {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* --- Icon Styling --- */
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 2rem;
+}
+
+/* --- Floating Label Fixes --- */
+.page-login .form-floating {
+    position: relative;
+}
+
+.page-login .form-control {
+    height: 60px !important; /* Fixed height stops the 'jump' */
+    border-radius: 12px;
+    padding: 1rem 0.75rem;
+    border: 1px solid #dee2e6;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.page-login .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+}
+
+/* Ensure placeholder is hidden until focused so it doesn't fight the label */
+.page-login .form-control::placeholder {
+    color: transparent;
+}
+
+/* --- Button Styling --- */
+.btn-login {
+    background: #0d6efd;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    transition: transform 0.1s active, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-login:hover {
+    background: #0b5ed7;
+}
+
+.btn-login:active {
+    transform: scale(0.98);
+}
+
+.back-link {
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    color: #0d6efd;
+}
+
+/* --- Mobile Specific Overrides --- */
+@media (max-width: 576px) {
+    .login-card {
+        padding: 1.5rem;
+    }
+    
+    .page-login {
+        align-items: flex-start; /* Better for smaller screens when keyboard pops up */
+        padding-top: 10vh;
+    }
+}

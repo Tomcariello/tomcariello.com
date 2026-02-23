@@ -24,6 +24,7 @@ Technologies Used:
 
 To-Do:  
     - Fix puzzle frontend width on mobile
+    - Fix login shenanigans on mobile
     - Finish breaking routes into manageable file sizes (split auth as well)  
     - Create Admin puzzle page(s) to allow editing & image upload of each puzzle  
     - Enable Handlebars linter  

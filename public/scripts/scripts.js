@@ -64,12 +64,15 @@ const handleError = (element) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Select all registration inputs to add listeners in one go
-  const regInputs = document.querySelectorAll('#fname, #lname, #email, #password, #confirmpassword');
+  const registrationForm = document.getElementById('registrationForm'); // Use the ID of your actual reg form
+
+  if (registrationForm) {
+    const regInputs = document.querySelectorAll('#fname, #lname, #email, #password, #confirmpassword');
   
-  regInputs.forEach(input => {
-    input.addEventListener('input', validateRegistration);
-  });
+    regInputs.forEach(input => {
+      input.addEventListener('input', validateRegistration);
+    });
+  }
 
   // Modal listener
   const addBtn = document.querySelector('#addnewproject');
