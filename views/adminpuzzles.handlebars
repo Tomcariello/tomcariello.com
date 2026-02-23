@@ -106,7 +106,7 @@
     resultsBody.innerHTML = matches.map(p => {
       // Helper to generate a thumb or a placeholder
       const getThumb = (path, label) => path 
-        ? `<div class= "admin-thumb-wrapper" > <img src="${s3Base}${path}.png" title="${label}" class="admin-table-thumb"></div>`
+        ? `<div class= "admin-thumb-wrapper" > <img src="${s3Base}${path}" title="${label}" class="admin-table-thumb"></div>`
         : `<div class= "admin-thumb-wrapper empty" title = "Missing ${label}" > <i class="fas fa-times"></i></div> `;
 
       return `
@@ -123,7 +123,7 @@
                 </div>
             </td>
             <td class="text-right">
-              <a href="/editpuzzle/${p.puzzle_id}" class="btn btn-sm btn-outline-primary w-100-mobile">
+              <a href="/editpuzzle/${p.id}" class="btn btn-sm btn-outline-primary w-100-mobile">
                 <i class="fas fa-edit"></i> Edit
               </a>
             </td>

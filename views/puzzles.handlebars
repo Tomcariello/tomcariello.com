@@ -111,7 +111,7 @@
                onclick="showPuzzleDetails('${p.puzzle_id}')" style="cursor: pointer;">
             <div class="puzzle-img-wrapper">
               ${p.image_box_front
-            ? `<img src="${s3Base}${p.image_box_front}.png" alt="${p.puzzle_name}" loading="lazy" class="card-img-top">`
+            ? `<img src="${s3Base}${p.image_box_front}" alt="${p.puzzle_name}" loading="lazy" class="card-img-top">`
             : `<div class="no-image-placeholder"><i class="fas fa-camera-retro fa-2x mb-2"></i><span>Coming Soon</span></div>`
           }
               ${p.in_collection ? `<div class="owned-tag"><i class="fas fa-home"></i> In Collection</div>` : ''}
@@ -157,14 +157,29 @@
 
         itemsToShow = 40;
 
+        const isSearching = document.getElementById('puzzleSearch').value.trim() !== "";
+        const otherFilters = document.querySelectorAll('#startYear, #endYear, #pieceFilter, #collectionOnly');
+
+        otherFilters.forEach(el => {
+            el.style.opacity = isSearching ? "0.4" : "1";
+            el.style.pointerEvents = isSearching ? "none" : "auto"; // Optional: prevents clicking while searching
+        });
+
         filteredResults = allPuzzles.filter(p => {
+          const searchTerm = document.getElementById('puzzleSearch').value.toLowerCase().trim();
+    
+          // If there's a search term, let it override everything else
+          if (searchTerm !== "") {
+            return p.puzzle_name.toLowerCase().includes(searchTerm) ||
+              p.puzzle_id.toLowerCase().includes(searchTerm);
+          }
+
           const year = parseInt(p.year);
           const matchesYear = year >= startYear && year <= endYear;
           const matchesPieces = pieceLimit === "all" || String(p.piece_count) === pieceLimit;
           const matchesCollection = !collectionOnly || p.in_collection;
-          const matchesSearch = p.puzzle_name.toLowerCase().includes(searchTerm) ||
-            p.puzzle_id.toLowerCase().includes(searchTerm);
-          return matchesYear && matchesPieces && matchesCollection && matchesSearch;
+
+          return matchesYear && matchesPieces && matchesCollection;
         });
 
         renderGrid();
@@ -204,7 +219,7 @@
             ${images.map((img, index) => `
               <div class="carousel-item ${index === 0 ? 'active' : ''}">
                 ${img.src
-          ? `<img src="${s3Base}${img.src}.png" class="d-block w-100 p-2" style="height: 400px; object-fit: contain;" alt="${img.label}">`
+          ? `<img src="${s3Base}${img.src}" class="d-block w-100 p-2" style="height: 400px; object-fit: contain;" alt="${img.label}">`
           : `<div class="d-flex flex-column align-items-center justify-content-center bg-light text-muted" style="height: 400px;">
                        <i class="fas fa-camera-retro fa-3x mb-2"></i><span>No ${img.label} Image</span>
                      </div>`

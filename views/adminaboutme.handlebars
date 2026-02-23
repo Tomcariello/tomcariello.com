@@ -100,9 +100,8 @@
   </form>
   <script>
   $(document).ready(function() {
-    // 1. Summernote Configuration
     const summernoteConfig = {
-      height: 250, // Added a default height so it doesn't look collapsed
+      height: 250,
       fontNames: ["Arial", "Arial Black", "Courier New", "Helvetica", "Impact", "Tahoma", "Times New Roman", "Verdana"],
       fontNamesIgnoreCheck: ["Arial", "Arial Black", "Courier New", "Helvetica", "Impact", "Tahoma", "Times New Roman", "Verdana"],
       toolbar: [
@@ -117,7 +116,6 @@
       ]
     };
 
-    // 2. Editor Mapping
     const summerNoteEditors = [
       { editor: '#summernoteAboutMe', input: '#AboutMe' },
       { editor: '#summernoteAboutMeCaption', input: '#AboutMeCaption' },
@@ -125,28 +123,22 @@
       { editor: '#summernoteAboutPageCaption', input: '#AboutPageCaption' }
     ];
 
-    // 3. Initialize and Load Data
     summerNoteEditors.forEach(({ editor, input }) => {
       const $editor = $(editor);
       const inputEl = document.querySelector(input);
 
       $editor.summernote(summernoteConfig);
-
-      // Populate with existing data from DB
       if (inputEl && inputEl.value) {
         try {
-          // Changed to decodeURIComponent to handle complex HTML strings better
           const decodedContent = decodeURIComponent(inputEl.value);
           $editor.summernote('code', decodedContent);
         } catch (e) {
-          // Fallback to your original decodeURI if the encoding format differs
           $editor.summernote('code', decodeURI(inputEl.value));
         }
       }
     });
   });
 
-  // 4. Form Validation & Data Preparation for POST
   function validateAboutMeForm() {
     const summerNoteEditors = [
       { editor: '#summernoteAboutMe', input: '#AboutMe' },

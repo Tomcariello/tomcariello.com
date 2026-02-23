@@ -377,27 +377,22 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, async (req, res) => {
   try {
     const currentDate = new Date();
     
-    // 1. Fetch current data to preserve existing images if no new ones are uploaded
     const aboutMe = await models.AboutMe.findOne({ where: { id: 1 } });
     if (!aboutMe) return res.status(404).send("About Me record not found.");
 
-    // 2. Initialize image paths with current values
     let profileImagePath = aboutMe.image;
     let aboutPageImagePath = aboutMe.aboutpageimage;
 
-    // 3. Handle Profile Picture Upload (if provided)
     if (req.files?.profilepicture) {
       const file = req.files.profilepicture[0];
       profileImagePath = await uploadToS3(file.originalname, file.path, file.mimetype);
     }
 
-    // 4. Handle About Page Picture Upload (if provided)
     if (req.files?.aboutpagepicture) {
       const file = req.files.aboutpagepicture[0];
       aboutPageImagePath = await uploadToS3(file.originalname, file.path, file.mimetype);
     }
 
-    // 5. Update everything in one single Database call
     await aboutMe.update({
       bio: req.body.AboutMe,
       caption: req.body.AboutMeCaption,
@@ -445,5 +440,6 @@ router.post('/updateAboutMe', isLoggedIn, fileUpload, async (req, res) => {
 router.isLoggedIn = isLoggedIn;
 router.checkAdminStatus = checkAdminStatus;
 router.uploadToS3 = uploadToS3;
+router.s3Client = s3Client;
 
 module.exports = router

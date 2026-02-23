@@ -23,15 +23,14 @@ Technologies Used:
     - **Summernote**: WYSYWIG used on the backend for styling  
 
 To-Do:  
-    - Create Admin puzzle page(s) to allow editing & image upload of each puzzle  
-    - Consider 'How aquired' being a managed list instead of text input  
+    
+    - Consider 'How aquired' being a managed list instead of text input (puzzle edit page)  
     - Finish breaking routes into manageable file sizes (split auth as well)  
     - Enable Handlebars linter  
     - Better organize AWS S3 image storage paths  
-    - deleteFromS3 Utility: Create a function to deletes file(s) from S3  
-    - Integrate deleteFromS3 for portfolio, blog, etc. deletion
+    - Abstract /delete-puzzle-image & use for portfolio, blog, etc. image deletion
 	- Add warning messages on misformed requests on login  
-    - Re-activate contact form with a different email provider & avoid spam(?)  
     - Remove or enable quiz game project  
     - Remove or enable hangman project  
+    - Re-activate contact form with a different email provider & avoid spam(?)  
     - Address Edit Blog page footer clash  

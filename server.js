@@ -10,16 +10,13 @@ const exphbs = require('express-handlebars');
 const db = require("./models");
 const app = express();
 
-// 1. Passport Config - One time is enough!
 require('./config/passportConfig.js')(passport);
 
-// 2. Middleware & Static Files
 app.use('/public', express.static(`${__dirname}/public`));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json()); // Added this in case you use AJAX/Fetch for the Puzzles
+app.use(bodyParser.json());
 
-// 3. Handlebars Setup
 app.engine('handlebars', exphbs.engine({
   defaultLayout: 'main',
   helpers: {
@@ -41,16 +38,14 @@ app.engine('handlebars', exphbs.engine({
 }));
 app.set('view engine', 'handlebars');
 
-// 4. Session & Passport (The Order Matters)
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'tomtest', // Best practice: use .env for secrets
-  resave: false, // Changed to false: modern express-session recommendation
-  saveUninitialized: false, // Prevents "empty" session objects from cluttering DB
+  secret: process.env.SESSION_SECRET || 'tomtest',
+  resave: false, 
+  saveUninitialized: false, 
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 5. Routes
 const routes = require('./controllers/route_controller.js');
 const blogRoutes = require('./controllers/blog_controller.js');
 const puzzleRoutes = require('./controllers/puzzle_controller.js');
@@ -58,10 +53,8 @@ app.use('/', routes);
 app.use('/', blogRoutes);
 app.use('/', puzzleRoutes);
 
-// 6. Database Sync & Start
 const PORT = process.env.PORT || 3000;
 
-// Syncing models to the database
 db.sequelize.sync({ force: false }).then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Server launched on port ${PORT}`);
