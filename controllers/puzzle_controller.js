@@ -11,19 +11,7 @@ const uploadToS3 = mainRouter.uploadToS3;
 
 const router = express.Router();
 const multerUpload = multer({ dest: path.join(__dirname, '/public/images/') });
-
-const isAdminMiddleware = (req, res, next) => {
-  // Passport attaches the user to req.user
-  if (req.isAuthenticated() && req.user.administrator === true) {
-    return next();
-  }
-
-  // Debugging: If it fails, let's see why in the terminal
-  console.log("--- Admin Access Denied ---");
-  console.log("User Object:", req.user); 
-  
-  res.status(403).send("Unauthorized: You must be an administrator to access this page.");
-};
+const s3BaseUrl = "https://tomcarielloimages.s3.amazonaws.com/puzzle_images/";
 
 router.get("/puzzles", (req, res) => {
   models.Puzzles.findAll({
@@ -49,8 +37,7 @@ router.get("/puzzles", (req, res) => {
 
     res.render("puzzles", {
       puzzles: puzzles,
-      // Keeping your S3 base for the image helper
-      s3Base: "https://tomcarielloimages.s3.amazonaws.com/puzzle_images/"
+      s3Base: s3BaseUrl
     });
   })
   .catch(err => {
@@ -84,29 +71,6 @@ const puzzleImageUploads = multerUpload.fields([
   { name: 'image_box_back', maxCount: 1 },
   { name: 'image_complete', maxCount: 1 }
 ]);
-
-// 1. THE GET ROUTE: Loads the edit page for a specific puzzle
-// router.get('/adminpuzzles/edit/:id', isLoggedIn, checkAdminStatus, async (req, res) => {
-//   try {
-//     // Find the puzzle in the DB using the ID from the URL (/edit/45)
-//     const puzzle = await models.Puzzles.findByPk(req.params.id);
-    
-//     if (!puzzle) {
-//       return res.status(404).send("That puzzle doesn't exist in the archive.");
-//     }
-
-//     // Render the edit handlebars file and pass the puzzle data to it
-//     res.render('adminpuzzles-edit', {
-//       puzzle: puzzle.get({ plain: true }),
-//       // Pass your S3 base URL so the image previews work
-//       s3Base: "https://tomcarielloimages.s3.amazonaws.com/puzzle_images/"
-//     });
-    
-//   } catch (err) {
-//     console.error("Error loading edit page:", err);
-//     res.status(500).send("Server error while trying to open the edit form.");
-//   }
-// });
 
 router.post('/adminpuzzles/update/:id', isLoggedIn, checkAdminStatus, puzzleImageUploads, async (req, res) => {
   try {
@@ -160,74 +124,38 @@ router.post('/adminpuzzles/update/:id', isLoggedIn, checkAdminStatus, puzzleImag
   }
 });
 
-// 1. DISPLAY THE EDIT FORM
-router.get('/adminpuzzles/edit/:id', isLoggedIn, isAdminMiddleware, async (req, res) => {
-  console.error('--- Route Reached! ---');
-  console.error('ID:', req.params.id);
-  console.error(`isLoggedIn: ${isLoggedIn}`)
-  
+router.get('/editpuzzle/:id', isLoggedIn, async (req, res) => {
   try {
-    const puzzle = await models.Puzzles.findByPk(req.params.id);
-    if (!puzzle) return res.status(404).send("Puzzle not found.");
-
-    res.render('adminpuzzles-edit', {
-      puzzle: puzzle.get({ plain: true }),
-      s3Base: "https://tomcarielloimages.s3.amazonaws.com/puzzle_images/"
-    });
-  } catch (err) {
-    console.error("Database Error:", err);
-    res.status(500).send("Error loading puzzle.");
-  }
-});
-
-// 2. PROCESS THE UPDATE
-router.post('/adminpuzzles/update/:id', isLoggedIn, checkAdminStatus, puzzleImageUploads, async (req, res) => {
-  try {
-    const id = req.params.id;
-    const existing = await models.Puzzles.findByPk(id);
-
-    // Prepare the basic data
-    // Remember: checkboxes only exist in req.body if they are checked ('on')
-    const updateData = {
-      puzzle_name: req.body.puzzle_name,
-      year: parseInt(req.body.year),
-      piece_count: parseInt(req.body.piece_count),
-      in_collection: req.body.in_collection === 'on',
-      is_complete: req.body.is_complete === 'on',
-      how_acquired: req.body.how_acquired,
-      notes: req.body.notes,
-      updatedAt: new Date()
-    };
-
-    // Handle the 3 potential image slots
-    const slots = ['image_box_front', 'image_box_back', 'image_complete'];
-
-    for (const slot of slots) {
-      if (req.files && req.files[slot]) {
-        const file = req.files[slot][0];
-        
-        // Clean Filename: PZL4190_front.png
-        const suffix = slot.split('_').pop(); // 'front', 'back', or 'complete'
-        const s3Key = `${existing.puzzle_id}_${suffix}`;
-
-        await uploadToS3(s3Key, file.path, file.mimetype);
-
-        // Update the database field with the new key
-        updateData[slot] = s3Key;
-
-        // Cleanup local temp file
-        fs.unlinkSync(file.path); 
-      }
+    const puzzleId = req.params.id; 
+    if (!puzzleId) {
+      return res.redirect('/adminpuzzles');
     }
 
-    await models.Puzzles.update(updateData, { where: { id: id } });
+    const puzzle = await models.Puzzles.findOne({
+      where: { puzzle_id: puzzleId },
+    });
 
-    // Success! Send them back to the search page to find the next one
-    res.redirect('/adminpuzzles?success=true');
+    if (!puzzle) {
+      return res.redirect('/adminpuzzles');
+    }
+
+    const cleanPuzzle = puzzle.get({ plain: true });
+    
+    const payload = { 
+        dynamicData: cleanPuzzle,
+    };
+
+    checkAdminStatus(req, payload);
+    payload.dynamicData.s3Base = s3BaseUrl
+
+    res.render('adminpuzzles-edit', payload );
 
   } catch (err) {
-    console.error("Update Error:", err);
-    res.status(500).send("Failed to save changes to the archive.");
+    console.error("Error loading edit puzzle page:", err);
+    res.status(500).render('error', { 
+      message: "An error occurred while trying to load the puzzle for editing.", 
+      error: err 
+    });
   }
 });
 

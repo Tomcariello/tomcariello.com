@@ -1,56 +1,142 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<div class="panel panel-default">
-    <div class="panel-body">
-        <form action="/adminpuzzles/update/{{puzzle.id}}" method="POST" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="well">
-                        <div class="checkbox">
-                            <label class="h4"><input type="checkbox" name="in_collection" {{#if puzzle.in_collection}}checked{{/if}}> <strong>In My Collection</strong></label>
+<section class="admin-edit-page py-4">
+    <div class="container">
+        <div class="d-flex align-items-center mb-4">
+            <a href="/adminpuzzles" class="btn btn-outline-secondary btn-sm me-3">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="h3 mb-0">Edit Puzzle<span class="text-muted">#{{dynamicData.puzzle_id}}</span></h1>
+        </div>
+
+        <form action="/adminpuzzles/update/{{dynamicData.puzzle_id}}" method="POST" enctype="multipart/form-data">
+            <div class="row g-4">
+
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0 rounded-4 p-4">
+                        <h5 class="fw-bold mb-4">General Information</h5>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Puzzle Name</label>
+                            <input type="text" name="puzzle_name" class="form-control"
+                                value="{{dynamicData.puzzle_name}}" required>
                         </div>
-                        <div class="checkbox">
-                            <label><input type="checkbox" name="is_complete" {{#if puzzle.is_complete}}checked{{/if}}> <strong>Puzzle is Complete</strong></label>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Year</label>
+                                <input type="number" name="year" class="form-control" value="{{dynamicData.year}}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Piece Count</label>
+                                <input type="number" name="piece_count" class="form-control"
+                                    value="{{dynamicData.piece_count}}">
+                            </div>
                         </div>
-                        <hr>
-                        <label>How Acquired</label>
-                        <input type="text" name="how_acquired" class="form-control" value="{{puzzle.how_acquired}}" placeholder="Thrift Store, eBay, etc.">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Notes</label>
+                            <textarea name="notes" class="form-control" rows="4">{{dynamicData.notes}}</textarea>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" name="in_collection" id="inCollection" {{#if
+                                dynamicData.in_collection}}checked{{/if}}>
+                            <label class="form-check-label fw-bold" for="inCollection">In My Collection</label>
+                        </div>
+                        <div id="collectionDetails" style="display: {{#if dynamicData.in_collection}}block{{else}}none{{/if}};">
+                            <div class="card border-primary border-opacity-25 bg-primary bg-opacity-10 p-3 mb-4">
+                                <h6 class="fw-bold text-primary mb-3">Collection Details</h6>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Is it Complete?</label>
+                                        <select name="is_complete" class="form-select">
+                                            <option value="Unknown" {{#if (eq dynamicData.is_complete "Unknown")}}selected{{/if}}>Unknown</option>
+                                            <option value="Yes" {{#if (eq dynamicData.is_complete "Yes")}}selected{{/if}}>Yes (All pieces present)</option>
+                                            <option value="No" {{#if (eq dynamicData.is_complete "No")}}selected{{/if}}>No (Missing pieces)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">How Acquired?</label>
+                                        <input type="text" name="how_acquired" class="form-control" 
+                                            value="{{dynamicData.how_acquired}}" placeholder="e.g. Thrift Store, Gift, Amazon">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-md-8 border-left">
-                    <h4>Image Assets</h4>
-                    <div class="row">
-                        <div class="col-sm-4 text-center">
-                            <label>Box Front</label>
-                            <div class="thumbnail">
-                                <img src="{{s3Base}}{{puzzle.image_box_front}}.png" onerror="this.src='/images/placeholder.png'">
-                                <input type="file" name="image_box_front" class="btn btn-xs">
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0 rounded-4 p-4 mb-4">
+                        <h5 class="fw-bold mb-4">Image Management</h5>
+                        <div class="mb-4">
+                            <label class="small text-muted text-uppercase fw-bold">Box Front</label>
+                            <div class="mt-2 mb-2">
+                                {{#if dynamicData.image_box_front}}
+                                <img src="{{dynamicData.s3Base}}{{dynamicData.image_box_front}}.png"
+                                    class="img-thumbnail d-block mb-2" style="max-height: 120px;">
+                                {{else}}
+                                <div class="py-3 bg-light text-center rounded border dashed">
+                                    <small class="text-muted">No front image</small>
+                                </div>
+                                {{/if}}
                             </div>
+                            <input type="file" name="image_box_front" class="form-control form-control-sm">
                         </div>
-                        <div class="col-sm-4 text-center">
-                            <label>Box Back</label>
-                            <div class="thumbnail">
-                                <img src="{{s3Base}}{{puzzle.image_box_back}}.png" onerror="this.src='/images/placeholder.png'">
-                                <input type="file" name="image_box_back" class="btn btn-xs">
+
+                        <div class="mb-4">
+                            <label class="small text-muted text-uppercase fw-bold">Box Back</label>
+                            <div class="mt-2 mb-2">
+                                {{#if dynamicData.image_box_back}}
+                                <img src="{{dynamicData.s3Base}}{{dynamicData.image_box_back}}.png"
+                                    class="img-thumbnail d-block mb-2" style="max-height: 120px;">
+                                {{else}}
+                                <div class="py-3 bg-light text-center rounded border dashed">
+                                    <small class="text-muted">No back image</small>
+                                </div>
+                                {{/if}}
                             </div>
+                            <input type="file" name="image_box_back" class="form-control form-control-sm">
                         </div>
-                        <div class="col-sm-4 text-center">
-                            <label>Completed</label>
-                            <div class="thumbnail">
-                                <img src="{{s3Base}}{{puzzle.image_complete}}.png" onerror="this.src='/images/placeholder.png'">
-                                <input type="file" name="image_complete" class="btn btn-xs">
+
+                        <div class="mb-4">
+                            <label class="small text-muted text-uppercase fw-bold">Completed Puzzle</label>
+                            <div class="mt-2 mb-2">
+                                {{#if dynamicData.image_complete}}
+                                <img src="{{dynamicData.s3Base}}{{dynamicData.image_complete}}.png"
+                                    class="img-thumbnail d-block mb-2" style="max-height: 120px;">
+                                {{else}}
+                                <div class="py-3 bg-light text-center rounded border dashed">
+                                    <small class="text-muted">No completion image</small>
+                                </div>
+                                {{/if}}
                             </div>
+                            <input type="file" name="image_complete" class="form-control form-control-sm">
                         </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold">
+                            Save Changes
+                        </button>
                     </div>
                 </div>
             </div>
-            
-            <div class="form-group mt-4">
-                <label>Archive Notes</label>
-                <textarea name="notes" class="form-control" rows="5">{{puzzle.notes}}</textarea>
-            </div>
-
-            <button type="submit" class="btn btn-success btn-lg">Save Archive Record</button>
         </form>
     </div>
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const collectionToggle = document.getElementById('inCollection');
+            const collectionDetails = document.getElementById('collectionDetails');
+
+            collectionToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    collectionDetails.style.display = 'block';
+                    // Optional: add a little animation class here
+                } else {
+                    collectionDetails.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</section>

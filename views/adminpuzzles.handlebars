@@ -111,8 +111,8 @@
 
       return `
         <tr>
-          <td data-label="ID">#${p.puzzle_id}</td>
           <td data-label="Name" class="fw-bold">${p.puzzle_name}</td>
+          <td data-label="ID">#${p.puzzle_id}</td>
           <td data-label="Year">${p.year}</td>
           <td data-label="Collection">${p.in_collection ? '✅' : '❌'}</td>
           <td data-label="Images" class="text-center">
@@ -123,7 +123,7 @@
                 </div>
             </td>
             <td class="text-right">
-              <a href="/adminpuzzles/edit/${p.puzzle_id}" class="btn btn-sm btn-outline-primary w-100-mobile">
+              <a href="/editpuzzle/${p.puzzle_id}" class="btn btn-sm btn-outline-primary w-100-mobile">
                 <i class="fas fa-edit"></i> Edit
               </a>
             </td>

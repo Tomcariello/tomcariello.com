@@ -36,6 +36,7 @@ app.engine('handlebars', exphbs.engine({
     json: function (context) {
       return JSON.stringify(context);
     },
+    eq: (a, b) => a === b,
   },
 }));
 app.set('view engine', 'handlebars');

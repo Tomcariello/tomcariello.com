@@ -24,9 +24,10 @@ Technologies Used:
 
 To-Do:  
     - Create Admin puzzle page(s) to allow editing & image upload of each puzzle  
+    - Consider 'How aquired' being a managed list instead of text input  
     - Finish breaking routes into manageable file sizes (split auth as well)  
     - Enable Handlebars linter  
-    - Organize AWS S3 image storage paths  
+    - Better organize AWS S3 image storage paths  
     - deleteFromS3 Utility: Create a function to deletes file(s) from S3  
     - Integrate deleteFromS3 for portfolio, blog, etc. deletion
 	- Add warning messages on misformed requests on login  

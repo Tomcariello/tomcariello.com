@@ -281,12 +281,10 @@ router.post('/updateblog/:blogId', isLoggedIn, multerUpload.single('blogpicture'
     const { blogId } = req.params;
     const currentDate = new Date();
 
-    // 1. Determine the image path
     // Default to the existing image sent in the body (if no new file is uploaded)
     let blogImagePath = req.body.existingBlogImage; 
 
     if (req.file) {
-      // Use our bulletproof S3 function (passing the path string, not a stream!)
       blogImagePath = await uploadToS3(
         req.file.originalname,
         req.file.path,
@@ -294,26 +292,22 @@ router.post('/updateblog/:blogId', isLoggedIn, multerUpload.single('blogpicture'
       );
     }
 
-    // 2. Find the blog entry
     const blog = await models.Blogs.findOne({ where: { id: blogId } });
 
     if (!blog) {
       return res.status(404).send("Blog post not found.");
     }
 
-    // 3. Update everything in one go
     await blog.update({
       headline: req.body.BlogHeadline,
       blogtext: req.body.Blogtext,
-      blogimage: blogImagePath, // Will be the NEW S3 URL or the OLD one
+      blogimage: blogImagePath,
       imagecaption: req.body.ImageCaption,
       author: req.body.BlogAuthor,
       updatedAt: currentDate,
     });
 
-    // 4. Redirect (Note: removed the extra space in the query string)
     res.redirect(`../editblog?id=${blogId}`);
-
   } catch (err) {
     console.error("Error in /updateblog route:", err);
     res.status(500).send("Update failed.");
