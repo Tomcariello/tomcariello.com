@@ -1,5 +1,3 @@
-let socialMediaExpanded = false;
-
 const hideSubmitButton = () => {
   const btn = document.querySelector('#submitButton');
   if (btn) btn.style.display = 'none';
@@ -18,33 +16,29 @@ const validateRegistration = () => {
   // Helper to safely check and style elements
   const setError = (el) => {
     if (el) {
-      el.style.borderColor = '#dc3545'; // Bootstrap 'danger' red
+      el.style.borderColor = '#dc3545';
       el.focus();
     }
     if (submitBtn) submitBtn.style.display = 'none';
     return false;
   };
 
-  // 1. Reset all borders
   Object.values(fields).forEach(el => {
     if (el) el.style.borderColor = '#dee2e6'; 
   });
 
-  // 2. Validate existence and value
   // This check ensures the element exists before trying to read .value
   if (fields.fname && !fields.fname.value) return setError(fields.fname);
   if (fields.lname && !fields.lname.value) return setError(fields.lname);
   if (fields.email && !fields.email.value) return setError(fields.email);
   if (fields.pass && !fields.pass.value) return setError(fields.pass);
 
-  // 3. Password Match Check (Only if both fields exist)
   if (fields.pass && fields.confirm) {
     if (fields.pass.value !== fields.confirm.value) {
       return setError(fields.confirm);
     }
   }
 
-  // 4. Success
   if (submitBtn) submitBtn.style.display = 'block';
 };
 
@@ -64,7 +58,7 @@ const handleError = (element) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  const registrationForm = document.getElementById('registrationForm'); // Use the ID of your actual reg form
+  const registrationForm = document.getElementById('registrationForm');
 
   if (registrationForm) {
     const regInputs = document.querySelectorAll('#fname, #lname, #email, #password, #confirmpassword');
@@ -83,52 +77,17 @@ document.addEventListener('DOMContentLoaded', () => {
       $('#myModal').modal('show'); 
     });
   }
-  // Social Media Toggle
-  document.querySelector('#socialMediaParent')?.addEventListener('click', () => {
-    const links = document.querySelector('#socialMediaLinks');
-    socialMediaExpanded = !socialMediaExpanded;
-    
-    if (links) {
-      // Using simple display toggle since we're ditching the slow jQuery fades
-      links.style.display = socialMediaExpanded ? 'block' : 'none';
-    }
-  });
-
-  // Portfolio Navigation
-  // document.querySelectorAll('.qap-nav').forEach(navItem => {
-  //   navItem.addEventListener('click', (e) => {
-  //     const clickedId = e.currentTarget.id;
-
-  //     // Hide all sections, then show the specific one
-  //     document.querySelectorAll('.portfolio-section').forEach(section => {
-  //       section.classList.remove('fade-in');
-  //       section.style.display = 'none';
-  //     });
-
-  //     const targetSection = document.querySelector(`#main-${clickedId}`);
-  //     if (targetSection) {
-  //       targetSection.classList.add('fade-in');
-  //       targetSection.style.display = 'inherit';
-  //     }
-  //   });
-  // });
 
   $('.qap-item').on('click', function() {
       const projectId = $(this).attr('id');
-      
-      // 1. Hide the placeholder and all other cards
       $('.portfolio-card').addClass('d-none');
-      
-      // 2. Show the selected card
       $(`#main-${projectId}`).removeClass('d-none');
-      
-      // 3. Optional: Smooth scroll down to the card
       $('html, body').animate({
           scrollTop: $(".portfolio-display-area").offset().top - 100
       }, 400);
   });
 
-  // Footer
+  
   const footer = document.querySelector('#footer-div');
   if (footer) {
     footer.innerHTML = `&copy; ${new Date().getFullYear()}`;
@@ -146,7 +105,6 @@ const filterPuzzles = () => {
     const cardPieces = card.dataset.pieces;
     const isOwned = card.dataset.owned === 'true';
 
-    // Logic Check
     const yearMatch = cardYear >= start && cardYear <= end;
     const pieceMatch = pieces === 'all' || cardPieces === pieces;
     const ownershipMatch = !onlyOwned || isOwned;
@@ -159,7 +117,7 @@ const filterPuzzles = () => {
   });
 };
 
-// Add listeners to all filter inputs
+// Add listeners to all puzzle filter inputs
 document.querySelectorAll('#puzzleFilterForm input, #puzzleFilterForm select').forEach(el => {
   el.addEventListener('input', filterPuzzles);
 });

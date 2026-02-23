@@ -23,10 +23,8 @@ Technologies Used:
     - **Summernote**: WYSYWIG used on the backend for styling  
 
 To-Do:  
-    - Fix puzzle frontend width on mobile
-    - Fix login shenanigans on mobile
-    - Finish breaking routes into manageable file sizes (split auth as well)  
     - Create Admin puzzle page(s) to allow editing & image upload of each puzzle  
+    - Finish breaking routes into manageable file sizes (split auth as well)  
     - Enable Handlebars linter  
     - Organize AWS S3 image storage paths  
     - deleteFromS3 Utility: Create a function to deletes file(s) from S3  

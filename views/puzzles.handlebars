@@ -132,9 +132,25 @@
       `).join('');
       };
 
-      const applyFilters = () => {
-        const startYear = parseInt(document.getElementById('startYear').value) || 0;
-        const endYear = parseInt(document.getElementById('endYear').value) || 9999;
+      const applyFilters = (e) => {
+        const startInput = document.getElementById('startYear');
+        const endInput = document.getElementById('endYear');
+
+        let startYear = parseInt(startInput.value) || 0;
+        let endYear = parseInt(endInput.value) || 9999;
+
+        // RANGE GUARD: 
+        // If the event came from the 'start' input and it's now > 'end'
+        if (e && e.target.id === 'startYear' && startYear > endYear) {
+          endYear = startYear;
+          endInput.value = startYear;
+        }
+        // If the event came from the 'end' input and it's now < 'start'
+        else if (e && e.target.id === 'endYear' && endYear < startYear) {
+          startYear = endYear;
+          startInput.value = endYear;
+        }
+
         const pieceLimit = document.getElementById('pieceFilter').value;
         const collectionOnly = document.getElementById('collectionOnly').checked;
         const searchTerm = document.getElementById('puzzleSearch').value.toLowerCase();
@@ -159,7 +175,7 @@
         renderGrid();
       });
 
-      filterForm.addEventListener('input', applyFilters);
+      filterForm.addEventListener('input', (e) => applyFilters(e));
       applyFilters();
     });
 
