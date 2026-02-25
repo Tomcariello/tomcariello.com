@@ -211,13 +211,22 @@ router.post('/updatepuzzle/:dbId', isLoggedIn, puzzleUpload, async (req, res) =>
       completePath = await uploadToS3(`puzzle_images/${completeImageName}`, file.path, file.mimetype);
     }
 
+    let isCompleteValue;
+    if (req.body.is_complete === "1") {
+        isCompleteValue = true;
+    } else if (req.body.is_complete === "0") {
+        isCompleteValue = false;
+    } else {
+        isCompleteValue = null; // Represents "Unknown"
+    }
+
     await puzzle.update({
       puzzle_name: req.body.puzzle_name,
       year: req.body.year || null,
       piece_count: req.body.piece_count ? parseInt(req.body.piece_count, 10) : null,
       notes: req.body.notes,
       in_collection: req.body.in_collection === 'on',
-      is_complete: req.body.is_complete,
+      is_complete: isCompleteValue,
       how_acquired: req.body.how_acquired,
       image_box_front: frontImageName,
       image_box_back: backImageName,

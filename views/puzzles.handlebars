@@ -258,9 +258,17 @@
           <p class="mb-0 fw-medium">${p.in_collection ? '✅ In My Collection' : '🔎 Still Searching'}</p>
         </div>
 
+        ${p.in_collection ? `
+        <div class="mb-3">
+          <label class="small text-uppercase text-muted fw-bold d-block mb-1" style="font-size: 0.65rem;">Complete?</label>
+          <p class="mb-0 fw-medium">
+            ${p.is_complete === null ? 'Unknown' : (p.is_complete ? 'Yes!' : 'No')}
+          </p>
+        </div>` : ''}
+
         ${p.how_acquired ? `
         <div class="mb-3">
-          <label class="small text-uppercase text-muted fw-bold d-block mb-1" style="font-size: 0.65rem;">Provenance</label>
+          <label class="small text-uppercase text-muted fw-bold d-block mb-1" style="font-size: 0.65rem;">How acquired</label>
           <p class="mb-0 small text-secondary">${p.how_acquired}</p>
         </div>` : ''}
 

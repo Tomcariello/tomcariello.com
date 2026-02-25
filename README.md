@@ -24,13 +24,21 @@ Technologies Used:
 
 To-Do:  
     
-    - Consider 'How aquired' being a managed list instead of text input (puzzle edit page)  
-    - Finish breaking routes into manageable file sizes (split auth as well)  
-    - Enable Handlebars linter  
-    - Better organize AWS S3 image storage paths  
-    - Abstract /delete-puzzle-image & use for portfolio, blog, etc. image deletion
+    Usability fixes:
+    - Adjust puzzle Detail modal on mobile  
 	- Add warning messages on misformed requests on login  
     - Remove or enable quiz game project  
     - Remove or enable hangman project  
-    - Re-activate contact form with a different email provider & avoid spam(?)  
     - Address Edit Blog page footer clash  
+    
+    Feature updates"
+    - Consider 'How aquired' being a managed list instead of text input (puzzle edit page)  
+    - Puzzle update feed (last ~5 updates at top of puzzle page?)  
+    - Puzzle scraper to facilitate the availability index
+    - Abstract /delete-puzzle-image & use for portfolio, blog, etc. image deletion  
+    - Re-activate contact form with a different email provider & avoid spam(?)  
+    
+    Housekeeping
+    - Finish breaking routes into manageable file sizes (split auth as well)  
+    - Enable Handlebars linter  
+    - Better organize AWS S3 image storage paths  

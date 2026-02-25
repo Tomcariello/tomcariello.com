@@ -51,12 +51,15 @@
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-bold">Is it Complete?</label>
                                         <select name="is_complete" class="form-select">
-                                            <option value="Unknown" {{#if (eq dynamicData.is_complete "Unknown"
-                                                )}}selected{{/if}}>Unknown</option>
-                                            <option value="Yes" {{#if (eq dynamicData.is_complete "Yes"
-                                                )}}selected{{/if}}>Yes (All pieces present)</option>
-                                            <option value="No" {{#if (eq dynamicData.is_complete "No"
-                                                )}}selected{{/if}}>No (Missing pieces)</option>
+                                            <option value="" {{#if (eq dynamicData.is_complete null)}}selected{{/if}}>
+                                                Unknown
+                                            </option>
+                                            <option value="1" {{#if (eq dynamicData.is_complete true)}}selected{{/if}}>
+                                                Yes (All pieces present)
+                                            </option>
+                                            <option value="0" {{#if (eq dynamicData.is_complete false)}}selected{{/if}}>
+                                                No (Missing pieces)
+                                            </option>
                                         </select>
                                     </div>
 
