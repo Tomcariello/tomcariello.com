@@ -219,8 +219,8 @@
             ${images.map((img, index) => `
               <div class="carousel-item ${index === 0 ? 'active' : ''}">
                 ${img.src
-          ? `<img src="${s3Base}${img.src}" class="d-block w-100 p-2" style="height: 400px; object-fit: contain;" alt="${img.label}">`
-          : `<div class="d-flex flex-column align-items-center justify-content-center bg-light text-muted" style="height: 400px;">
+          ? `<img src="${s3Base}${img.src}" class="d-block w-100 p-2" style="height: 300px; object-fit: contain;" alt="${img.label}">`
+          : `<div class="d-flex flex-column align-items-center justify-content-center bg-light text-muted" style="height: 300px;">
                        <i class="fas fa-camera-retro fa-3x mb-2"></i><span>No ${img.label} Image</span>
                      </div>`
         }
